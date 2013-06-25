@@ -11,11 +11,11 @@ import javax.persistence.ElementCollection
 class Alert {
 
   @Id @GeneratedValue(strategy=GenerationType.AUTO)
-  var id: Int = _
+  var id: Int
   @Column
-  var email: String = _
+  var email: String
   @Column
-  var name: String = _
+  var name: String
   @ElementCollection
   var keywords: List[String] = List();
   
