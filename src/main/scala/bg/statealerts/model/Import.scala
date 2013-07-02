@@ -5,12 +5,10 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.GenerationType
 
-class Document {
+class Import {
    @Id @GeneratedValue(strategy=GenerationType.AUTO)
    var id: Int = _
   
-	var title: String = _
-	var content: String = _
-	var publishDate: DateTime = _
-	var source: String = _
+	var importTime:DateTime = _
+	var importedDocuments:Int = _
 }
