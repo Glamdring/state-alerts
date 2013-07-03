@@ -1,5 +1,5 @@
 package bg.statealerts.scheduled
 
-class ExtractorConfiguration {
-	var extractors:List[ExtractorDescriptor] = List()
+class ExtractorConfiguration(extractors:List[ExtractorDescriptor]){
+	
 }
