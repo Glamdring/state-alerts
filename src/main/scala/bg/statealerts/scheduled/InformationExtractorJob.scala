@@ -18,7 +18,7 @@ class InformationExtractorJob {
   var extractors: List[InformationExtractor] = List()
   val mapper: ObjectMapper = new ObjectMapper()
   
-  @Value("${config.location}")
+  @Value("${statealerts.config.location}")
   var configLocation: String = _
   
   @Inject
@@ -26,7 +26,7 @@ class InformationExtractorJob {
   
   @PostConstruct
   def init() {
-    var file:File = new File(configLocation + "/extractors.xml")
+    var file:File = new File(configLocation + "/extractors.json")
     var config = mapper.readValue(file, classOf[ExtractorConfiguration])
     for (descriptor <- config.extractors) yield {
       var extractor: InformationExtractor = null
