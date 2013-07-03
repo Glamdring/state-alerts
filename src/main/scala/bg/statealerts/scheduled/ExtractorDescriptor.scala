@@ -7,5 +7,5 @@ class ExtractorDescriptor {
   var contentPath: String = _
   var dateFormat: String = _
   var datePath: String = _
-  var source: String = _
+  var url: String = _
 }

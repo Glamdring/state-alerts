@@ -46,6 +46,6 @@ class InformationExtractorJob {
   }
   
   private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.contentPath, descriptor.titlePath, descriptor.datePath, descriptor.dateFormat);
+    new XPathExtractor(descriptor.url, descriptor.contentPath, descriptor.titlePath, descriptor.datePath, descriptor.dateFormat);
   }
 }

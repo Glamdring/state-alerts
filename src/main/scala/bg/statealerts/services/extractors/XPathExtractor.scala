@@ -7,7 +7,7 @@ import bg.statealerts.model.Document
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
 
-class XPathExtractor(contentPath:String, titlePath:String, datePath:String, dateFormat: String) extends InformationExtractor {
+class XPathExtractor(url: String, contentPath:String, titlePath:String, datePath:String, dateFormat: String) extends InformationExtractor {
   var dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(dateFormat);
   
   def extract(since: DateTime): List[Document] = {
