@@ -1,14 +1,16 @@
-extractors: [
-	{
-		extractorType: XPath,
-		url: http://foo.bar,
-		contentPath: "",
-		titlePath: /foo/var,
-		datePath: "",
-		dateFormat: dd/MM/yyyy
-	}
-	{
-		extractorType: PDF,
-		url: http://bar.baz,
-	}
-]
+{
+   "extractors":[
+      {
+         "extractorType":"XPath",
+         "url":"http://foo.bar",
+         "contentPath":"",
+         "titlePath":"/foo/var",
+         "datePath":"",
+         "dateFormat":"dd/MM/yyyy"
+      },
+      {
+         "extractorType":"PDF",
+         "url":"http://bar.baz"
+      }
+   ]
+}
