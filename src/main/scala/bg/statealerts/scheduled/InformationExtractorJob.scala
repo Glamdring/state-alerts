@@ -36,6 +36,7 @@ class InformationExtractorJob {
       var extractor: InformationExtractor = null
       descriptor.extractorType match {
         case "XPath" => extractor = getXPathExtractor(descriptor)
+        case "PDF" => extractor = getPDFExtractor(descriptor)
       }
       extractors = extractor :: extractors
     }
@@ -50,6 +51,9 @@ class InformationExtractorJob {
   }
   
   private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.url, descriptor.contentPath, descriptor.titlePath, descriptor.datePath, descriptor.dateFormat);
+    new XPathExtractor(descriptor.url, descriptor.contentPath.get, descriptor.titlePath.get, descriptor.datePath.get, descriptor.dateFormat.get);
+  }
+  private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
+    new XPathExtractor(descriptor.url, descriptor.contentPath.get, descriptor.titlePath.get, descriptor.datePath.get, descriptor.dateFormat.get);
   }
 }

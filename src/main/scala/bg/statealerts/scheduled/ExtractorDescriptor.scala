@@ -2,9 +2,9 @@ package bg.statealerts.scheduled
 
 case class ExtractorDescriptor(
   extractorType: String,
-  titlePath: String = null,
-  contentPath: String = null,
-  dateFormat: String = null,
-  datePath: String = null,
+  titlePath: Option[String],
+  contentPath: Option[String],
+  dateFormat: Option[String],
+  datePath: Option[String],
   url: String) {
 }
