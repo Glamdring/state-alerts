@@ -1,11 +1,10 @@
 package bg.statealerts.scheduled
 
-class ExtractorDescriptor {
-
-  var extractorType: String = _
-  var titlePath: String = _
-  var contentPath: String = _
-  var dateFormat: String = _
-  var datePath: String = _
-  var url: String = _
+case class ExtractorDescriptor(
+  extractorType: String,
+  titlePath: String = null,
+  contentPath: String = null,
+  dateFormat: String = null,
+  datePath: String = null,
+  url: String) {
 }

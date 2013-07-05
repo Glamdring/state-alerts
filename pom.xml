@@ -26,6 +26,10 @@
 			<name>Spring Maven Milestone Repository</name>
 			<url>http://maven.springframework.org/milestone</url>
 		</repository>
+		<repository>
+			<id>repo.codahale.com</id>
+			<url>http://repo.codahale.com</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -336,6 +340,11 @@
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
 			<version>2.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.yuvimasory</groupId>
+			<artifactId>jerkson_2.10</artifactId>
+			<version>0.6.1</version>
 		</dependency>
 	</dependencies>
 	<build>

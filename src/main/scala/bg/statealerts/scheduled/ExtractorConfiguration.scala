@@ -1,5 +1,4 @@
 package bg.statealerts.scheduled
 
-class ExtractorConfiguration(extractors:List[ExtractorDescriptor]){
-	
+case class ExtractorConfiguration(extractors: List[ExtractorDescriptor]) {
 }
