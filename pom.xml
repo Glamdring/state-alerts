@@ -346,6 +346,11 @@
 			<artifactId>jerkson_2.10</artifactId>
 			<version>0.6.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>1.8.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -6,5 +6,7 @@ case class ExtractorDescriptor(
   contentPath: Option[String],
   dateFormat: Option[String],
   datePath: Option[String],
-  url: String) {
+  url: String,
+  paginationUrl: String,
+  documentLinkPath: Option[String]) {
 }
