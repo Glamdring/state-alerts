@@ -16,44 +16,51 @@ import com.codahale.jerkson.Json
 @Component
 class InformationExtractorJob {
 
-  var extractors: List[InformationExtractor] = List()
+  val extractors: List[InformationExtractor] = List()
   val mapper: ObjectMapper = {
     var mapper = new ObjectMapper();
     mapper
   }
-  
+
   @Value("${statealerts.config.location}")
   var configLocation: String = _
-  
+
   @Inject
   var dao: BaseDao = _
-  
+
   @PostConstruct
   def init() {
-    var file:File = new File(configLocation + "/extractors.json")
-    var config:ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
+    var file: File = new File(configLocation + "/extractors.json")
+    var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
     for (descriptor <- config.extractors) yield {
       var extractor: InformationExtractor = null
       descriptor.extractorType match {
         case "XPath" => extractor = getXPathExtractor(descriptor)
         case "PDF" => extractor = getPDFExtractor(descriptor)
       }
-      extractors = extractor :: extractors
+      extractors :+ extractor
     }
   }
-  
-  @Scheduled(fixedRate=100000)
+
+  @Scheduled(fixedRate = 100000)
   def run() {
     var lastImportTime = dao.getLastImportDate();
     for (extractor <- extractors) {
-      var document: List[Document] = extractor.extract(lastImportTime);
+      var documents: List[Document] = extractor.extract(lastImportTime)
+      for (document <- documents) {
+        dao.save(document)
+      }
     }
   }
-  
+
   private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.url, descriptor.contentPath.get, descriptor.titlePath.get, descriptor.datePath.get, descriptor.dateFormat.get);
+    new XPathExtractor(descriptor.url, descriptor.contentPath.get, 
+        descriptor.titlePath.get, descriptor.datePath.get, 
+        descriptor.dateFormat.get, descriptor.pagingMultipler);
   }
   private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.url, descriptor.contentPath.get, descriptor.titlePath.get, descriptor.datePath.get, descriptor.dateFormat.get);
+    new XPathExtractor(descriptor.url, descriptor.contentPath.get, 
+        descriptor.titlePath.get, descriptor.datePath.get, 
+        descriptor.dateFormat.get, descriptor.pagingMultipler);
   }
 }

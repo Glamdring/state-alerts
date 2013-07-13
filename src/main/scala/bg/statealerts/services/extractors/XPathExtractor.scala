@@ -6,9 +6,19 @@ import javax.xml.xpath.XPathFactory
 import bg.statealerts.model.Document
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
+import java.net.URL
+import org.apache.commons.io.IOUtils
+import scala.util.control.Breaks
+import javax.xml.xpath.XPathExpressionException
 
-class XPathExtractor(url: String, contentPath:String, titlePath:String, datePath:String, dateFormat: String) extends InformationExtractor {
+class XPathExtractor(url: String, 
+    contentPath:String, 
+    titlePath:String, 
+    datePath:String, 
+    dateFormat: String,
+    pagingMultiplier: Int) extends InformationExtractor {
   var dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(dateFormat);
+  val pager: Pager = new Pager(url, pagingMultiplier);
   
   def extract(since: DateTime): List[Document] = {
 	  val factory = XPathFactory.newInstance()
@@ -20,10 +30,22 @@ class XPathExtractor(url: String, contentPath:String, titlePath:String, datePath
 	  
 	  while (true) {
 	    val doc = new Document()
-	    val docContent = ""
-	    doc.content = contentField.evaluate(docContent)
-	    doc.title = titleField.evaluate(docContent)
-	    doc.publishDate = dateTimeFormatter.parseDateTime(dateField.evaluate(docContent));
+	    
+	    val in = new URL(pager.getNextPageUrl()).openStream()
+	    val page:String = IOUtils.toString(in)
+	    IOUtils.closeQuietly(in)
+	    
+	    try {
+		    doc.publishDate = dateTimeFormatter.parseDateTime(dateField.evaluate(page))
+		    if (doc.publishDate.isAfter(since)) {
+		      Breaks.break
+		    }
+		    doc.content = contentField.evaluate(page)
+		    doc.title = titleField.evaluate(page)
+		    result :+ doc
+	    } catch { 
+        	case ex: XPathExpressionException => 
+	    }
 	  }
 	  result;
 	}

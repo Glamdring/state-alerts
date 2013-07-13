@@ -3,7 +3,7 @@
       {
          "extractorType":"XPath",
          "url":"http://foo.bar",
-		 "paginationUrl":"http://foo.bar/p={p}",
+		 "pagingMultiplier": "1",
          "contentPath":"",
          "titlePath":"/foo/var",
          "datePath":"",
@@ -12,7 +12,7 @@
       {
          "extractorType":"PDF",
          "url":"http://bar.baz"
-		 "paginationUrl":"http://foo.bar/p={p}",
+         "pagingMultiplier": "1",
 		 "documentLinkPath": "",
 		 "datePath":"",
          "dateFormat":"dd/MM/yyyy"
