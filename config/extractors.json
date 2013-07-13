@@ -3,6 +3,7 @@
       {
          "extractorType":"XPath",
          "url":"http://foo.bar",
+         "httpMethod": "GET",
 		 "pagingMultiplier": "1",
          "contentPath":"",
          "titlePath":"/foo/var",
@@ -11,10 +12,12 @@
       },
       {
          "extractorType":"PDF",
-         "url":"http://bar.baz"
+         "url":"http://www.parliament.bg/bg/bills"
+         "httpMethod": "POST",
          "pagingMultiplier": "1",
 		 "documentLinkPath": "",
-		 "datePath":"",
+		 "documentPageLinkPath: "",
+		 "datePath":"//table[@class='billsresult']/tbody/tr/td[4]",
          "dateFormat":"dd/MM/yyyy"
       }
    ]

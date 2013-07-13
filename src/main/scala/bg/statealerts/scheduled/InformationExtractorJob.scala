@@ -12,6 +12,7 @@ import bg.statealerts.services.extractors.XPathExtractor
 import javax.annotation.PostConstruct
 import javax.inject.Inject
 import com.codahale.jerkson.Json
+import bg.statealerts.services.extractors.PDFExtractor
 
 @Component
 class InformationExtractorJob {
@@ -54,13 +55,12 @@ class InformationExtractorJob {
   }
 
   private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.url, descriptor.contentPath.get, 
+    new XPathExtractor(descriptor.url, descriptor.httpMethod, descriptor.contentPath.get, 
         descriptor.titlePath.get, descriptor.datePath.get, 
         descriptor.dateFormat.get, descriptor.pagingMultipler);
   }
   private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.url, descriptor.contentPath.get, 
-        descriptor.titlePath.get, descriptor.datePath.get, 
-        descriptor.dateFormat.get, descriptor.pagingMultipler);
+    new PDFExtractor(descriptor.url, descriptor.httpMethod,  descriptor.datePath.get, 
+        descriptor.dateFormat.get, descriptor.documentLinkPath.get, descriptor.documentPageLinkPath, descriptor.pagingMultipler);
   }
 }
