@@ -1,24 +1,25 @@
 package bg.statealerts.services.extractors
 
-import java.net.URL
+import scala.collection.JavaConversions.asScalaBuffer
 import scala.util.control.Breaks
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.util.PDFTextStripper
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
-import com.gargoylesoftware.htmlunit.HttpMethod
-import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.WebRequestSettings
-import com.gargoylesoftware.htmlunit.html.HtmlElement
-import com.gargoylesoftware.htmlunit.html.HtmlPage
+import com.gargoylesoftware.htmlunit.BrowserVersion
+import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
 import bg.statealerts.model.Document
 import bg.statealerts.services.InformationExtractor
-import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
+import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.WebRequest
+import java.net.URL
+import com.gargoylesoftware.htmlunit.HttpMethod
+import com.gargoylesoftware.htmlunit.html.HtmlPage
 import java.util.ArrayList
-import scala.collection.JavaConversions._
+import com.gargoylesoftware.htmlunit.html.HtmlElement
 import scala.collection.mutable.Buffer
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.util.PDFTextStripper
 
 class PDFExtractor(url: String,
   httpMethod: String,
@@ -38,14 +39,30 @@ class PDFExtractor(url: String,
     val dateField = xpath.compile(datePath)
     var result = List[Document]()
     val loop = new Breaks();
-    val client: WebClient = new WebClient()
+
+    val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
+    bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING
+    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_17.getApplicationName(), 
+        BrowserVersion.FIREFOX_17.getApplicationVersion(), 
+        BrowserVersion.FIREFOX_17.getUserAgent(), 
+        BrowserVersion.FIREFOX_17.getBrowserVersionNumeric(), 
+        bvf);
+    val client: WebClient = new WebClient(bv)
+
     client.setJavaScriptEnabled(false)
 
     loop.breakable {
       while (true) {
-        val request: WebRequestSettings = new WebRequestSettings(new URL(pager.getNextPageUrl()), HttpMethod.valueOf(httpMethod));
+        val pageUrl = pager.getNextPageUrl()
+        val request: WebRequest = new WebRequest(new URL(pageUrl), HttpMethod.valueOf(httpMethod));
+        // POST parameters are set in the request body
+        if (HttpMethod.valueOf(httpMethod) == HttpMethod.POST) {
+          request.setRequestBody(pageUrl.substring(pageUrl.indexOf('?')))
+        }
+
         val htmlPage: HtmlPage = client.getPage(request);
         val list = htmlPage.getByXPath(datePath).asInstanceOf[ArrayList[HtmlElement]]
+        println("AA: " + htmlPage.getWebResponse().getContentAsString())
         if (list.isEmpty()) {
           loop.break
         }
