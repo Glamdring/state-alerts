@@ -40,46 +40,46 @@ class PDFExtractor(url: String,
     val loop = new Breaks();
     val client: WebClient = new WebClient()
     client.setJavaScriptEnabled(false)
-    
+
     loop.breakable {
       while (true) {
         val request: WebRequestSettings = new WebRequestSettings(new URL(pager.getNextPageUrl()), HttpMethod.valueOf(httpMethod));
         val htmlPage: HtmlPage = client.getPage(request);
         val list = htmlPage.getByXPath(datePath).asInstanceOf[ArrayList[HtmlElement]]
-      	val publishDateList: Buffer[HtmlElement] = asScalaBuffer(list)
-      	val linkJavaList = htmlPage.getByXPath(documentLinkPath).asInstanceOf[ArrayList[HtmlElement]]
-		val linkList: Buffer[HtmlElement] = asScalaBuffer(linkJavaList);
-        
-      	val linkIterator: Iterator[HtmlElement] = linkList.iterator
-        try {
-          for (element <- publishDateList) {
-            val doc = new Document()
-            doc.publishDate = dateTimeFormatter.parseDateTime(element.getTextContent())
+        if (list.isEmpty()) {
+          loop.break
+        }
 
-            if (doc.publishDate.isBefore(since)) {
-              loop.break;
-            }
-            
-            // if the link is not available in the table, but on a separate page, go to that page first
-            var documentUrl: String = linkIterator.next.getAttribute("href");
-            if (documentPageLinkPath.exists(a => true)) {
-              var docPage: HtmlPage = client.getPage(documentUrl)
-              var link: HtmlElement = docPage.getFirstByXPath(documentPageLinkPath.get);
-              documentUrl = link.getAttribute("href")
-            }
-            
-            var pdfDoc: PDDocument = null
-            try {
-              val pdfDoc: PDDocument = PDDocument.load(documentUrl);
-              var extractor: PDFTextStripper = null;
-              doc.content = extractor.getText(pdfDoc);
-            } finally {
-              if (pdfDoc != null) pdfDoc.close()
-            }
-            result ::= doc
+        val publishDateList: Buffer[HtmlElement] = asScalaBuffer(list)
+        val linkJavaList = htmlPage.getByXPath(documentLinkPath).asInstanceOf[ArrayList[HtmlElement]]
+        val linkList: Buffer[HtmlElement] = asScalaBuffer(linkJavaList);
+
+        val linkIterator: Iterator[HtmlElement] = linkList.iterator
+        for (element <- publishDateList) {
+          val doc = new Document()
+          doc.publishDate = dateTimeFormatter.parseDateTime(element.getTextContent())
+
+          if (doc.publishDate.isBefore(since)) {
+            loop.break;
           }
-        } catch {
-          case ex: XPathExpressionException =>
+
+          // if the link is not available in the table, but on a separate page, go to that page first
+          var documentUrl: String = linkIterator.next.getAttribute("href");
+          if (documentPageLinkPath.exists(a => true)) {
+            var docPage: HtmlPage = client.getPage(documentUrl)
+            var link: HtmlElement = docPage.getFirstByXPath(documentPageLinkPath.get);
+            documentUrl = link.getAttribute("href")
+          }
+
+          var pdfDoc: PDDocument = null
+          try {
+            val pdfDoc: PDDocument = PDDocument.load(documentUrl);
+            var extractor: PDFTextStripper = null;
+            doc.content = extractor.getText(pdfDoc);
+          } finally {
+            if (pdfDoc != null) pdfDoc.close()
+          }
+          result ::= doc
         }
       }
     }
