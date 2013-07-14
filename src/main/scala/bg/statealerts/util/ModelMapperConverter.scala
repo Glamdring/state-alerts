@@ -1,7 +1,5 @@
 package bg.statealerts.util
 
-package com.ontotext.dsp.util
-
 import java.util.Collections
 import java.util.Set
 import org.modelmapper.ModelMapper

@@ -1,25 +1,24 @@
 package bg.statealerts.services.extractors
 
 import java.net.URL
-
 import scala.util.control.Breaks
-
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.util.PDFTextStripper
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
-
 import com.gargoylesoftware.htmlunit.HttpMethod
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.WebRequestSettings
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-
 import bg.statealerts.model.Document
 import bg.statealerts.services.InformationExtractor
 import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
+import java.util.ArrayList
+import scala.collection.JavaConversions._
+import scala.collection.mutable.Buffer
 
 class PDFExtractor(url: String,
   httpMethod: String,
@@ -37,16 +36,20 @@ class PDFExtractor(url: String,
     val xpath = factory.newXPath()
     val documentField = xpath.compile(documentLinkPath)
     val dateField = xpath.compile(datePath)
-    val result = List[Document]()
+    var result = List[Document]()
     val loop = new Breaks();
     val client: WebClient = new WebClient()
+    client.setJavaScriptEnabled(false)
     
     loop.breakable {
       while (true) {
         val request: WebRequestSettings = new WebRequestSettings(new URL(pager.getNextPageUrl()), HttpMethod.valueOf(httpMethod));
         val htmlPage: HtmlPage = client.getPage(request);
-      	val publishDateList: List[HtmlElement] = htmlPage.getByXPath(datePath).asInstanceOf[List[HtmlElement]]
-		val linkList: List[HtmlElement] = htmlPage.getByXPath(documentLinkPath).asInstanceOf[List[HtmlElement]];
+        val list = htmlPage.getByXPath(datePath).asInstanceOf[ArrayList[HtmlElement]]
+      	val publishDateList: Buffer[HtmlElement] = asScalaBuffer(list)
+      	val linkJavaList = htmlPage.getByXPath(documentLinkPath).asInstanceOf[ArrayList[HtmlElement]]
+		val linkList: Buffer[HtmlElement] = asScalaBuffer(linkJavaList);
+        
       	val linkIterator: Iterator[HtmlElement] = linkList.iterator
         try {
           for (element <- publishDateList) {
@@ -56,6 +59,8 @@ class PDFExtractor(url: String,
             if (doc.publishDate.isBefore(since)) {
               loop.break;
             }
+            
+            // if the link is not available in the table, but on a separate page, go to that page first
             var documentUrl: String = linkIterator.next.getAttribute("href");
             if (documentPageLinkPath.exists(a => true)) {
               var docPage: HtmlPage = client.getPage(documentUrl)
@@ -71,14 +76,14 @@ class PDFExtractor(url: String,
             } finally {
               if (pdfDoc != null) pdfDoc.close()
             }
-            result :+ doc
+            result ::= doc
           }
         } catch {
           case ex: XPathExpressionException =>
         }
       }
     }
-
-    null
+    client.closeAllWindows();
+    result
   }
 }

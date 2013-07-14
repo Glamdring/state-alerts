@@ -11,14 +11,14 @@
          "dateFormat":"dd/MM/yyyy"
       },
       {
-         "extractorType":"PDF",
-         "url":"http://www.parliament.bg/bg/bills"
+         "extractorType": "PDF",
+         "url": "http://www.parliament.bg/bg/bills",
          "httpMethod": "POST",
          "pagingMultiplier": "1",
-		 "documentLinkPath": "",
-		 "documentPageLinkPath: "",
-		 "datePath":"//table[@class='billsresult']/tbody/tr/td[4]",
-         "dateFormat":"dd/MM/yyyy"
+		 "documentLinkPath": "//table[@class='billsresult']/tbody/tr/td[2]/a",
+		 "documentPageLinkPath": "//table[@class='bills']/tbody/tr[5]/td[2]/a",
+		 "datePath": "//table[@class='billsresult']/tbody/tr/td[4]",
+         "dateFormat": "dd/MM/yyyy"
       }
    ]
 }

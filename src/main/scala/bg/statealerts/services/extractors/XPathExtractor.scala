@@ -31,7 +31,7 @@ class XPathExtractor(url: String,
     val contentField = xpath.compile(contentPath)
     val titleField = xpath.compile(titlePath)
     val dateField = xpath.compile(datePath)
-    val result = List[Document]()
+    var result = List[Document]()
     val loop = new Breaks();
     loop.breakable {
       while (true) {
@@ -53,7 +53,7 @@ class XPathExtractor(url: String,
             }
             doc.content = contentList.item(i).getTextContent()
             doc.title = titleList.item(i).getTextContent()
-            result :+ doc
+            result ::= doc
           }
         } catch {
           case ex: XPathExpressionException =>

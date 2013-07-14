@@ -13,11 +13,12 @@ import javax.annotation.PostConstruct
 import javax.inject.Inject
 import com.codahale.jerkson.Json
 import bg.statealerts.services.extractors.PDFExtractor
+import org.joda.time.DateTime
 
 @Component
 class InformationExtractorJob {
 
-  val extractors: List[InformationExtractor] = List()
+  var extractors: List[InformationExtractor] = List()
   val mapper: ObjectMapper = {
     var mapper = new ObjectMapper();
     mapper
@@ -33,19 +34,23 @@ class InformationExtractorJob {
   def init() {
     var file: File = new File(configLocation + "/extractors.json")
     var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
-    for (descriptor <- config.extractors) yield {
+    for (descriptor <- config.extractors) {
+      println("AA: " + descriptor.extractorType)
       var extractor: InformationExtractor = null
       descriptor.extractorType match {
         case "XPath" => extractor = getXPathExtractor(descriptor)
         case "PDF" => extractor = getPDFExtractor(descriptor)
       }
-      extractors :+ extractor
+      extractors ::= extractor
     }
   }
 
   @Scheduled(fixedRate = 100000)
   def run() {
     var lastImportTime = dao.getLastImportDate();
+    if (lastImportTime == null) {
+      lastImportTime = new DateTime().minusDays(14)
+    }
     for (extractor <- extractors) {
       var documents: List[Document] = extractor.extract(lastImportTime)
       for (document <- documents) {
@@ -57,10 +62,10 @@ class InformationExtractorJob {
   private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
     new XPathExtractor(descriptor.url, descriptor.httpMethod, descriptor.contentPath.get, 
         descriptor.titlePath.get, descriptor.datePath.get, 
-        descriptor.dateFormat.get, descriptor.pagingMultipler);
+        descriptor.dateFormat.get, descriptor.pagingMultiplier);
   }
   private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
     new PDFExtractor(descriptor.url, descriptor.httpMethod,  descriptor.datePath.get, 
-        descriptor.dateFormat.get, descriptor.documentLinkPath.get, descriptor.documentPageLinkPath, descriptor.pagingMultipler);
+        descriptor.dateFormat.get, descriptor.documentLinkPath.get, descriptor.documentPageLinkPath, descriptor.pagingMultiplier);
   }
 }

@@ -59,7 +59,7 @@
 		class="org.springframework.context.support.ConversionServiceFactoryBean">
 		<property name="converters">
 			<set>
-				<bean class="com.statealerts.util.ModelMapperConverter" />
+				<bean class="bg.statealerts.util.ModelMapperConverter" />
 			</set>
 		</property>
 	</bean>
