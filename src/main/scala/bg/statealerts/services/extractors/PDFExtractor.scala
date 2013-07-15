@@ -57,7 +57,9 @@ class PDFExtractor(url: String,
         val request: WebRequest = new WebRequest(new URL(pageUrl), HttpMethod.valueOf(httpMethod));
         // POST parameters are set in the request body
         if (HttpMethod.valueOf(httpMethod) == HttpMethod.POST) {
-          request.setRequestBody(pageUrl.substring(pageUrl.indexOf('?')))
+          val body = pageUrl.substring(pageUrl.indexOf('?') + 1)
+          request.setRequestBody(body)
+          request.setUrl(new URL(pageUrl.replace("?" + body, "")))
         }
 
         val htmlPage: HtmlPage = client.getPage(request);
