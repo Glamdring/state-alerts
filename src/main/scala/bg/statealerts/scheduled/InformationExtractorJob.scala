@@ -14,6 +14,8 @@ import javax.inject.Inject
 import com.codahale.jerkson.Json
 import bg.statealerts.services.extractors.PDFExtractor
 import org.joda.time.DateTime
+import bg.statealerts.services.DocumentService
+import bg.statealerts.model.Import
 
 @Component
 class InformationExtractorJob {
@@ -28,8 +30,11 @@ class InformationExtractorJob {
   var configLocation: String = _
 
   @Inject
-  var dao: BaseDao = _
+  var service: DocumentService = _
 
+  @Inject
+  var dao: BaseDao = _
+  
   @PostConstruct
   def init() {
     var file: File = new File(configLocation + "/extractors.json")
@@ -51,11 +56,21 @@ class InformationExtractorJob {
     if (lastImportTime == null) {
       lastImportTime = new DateTime().minusDays(14)
     }
+    val now = new DateTime();
+    var total: Int = 0
     for (extractor <- extractors) {
       var documents: List[Document] = extractor.extract(lastImportTime)
+      total += documents.size
       for (document <- documents) {
-        dao.save(document)
+        service.save(document)
       }
+    }
+    
+    if (total > 0) {
+	    val docImport = new Import()
+	    docImport.importedDocuments = total;
+	    docImport.importTime = now
+	    service.save(docImport)
     }
   }
 
