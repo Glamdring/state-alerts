@@ -16,6 +16,7 @@ import bg.statealerts.services.extractors.PDFExtractor
 import org.joda.time.DateTime
 import bg.statealerts.services.DocumentService
 import bg.statealerts.model.Import
+import bg.statealerts.services.Indexer
 
 @Component
 class InformationExtractorJob {
@@ -34,6 +35,9 @@ class InformationExtractorJob {
 
   @Inject
   var dao: BaseDao = _
+  
+  @Inject
+  var indexer: Indexer = _
   
   @PostConstruct
   def init() {
@@ -59,11 +63,13 @@ class InformationExtractorJob {
     val now = new DateTime();
     var total: Int = 0
     for (extractor <- extractors) {
-      var documents: List[Document] = extractor.extract(lastImportTime)
+      val documents: List[Document] = extractor.extract(lastImportTime)
       total += documents.size
       for (document <- documents) {
         service.save(document)
       }
+      //TODO more effort to keep in sync with db
+      indexer.index(documents)
     }
     
     if (total > 0) {
