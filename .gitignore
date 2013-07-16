@@ -4,6 +4,7 @@ project/target
 target
 tmp
 .history
+.cache
 dist
 /.idea
 /*.iml
