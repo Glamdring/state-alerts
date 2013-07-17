@@ -17,6 +17,7 @@ import javax.annotation.PreDestroy
 import org.apache.lucene.document.LongField
 import org.apache.lucene.document.TextField
 import org.apache.lucene.document.Field.Store
+import org.joda.time.DateTime
 
 @Service
 class Indexer {
@@ -40,14 +41,16 @@ class Indexer {
     writer.close()
   }
   def index(documents: List[Document]) = {
+    val now = new DateTime()
     for (document <- documents) {
-	  writer.addDocument(getLuceneDocument(document))
+	  writer.addDocument(getLuceneDocument(document, now))
     }
   }
   
-  def getLuceneDocument(document: Document) = {
+  def getLuceneDocument(document: Document, time: DateTime) = {
 	  val luceneDoc: org.apache.lucene.document.Document = new org.apache.lucene.document.Document()
 	  luceneDoc.add(new LongField("id", document.id, Store.YES))
+	  luceneDoc.add(new LongField("timestamp", time.getMillis(), Store.YES))
 	  luceneDoc.add(new TextField("text", document.content, Store.YES))
 	  luceneDoc
   }
