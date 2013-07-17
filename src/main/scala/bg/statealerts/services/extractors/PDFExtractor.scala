@@ -31,11 +31,15 @@ class PDFExtractor(url: String,
   documentPageLinkPath: Option[String],
   pagingMultiplier: Int) extends InformationExtractor {
 
-  val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(dateFormat);
-  val pager: Pager = new Pager(url, pagingMultiplier);
+  val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(dateFormat)
+  val pager: Pager = new Pager(url, pagingMultiplier)
   val baseUrl: String = {
-    val fullUrl = new URL(url);
-    fullUrl.getProtocol() + "://" + fullUrl.getHost() + ":" + fullUrl.getPort();
+    val fullUrl = new URL(url)
+    var port = fullUrl.getPort()
+    if (port == -1) {
+      port = 80
+    }
+    fullUrl.getProtocol() + "://" + fullUrl.getHost() + ":" + port
   }
 
   def extract(since: DateTime): List[Document] = {

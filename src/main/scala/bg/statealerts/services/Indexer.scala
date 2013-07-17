@@ -45,6 +45,7 @@ class Indexer {
     for (document <- documents) {
 	  writer.addDocument(getLuceneDocument(document, now))
     }
+    writer.commit()
   }
   
   def getLuceneDocument(document: Document, time: DateTime) = {
