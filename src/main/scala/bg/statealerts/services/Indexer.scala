@@ -23,7 +23,6 @@ import org.joda.time.DateTime
 class Indexer {
 
   var writer: IndexWriter = _
-
   @Value("${index.path}")
   var indexPath: String = _
 
@@ -40,6 +39,7 @@ class Indexer {
   def destroy() = {
     writer.close()
   }
+  
   def index(documents: List[Document]) = {
     val now = new DateTime()
     for (document <- documents) {
