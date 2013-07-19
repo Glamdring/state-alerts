@@ -10,13 +10,13 @@ import org.hibernate.annotations.Type
 
 @Entity
 class Document {
-   @Id @GeneratedValue(strategy=GenerationType.AUTO)
-   var id: Int = _
-  
-	var title: String = _
-	@Lob
-	var content: String = _
-	@Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	var publishDate: DateTime = _
-	var source: String = _
+  @Id @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Int = _
+
+  var title: String = _
+  @Lob
+  var content: String = _
+  @Type(`type` = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+  var publishDate: DateTime = _
+  var source: String = _
 }

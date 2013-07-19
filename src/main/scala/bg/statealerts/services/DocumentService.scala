@@ -12,7 +12,7 @@ class DocumentService {
   var dao: BaseDao = _
   
   @Transactional
-  def save(e: Any) = {
+  def save[T](e: T): T = {
     dao.save(e)
   }
 }

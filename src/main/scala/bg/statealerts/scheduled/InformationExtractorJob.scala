@@ -22,10 +22,6 @@ import bg.statealerts.services.Indexer
 class InformationExtractorJob {
 
   var extractors: List[InformationExtractor] = List()
-  val mapper: ObjectMapper = {
-    var mapper = new ObjectMapper();
-    mapper
-  }
 
   @Value("${statealerts.config.location}")
   var configLocation: String = _
@@ -43,8 +39,8 @@ class InformationExtractorJob {
   def init() {
     var file: File = new File(configLocation + "/extractors.json")
     var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
+    //TODO validate configuration - required/optional fields per type
     for (descriptor <- config.extractors) {
-      println("AA: " + descriptor.extractorType)
       var extractor: InformationExtractor = null
       descriptor.extractorType match {
         case "XPath" => extractor = getXPathExtractor(descriptor)
@@ -64,12 +60,13 @@ class InformationExtractorJob {
     var total: Int = 0
     for (extractor <- extractors) {
       val documents: List[Document] = extractor.extract(lastImportTime)
+      var persistedDocuments = List[Document]()
       total += documents.size
       for (document <- documents) {
-        service.save(document)
+        persistedDocuments ::= service.save(document)
       }
       //TODO more effort to keep in sync with db
-      indexer.index(documents)
+      indexer.index(persistedDocuments)
     }
     
     if (total > 0) {
@@ -86,7 +83,8 @@ class InformationExtractorJob {
         descriptor.dateFormat.get, descriptor.pagingMultiplier);
   }
   private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new PDFExtractor(descriptor.url, descriptor.httpMethod,  descriptor.datePath.get, 
-        descriptor.dateFormat.get, descriptor.documentLinkPath.get, descriptor.documentPageLinkPath, descriptor.pagingMultiplier);
+    new PDFExtractor(descriptor.url, descriptor.httpMethod, descriptor.datePath.get, 
+        descriptor.dateFormat.get, descriptor.titlePath.get, 
+        descriptor.documentLinkPath.get, descriptor.documentPageLinkPath, descriptor.pagingMultiplier);
   }
 }

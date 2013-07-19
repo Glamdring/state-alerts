@@ -4,10 +4,13 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
-
 import bg.statealerts.model.Document
 import bg.statealerts.services.SearchService
 import javax.inject.Inject
+import scala.collection.JavaConversions._
+import scala.collection.mutable.Buffer
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.codahale.jerkson.Json
 
 @Controller
 class MainController {
@@ -15,9 +18,12 @@ class MainController {
   @Inject
   var searcher: SearchService = _
   
+  val mapper = new ObjectMapper()
+  
   @RequestMapping(Array("/search"))
   @ResponseBody
-  def search(@RequestParam keywords: String): List[Document] = {
-    searcher.search(keywords)
+  def search(@RequestParam keywords: String): String = {
+    val buffer: Buffer[Document] = searcher.search(keywords).toBuffer
+    Json.generate(asJavaList(buffer))
   }
 }

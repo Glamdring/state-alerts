@@ -27,6 +27,7 @@ class PDFExtractor(url: String,
   httpMethod: String,
   datePath: String,
   dateFormat: String,
+  titlePath: String,
   documentLinkPath: String,
   documentPageLinkPath: Option[String],
   pagingMultiplier: Int) extends InformationExtractor {
@@ -84,11 +85,14 @@ class PDFExtractor(url: String,
           val linkJavaList = htmlPage.getByXPath(documentLinkPath).asInstanceOf[ArrayList[HtmlElement]]
           val linkList: Buffer[HtmlElement] = asScalaBuffer(linkJavaList);
 
+          val titleList: Buffer[HtmlElement] = asScalaBuffer(htmlPage.getByXPath(titlePath).asInstanceOf[ArrayList[HtmlElement]]);
+          
           if (linkList.size != publishDateList.size) {
             throw new IllegalStateException("Document links are fewer than dates. Check your XPath");
           }
 
           val linkIterator: Iterator[HtmlElement] = linkList.iterator
+          val titleIterator: Iterator[HtmlElement] = titleList.iterator
           for (element <- publishDateList) {
             val doc = new Document()
             doc.publishDate = dateTimeFormatter.parseDateTime(element.getTextContent())
@@ -97,6 +101,8 @@ class PDFExtractor(url: String,
               loop.break;
             }
 
+            doc.title = titleIterator.next.getTextContent()
+            
             var documentUrl: String = linkIterator.next.getAttribute("href");
             if (!documentUrl.startsWith("http")) {
               documentUrl = baseUrl + documentUrl
