@@ -12,7 +12,11 @@
 
 	<!-- Turns on support for mapping requests to Spring MVC @Controller methods Also registers default Formatters and Validators 
 		for use across all @Controllers -->
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="bg.statealerts.util.ScalaJsonHttpMessageConverter"/>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources -->
 	<mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**" />

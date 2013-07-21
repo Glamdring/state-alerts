@@ -80,11 +80,9 @@ class InformationExtractorJob {
   private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
     new XPathExtractor(descriptor.url, descriptor.httpMethod, descriptor.contentPath.get, 
         descriptor.titlePath.get, descriptor.datePath.get, 
-        descriptor.dateFormat.get, descriptor.pagingMultiplier);
+        descriptor.dateFormat, descriptor.pagingMultiplier);
   }
   private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new PDFExtractor(descriptor.url, descriptor.httpMethod, descriptor.datePath.get, 
-        descriptor.dateFormat.get, descriptor.titlePath.get, 
-        descriptor.documentLinkPath.get, descriptor.documentPageLinkPath, descriptor.pagingMultiplier);
+    new PDFExtractor(descriptor);
   }
 }

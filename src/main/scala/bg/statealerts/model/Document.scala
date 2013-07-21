@@ -18,5 +18,5 @@ class Document {
   var content: String = _
   @Type(`type` = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   var publishDate: DateTime = _
-  var source: String = _
+  var sourceName: String = _
 }
