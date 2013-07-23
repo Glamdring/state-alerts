@@ -1,27 +1,27 @@
 package bg.statealerts.scheduled
 
 import java.io.File
+
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import com.fasterxml.jackson.databind.ObjectMapper
+
+import com.codahale.jerkson.Json
+
 import bg.statealerts.dao.BaseDao
 import bg.statealerts.model.Document
-import bg.statealerts.services.InformationExtractor
-import bg.statealerts.services.extractors.XPathExtractor
+import bg.statealerts.model.Import
+import bg.statealerts.services.DocumentService
+import bg.statealerts.services.Indexer
+import bg.statealerts.services.extractors.Extractor
 import javax.annotation.PostConstruct
 import javax.inject.Inject
-import com.codahale.jerkson.Json
-import bg.statealerts.services.extractors.PDFExtractor
-import org.joda.time.DateTime
-import bg.statealerts.services.DocumentService
-import bg.statealerts.model.Import
-import bg.statealerts.services.Indexer
 
 @Component
 class InformationExtractorJob {
 
-  var extractors: List[InformationExtractor] = List()
+  var extractors: List[Extractor] = List()
 
   @Value("${statealerts.config.location}")
   var configLocation: String = _
@@ -41,11 +41,7 @@ class InformationExtractorJob {
     var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
     //TODO validate configuration - required/optional fields per type
     for (descriptor <- config.extractors) {
-      var extractor: InformationExtractor = null
-      descriptor.extractorType match {
-        case "XPath" => extractor = getXPathExtractor(descriptor)
-        case "PDF" => extractor = getPDFExtractor(descriptor)
-      }
+      var extractor = new Extractor(descriptor)
       extractors ::= extractor
     }
   }
@@ -75,14 +71,5 @@ class InformationExtractorJob {
 	    docImport.importTime = now
 	    service.save(docImport)
     }
-  }
-
-  private def getXPathExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new XPathExtractor(descriptor.url, descriptor.httpMethod, descriptor.contentPath.get, 
-        descriptor.titlePath.get, descriptor.datePath.get, 
-        descriptor.dateFormat, descriptor.pagingMultiplier);
-  }
-  private def getPDFExtractor(descriptor: ExtractorDescriptor): InformationExtractor = {
-    new PDFExtractor(descriptor);
   }
 }

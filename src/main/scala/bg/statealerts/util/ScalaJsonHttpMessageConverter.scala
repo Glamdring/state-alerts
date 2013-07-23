@@ -13,11 +13,11 @@ class ScalaJsonHttpMessageConverter extends AbstractHttpMessageConverter[Object]
     true
   }
   
-  def readInternal[T](clazz: Class[T], input: HttpInputMessage): T = {
+  override def readInternal(clazz: Class[_ <: Object], input: HttpInputMessage): Object = {
     Json.parse(input.getBody())
   }
   
-  def writeInternal[T](obj: T, output: HttpOutputMessage) = {
+  override def writeInternal(obj: Object, output: HttpOutputMessage): Unit = {
     Json.generate(obj, output.getBody())
   }
   

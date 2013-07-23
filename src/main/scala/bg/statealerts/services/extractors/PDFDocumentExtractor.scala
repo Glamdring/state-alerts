@@ -7,7 +7,7 @@ import java.net.URL
 
 class PDFDocumentExtractor extends DocumentFileExtractor {
 
-  def extractContent(documentUrl: String): String = {
+  def extractContent(documentUrl: String, ctx: ExtractionContext): String = {
     var pdfDoc: PDDocument = null
     var in: InputStream = null
     try {

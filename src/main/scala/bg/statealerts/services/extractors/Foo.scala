@@ -11,9 +11,21 @@ import com.gargoylesoftware.htmlunit.HttpMethod
 import java.net.URL
 import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
 import com.gargoylesoftware.htmlunit.BrowserVersion
+import bg.statealerts.model.Document
+import org.joda.time.DateTime
+import com.codahale.jerkson.Json
+import bg.statealerts.model.Alert
 
 object Foo {
   def main(args: Array[String]) {
+    val doc = new Document()
+    doc.content = "foo bar baz aaaaaa fdsa fsa";
+    doc.publishDate = new DateTime()
+    doc.sourceName = "foo"
+    doc.id = 1
+    println(Json.generate(doc))
+  }
+  def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
     bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING
     val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_17.getApplicationName(), 
