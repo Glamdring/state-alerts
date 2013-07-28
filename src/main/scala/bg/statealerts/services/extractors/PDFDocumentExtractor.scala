@@ -13,7 +13,7 @@ class PDFDocumentExtractor extends DocumentFileExtractor {
     try {
       in = new URL(documentUrl).openStream();
       pdfDoc = PDDocument.load(in);
-      var extractor: PDFTextStripper = new PDFTextStripper(); //not thread-safe, so a new instance for each document
+      var extractor = new PDFTextStripper("utf-8"); //not thread-safe, so a new instance for each document
       return extractor.getText(pdfDoc);
     } finally {
       if (pdfDoc != null) pdfDoc.close()

@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import org.apache.lucene.index.Term
 import org.joda.time.DateTime
+import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
@@ -45,21 +46,30 @@ class SearchService {
     indexReader.close()
   }
   def search(keywords: String): List[Document] = {
+    val escapedKeywords = QueryParserUtil.escape(keywords)
     val parser: QueryParser = new QueryParser(Version.LUCENE_43, "text", analyzer);
-    val query: Query = parser.parse(keywords)
-    val q = new TermQuery(new Term("text", keywords))
+    val query: Query = parser.parse(escapedKeywords) //TODO delete one of these two queries
+    val q = new TermQuery(new Term("text", escapedKeywords))
     val result: TopDocs = searcher.search(q, 20)
-    
+
+    //TODO check index encoding?
     var documents = List[Document]()
     val topDocs: Array[ScoreDoc] = result.scoreDocs
+    
     for (topDoc <- topDocs) {
       val luceneDoc = searcher.doc(topDoc.doc)
-      val doc = new Document()
-      doc.id = luceneDoc.get("id").toInt
-      doc.publishDate = new DateTime(luceneDoc.get("timestamp").toLong)
-      doc.content = luceneDoc.get("text")
+      val doc = getDocument(luceneDoc)
       documents ::= doc
     }
     documents
+  }
+  
+  private def getDocument(luceneDoc: org.apache.lucene.document.Document): bg.statealerts.model.Document = {
+    val doc = new Document()
+    doc.id = luceneDoc.get("id").toInt
+    doc.publishDate = new DateTime(luceneDoc.get("timestamp").toLong)
+    doc.title = luceneDoc.get("title")
+    doc.content = luceneDoc.get("text")
+    doc
   }
 }

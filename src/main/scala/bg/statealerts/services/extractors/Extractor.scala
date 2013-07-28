@@ -9,7 +9,6 @@ import scala.util.control.Breaks
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
-import org.springframework.stereotype.Service
 
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
@@ -20,7 +19,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 
 import bg.statealerts.model.Document
-import bg.statealerts.scheduled.ContentLocationType
 import bg.statealerts.scheduled.ExtractorDescriptor
 
 class Extractor(descriptor: ExtractorDescriptor) {
@@ -49,7 +47,8 @@ class Extractor(descriptor: ExtractorDescriptor) {
     val ctx = new ExtractionContext(descriptor, baseUrl, dateTimeFormatter, client)
     //TODO get from enum field, rather than instantiating for each extraction
     var documentExtractor: DocumentFileExtractor = null
-    descriptor.documentType match {
+    val docType = DocumentType.withName(descriptor.documentType)
+    docType match {
       case DocumentType.PDF => documentExtractor = new PDFDocumentExtractor()
       case DocumentType.DOC => documentExtractor = new PDFDocumentExtractor()
       case DocumentType.HTML => documentExtractor = new HTMLDocumentExtractor()
@@ -88,11 +87,12 @@ class Extractor(descriptor: ExtractorDescriptor) {
               loop.break;
             }
 
-            if (descriptor.contentLocationType != ContentLocationType.Table) {
-              if (descriptor.contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
-                descriptor.contentLocationType == ContentLocationType.LinkedPage) {
+            val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
+            if (contentLocationType != ContentLocationType.Table) {
+              if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
+                contentLocationType == ContentLocationType.LinkedPage) {
                 documentPageExtractor.populateDocument(doc, row, ctx)
-              } else if (descriptor.contentLocationType == ContentLocationType.LinkedDocumentInTable) {
+              } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
                 doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
               }
 
@@ -106,7 +106,10 @@ class Extractor(descriptor: ExtractorDescriptor) {
             }
           }
         } catch {
-          case e: Exception => e.printStackTrace()
+          case e: Exception => {
+            e.printStackTrace()
+            loop.break
+          }
         }
       }
     }

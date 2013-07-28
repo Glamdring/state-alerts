@@ -1,12 +1,9 @@
 package bg.statealerts.services.extractors
 
-import bg.statealerts.model.Document
 import com.gargoylesoftware.htmlunit.html.HtmlElement
-import bg.statealerts.scheduled.ExtractorDescriptor
-import org.joda.time.format.DateTimeFormatter
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-import bg.statealerts.scheduled.ContentLocationType
-import com.gargoylesoftware.htmlunit.WebClient
+
+import bg.statealerts.model.Document
 
 class DocumentPageExtractor extends DocumentDetailsExtractor {
 
@@ -17,8 +14,9 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
       documentUrl = ctx.baseUrl + documentUrl
     }
 
+    val contentLocationType = ContentLocationType.withName(ctx.descriptor.contentLocationType)
     // if the link is not available in the table, but on a separate page, go to that page first
-    if (ctx.descriptor.contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || ctx.descriptor.contentLocationType == ContentLocationType.LinkedPage) {
+    if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || contentLocationType == ContentLocationType.LinkedPage) {
       var docPage: HtmlPage = ctx.client.getPage(documentUrl)
       if (ctx.descriptor.documentPageTitlePath.nonEmpty) {
         doc.title = docPage.getFirstByXPath(ctx.descriptor.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent()

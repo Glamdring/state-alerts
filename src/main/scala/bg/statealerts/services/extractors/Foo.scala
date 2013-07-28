@@ -15,15 +15,15 @@ import bg.statealerts.model.Document
 import org.joda.time.DateTime
 import com.codahale.jerkson.Json
 import bg.statealerts.model.Alert
+import bg.statealerts.scheduled.ExtractorConfiguration
+import java.io.File
+import bg.statealerts.scheduled.ExtractorDescriptor
 
 object Foo {
   def main(args: Array[String]) {
-    val doc = new Document()
-    doc.content = "foo bar baz aaaaaa fdsa fsa";
-    doc.publishDate = new DateTime()
-    doc.sourceName = "foo"
-    doc.id = 1
-    println(Json.generate(doc))
+    var file: File = new File("c:/config/statealerts/extractors.json")
+    println(Json.generate(new ExtractorDescriptor(null, "PDF", null,null, null, null,null, null, null,null, null, null, 0, null, null, null)))
+    var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
   }
   def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
