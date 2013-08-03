@@ -43,7 +43,7 @@ class Indexer {
   def index(documents: List[Document]) = {
     val now = new DateTime()
     for (document <- documents) {
-	  writer.addDocument(getLuceneDocument(document, now))
+	    writer.addDocument(getLuceneDocument(document, now))
     }
     writer.commit()
   }

@@ -33,7 +33,9 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
 	        if (!documentUrl.startsWith("http")) {
 	          documentUrl = ctx.baseUrl + documentUrl
 	        }
-	      }
+	      } else {
+          documentUrl = null
+        }
       }
       doc.url = documentUrl
     }

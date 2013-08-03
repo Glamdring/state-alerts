@@ -1,7 +1,6 @@
 package bg.statealerts.services
 
 import java.io.File
-import scala.collection.JavaConversions._
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.DirectoryReader
@@ -10,7 +9,6 @@ import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.ScoreDoc
-import org.apache.lucene.search.TermQuery
 import org.apache.lucene.search.TopDocs
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.util.Version
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service
 import bg.statealerts.model.Document
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
-import org.apache.lucene.index.Term
 import org.joda.time.DateTime
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil
 
@@ -48,12 +45,11 @@ class SearchService {
   def search(keywords: String): List[Document] = {
     val escapedKeywords = QueryParserUtil.escape(keywords)
     val parser: QueryParser = new QueryParser(Version.LUCENE_43, "text", analyzer);
-    val query: Query = parser.parse(escapedKeywords) //TODO delete one of these two queries
-    val q = new TermQuery(new Term("text", escapedKeywords))
-    val result: TopDocs = searcher.search(q, 20)
+    val query: Query = parser.parse(escapedKeywords)
+    val result: TopDocs = searcher.search(query, 20)
 
-    //TODO check index encoding?
     var documents = List[Document]()
+
     val topDocs: Array[ScoreDoc] = result.scoreDocs
     
     for (topDoc <- topDocs) {

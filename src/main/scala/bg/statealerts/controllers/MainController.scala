@@ -9,21 +9,21 @@ import bg.statealerts.services.SearchService
 import javax.inject.Inject
 import scala.collection.JavaConversions._
 import scala.collection.mutable.Buffer
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.codahale.jerkson.Json
+import javax.servlet.http.HttpServletResponse
+import org.apache.commons.io.IOUtils
 
 @Controller
 class MainController {
 
   @Inject
   var searcher: SearchService = _
-  
-  val mapper = new ObjectMapper()
-  
+
   @RequestMapping(Array("/search"))
-  @ResponseBody
-  def search(@RequestParam keywords: String): String = {
+  def search(@RequestParam keywords: String, response: HttpServletResponse): Unit = {
     val buffer: Buffer[Document] = searcher.search(keywords).toBuffer
-    Json.generate(asJavaList(buffer))
+    response.setContentType("application/json; charset=UTF-8")
+    val result = Json.generate(bufferAsJavaList(buffer))
+    IOUtils.write(result, response.getOutputStream())
   }
 }

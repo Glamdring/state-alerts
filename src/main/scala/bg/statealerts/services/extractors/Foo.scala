@@ -11,19 +11,22 @@ import com.gargoylesoftware.htmlunit.HttpMethod
 import java.net.URL
 import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
 import com.gargoylesoftware.htmlunit.BrowserVersion
-import bg.statealerts.model.Document
-import org.joda.time.DateTime
-import com.codahale.jerkson.Json
-import bg.statealerts.model.Alert
-import bg.statealerts.scheduled.ExtractorConfiguration
-import java.io.File
-import bg.statealerts.scheduled.ExtractorDescriptor
+import java.io.{InputStream, FileInputStream, File}
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.util.PDFTextStripper
+import org.apache.lucene.index.{DirectoryReader, IndexReader}
+import org.apache.lucene.store.FSDirectory
+import org.apache.lucene.search.IndexSearcher
 
 object Foo {
   def main(args: Array[String]) {
-    var file: File = new File("c:/config/statealerts/extractors.json")
-    println(Json.generate(new ExtractorDescriptor(null, "PDF", null,null, null, null,null, null, null,null, null, null, 0, null, null, null)))
-    var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
+    val indexReader = DirectoryReader.open(FSDirectory.open(new File("c:/config/statealerts/index")));
+    val searcher = new IndexSearcher(indexReader);
+
+    for (i <- 1 until indexReader.maxDoc()) {
+      println(indexReader.document(i).get("text"))
+    }
+    indexReader.close()
   }
   def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)

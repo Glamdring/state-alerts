@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage
 
 import bg.statealerts.model.Document
 import bg.statealerts.scheduled.ExtractorDescriptor
+import org.apache.commons.lang3.StringUtils
 
 class Extractor(descriptor: ExtractorDescriptor) {
 
@@ -99,7 +100,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
               if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
                 loop.break;
               }
-              if (doc.url != null) {
+              if (StringUtils.isNotBlank(doc.url)) {
                 doc.content = documentExtractor.extractContent(doc.url, ctx)
                 result ::= doc
               }

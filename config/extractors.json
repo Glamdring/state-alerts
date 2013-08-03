@@ -8,10 +8,10 @@
          "url": "http://www.parliament.bg/bg/bills?from=&to=&L_ActL_title=&L_Ses_id=&L_Act_sign=&L_Act_im_id=&A_ns_C_id=&submit=%D0%A2%D1%8A%D1%80%D1%81%D0%B8",
          "httpMethod": "POST",
          "pagingMultiplier": "1",
-		 "documentLinkPath": "//table[@class='billsresult']/tbody/tr[position()>1]/td[2]/a",
+		 "documentLinkPath": ".//td[2]/a",
 		 "documentPageLinkPath": "//table[@class='bills']/tbody/tr[5]/td[2]/a",
-		 "datePath": "//table[@class='billsresult']/tbody/tr[position()>1]/td[4]",
-		 "titlePath": "//foo",
+		 "datePath": ".//td[4]",
+		 "titlePath": ".//td[2]/a",
          "dateFormat":"dd/MM/yyyy"
       }
    ]
