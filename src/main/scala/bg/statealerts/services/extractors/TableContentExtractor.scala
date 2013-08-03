@@ -15,7 +15,7 @@ class TableContentExtractor extends DocumentDetailsExtractor {
         throw new IllegalStateException("Cannot find date element for xpath " + ctx.descriptor.datePath)
       }
       val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-      doc.publishDate = ctx.dateFormatter.parseDateTime(element.asInstanceOf[HtmlElement].getTextContent())
+      doc.publishDate = ctx.dateFormatter.parseDateTime(element.asInstanceOf[HtmlElement].getTextContent().trim())
     }
 
     if (ctx.descriptor.titlePath.nonEmpty) {
@@ -24,11 +24,11 @@ class TableContentExtractor extends DocumentDetailsExtractor {
         throw new IllegalStateException("Cannot find title element for xpath " + ctx.descriptor.titlePath)
       }
       val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-      doc.title = element.asInstanceOf[HtmlElement].getTextContent()
+      doc.title = element.asInstanceOf[HtmlElement].getTextContent().trim()
     }
     //TODO use rowIdx
     if (ctx.descriptor.contentLocationType == ContentLocationType.Table && ctx.descriptor.contentPath.nonEmpty) {
-    	doc.content = row.getFirstByXPath(ctx.descriptor.contentPath.get).asInstanceOf[HtmlElement].getTextContent()
+    	doc.content = row.getFirstByXPath(ctx.descriptor.contentPath.get).asInstanceOf[HtmlElement].getTextContent().trim()
     }
   }
 }

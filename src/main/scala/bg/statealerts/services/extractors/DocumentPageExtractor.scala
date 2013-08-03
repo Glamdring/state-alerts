@@ -21,15 +21,15 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
     if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || contentLocationType == ContentLocationType.LinkedPage) {
       val docPage: HtmlPage = ctx.client.getPage(documentUrl)
       if (ctx.descriptor.documentPageTitlePath.nonEmpty) {
-        doc.title = docPage.getFirstByXPath(ctx.descriptor.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent()
+        doc.title = docPage.getFirstByXPath(ctx.descriptor.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
       }
       if (ctx.descriptor.documentPageDatePath.nonEmpty) {
-        doc.publishDate = ctx.dateFormatter.parseDateTime(docPage.getFirstByXPath(ctx.descriptor.documentPageDatePath.get).asInstanceOf[HtmlElement].getTextContent())
+        doc.publishDate = ctx.dateFormatter.parseDateTime(docPage.getFirstByXPath(ctx.descriptor.documentPageDatePath.get).asInstanceOf[HtmlElement].getTextContent().trim())
       }
 
       // if the document is downloadable file, get the link to it. Otherwise set the documentUrl to be the document details page
       if (ctx.descriptor.documentPageLinkPath.nonEmpty) {
-	      var link: HtmlElement = docPage.getFirstByXPath(ctx.descriptor.documentPageLinkPath.get);
+	      val link: HtmlElement = docPage.getFirstByXPath(ctx.descriptor.documentPageLinkPath.get);
 	      if (link != null) {
 	        documentUrl = link.getAttribute("href")
 	        if (!documentUrl.startsWith("http")) {
