@@ -10,8 +10,9 @@ class TableContentExtractor extends DocumentDetailsExtractor {
 
     if (ctx.descriptor.datePath.nonEmpty) {
       val element = row.getFirstByXPath(ctx.descriptor.datePath.get).asInstanceOf[HtmlElement]
+      row.getByXPath(ctx.descriptor.datePath.get)
       if (element == null) {
-        throw new IllegalStateException("Cannot find date element for xpath " + ctx.descriptor.titlePath)
+        throw new IllegalStateException("Cannot find date element for xpath " + ctx.descriptor.datePath)
       }
       doc.publishDate = ctx.dateFormatter.parseDateTime(element.getTextContent())
     }

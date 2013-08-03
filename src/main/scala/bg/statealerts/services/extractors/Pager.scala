@@ -1,10 +1,20 @@
 package bg.statealerts.services.extractors
 
-class Pager(url: String, multiplier: Int = 1){
+class Pager(url: String, bodyParams: Option[String], multiplier: Int = 1){
 	
   var currentPage: Int = 0
-  def getNextPageUrl(): String = {
-    currentPage += 1
+  def getPageUrl(): String = {
     url.replace("${x}", String.valueOf(currentPage * multiplier))
+  }
+
+  def getBodyParams(): String = {
+    if (bodyParams.isEmpty) {
+      return ""
+    }
+    bodyParams.get.replace("${x}", String.valueOf(currentPage * multiplier))
+  }
+
+  def next() = {
+    currentPage += 1
   }
 }

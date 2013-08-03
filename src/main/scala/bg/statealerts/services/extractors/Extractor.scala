@@ -29,7 +29,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
 
-  val pager: Pager = new Pager(descriptor.url, descriptor.pagingMultiplier)
+  val pager: Pager = new Pager(descriptor.url, descriptor.bodyParams, descriptor.pagingMultiplier)
   val baseUrl: String = {
     val fullUrl = new URL(descriptor.url)
     var port = fullUrl.getPort()
@@ -64,16 +64,13 @@ class Extractor(descriptor: ExtractorDescriptor) {
       while (true) {
         // each iteration is in a try/catch, so that one failure doesn't fail the whole batch
         try {
-          val pageUrl = pager.getNextPageUrl()
+          val pageUrl = pager.getPageUrl()
           val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
           // POST parameters are set in the request body
           if (httpMethod == HttpMethod.POST) {
-            val body = pageUrl.substring(pageUrl.indexOf('?') + 1)
-            request.setRequestBody(body)
-            request.setUrl(new URL(pageUrl.replace("?" + body, "")))
+            request.setRequestBody(pager.getBodyParams())
           }
-
-          val htmlPage: HtmlPage = client.getPage(request);
+          val htmlPage: HtmlPage = client.getPage(request)
           val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
           if (list.isEmpty) {
             loop.break
@@ -106,6 +103,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
               }
             }
           }
+          pager.next()
         } catch {
           case e: Exception => {
             e.printStackTrace()
