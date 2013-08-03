@@ -75,12 +75,12 @@ class Extractor(descriptor: ExtractorDescriptor) {
           if (list.isEmpty) {
             loop.break
           }
-
+          var rowIdx = 0
           for (row <- list) {
             val doc = new Document()
             doc.sourceName = descriptor.sourceName
 
-            tableContentExtractor.populateDocument(doc, row, ctx)
+            tableContentExtractor.populateDocument(doc, row, rowIdx, ctx)
             if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
               loop.break;
             }
@@ -89,7 +89,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
             if (contentLocationType != ContentLocationType.Table) {
               if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
                 contentLocationType == ContentLocationType.LinkedPage) {
-                documentPageExtractor.populateDocument(doc, row, ctx)
+                documentPageExtractor.populateDocument(doc, row, rowIdx, ctx)
               } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
                 doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
               }
@@ -102,6 +102,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
                 result ::= doc
               }
             }
+            rowIdx += 1
           }
           pager.next()
         } catch {

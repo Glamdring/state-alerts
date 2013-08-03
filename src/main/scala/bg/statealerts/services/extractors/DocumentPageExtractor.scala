@@ -7,9 +7,11 @@ import bg.statealerts.model.Document
 
 class DocumentPageExtractor extends DocumentDetailsExtractor {
 
-  def populateDocument(doc: Document, row: HtmlElement, ctx: ExtractionContext) = {
+  def populateDocument(doc: Document, row: HtmlElement, rowIdx: Int, ctx: ExtractionContext) = {
 
-    var documentUrl: String = row.getFirstByXPath(ctx.descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getAttribute("href");
+    val elements = row.getByXPath(ctx.descriptor.documentLinkPath.get)
+    val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
+    var documentUrl: String = element.asInstanceOf[HtmlElement].getAttribute("href");
     if (!documentUrl.startsWith("http")) {
       documentUrl = ctx.baseUrl + documentUrl
     }
@@ -17,7 +19,7 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
     val contentLocationType = ContentLocationType.withName(ctx.descriptor.contentLocationType)
     // if the link is not available in the table, but on a separate page, go to that page first
     if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || contentLocationType == ContentLocationType.LinkedPage) {
-      var docPage: HtmlPage = ctx.client.getPage(documentUrl)
+      val docPage: HtmlPage = ctx.client.getPage(documentUrl)
       if (ctx.descriptor.documentPageTitlePath.nonEmpty) {
         doc.title = docPage.getFirstByXPath(ctx.descriptor.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent()
       }

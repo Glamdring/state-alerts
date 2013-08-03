@@ -10,5 +10,5 @@ trait DocumentDetailsExtractor {
   /**
    * Fills the document with whatever data can be extracted.
    */
-	def populateDocument(doc: Document, row: HtmlElement, ctx: ExtractionContext)
+	def populateDocument(doc: Document, row: HtmlElement, rowIdx: Int, ctx: ExtractionContext)
 }

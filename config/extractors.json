@@ -25,9 +25,9 @@
          "bodyParams": "go_page={x}&doc_description=&u_id=&key_word=&btn_pressed=%D0%A2%D1%8A%D1%80%D1%81%D0%B8+...",
          "pagingMultiplier": "1",
          "contentPath": "//div[@id='fullDocument']",
-      	 "documentLinkPath": ".//tr[position() mod 6 = 0]/td/a",
-      	 "datePath": ".//tr[position() mod 8 = 0]/td",
-      	 "titlePath": ".//tr[position() mod 11 = 0]/td",
+      	 "documentLinkPath": ".//tr[position() mod 6 = 0]/td[2]/a",
+         "datePath": ".//tr[position() mod 8 = 0]/td[2]",
+         "titlePath": ".//tr[position() mod 11 = 0]/td[2]",
          "dateFormat":"dd-MM-yyyy"
       }
    ]
