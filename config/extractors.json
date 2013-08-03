@@ -1,7 +1,7 @@
 {
    "extractors":[
       {
-         "sourceName": "Parliament",
+         "sourceName": "ParliamentLawProjects",
          "documentType": "PDF",
          "contentLocationType": "LinkedDocumentOnLinkedPage",
          "tableRowPath": "//table[@class='billsresult']/tbody/tr[position()>1]",
@@ -13,6 +13,20 @@
 		 "datePath": ".//td[4]",
 		 "titlePath": ".//td[2]/a",
          "dateFormat":"dd/MM/yyyy"
+      },
+      {
+         "sourceName": "AOP",
+         "documentType": "HTML",
+         "contentLocationType": "LinkedPage",
+         "tableRowPath": "//table[@id='resultaTable']/tbody",
+         "url": "http://rop3-app1.aop.bg:7778/portal/page?_pageid=93,662251&_dad=portal&_schema=PORTAL&go_page={x}",
+         "httpMethod": "POST",
+         "pagingMultiplier": "1",
+         "contentPath": "//div[@id='fullDocument']"
+      	 "documentLinkPath": ".//tr[position() mod 6 = 0]/td/a",
+      	 "datePath": ".//tr[position() mod 8 = 0]/td",
+      	 "titlePath": ".//tr[position() mod 11 = 0]/td",
+         "dateFormat":"dd-MM-yyyy"
       }
    ]
 }
