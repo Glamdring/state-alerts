@@ -30,6 +30,8 @@ class Extractor(descriptor: ExtractorDescriptor) {
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
 
   val pager: Pager = new Pager(descriptor.url, descriptor.bodyParams, descriptor.pagingMultiplier)
+  val sourceName = descriptor.sourceName
+
   val baseUrl: String = {
     val fullUrl = new URL(descriptor.url)
     var port = fullUrl.getPort()
@@ -62,7 +64,6 @@ class Extractor(descriptor: ExtractorDescriptor) {
     // - depending on "contentLocationType", go to a "details" page and/or parse the content - either HTML, or a downloadable document 
     loop.breakable {
       while (true) {
-        // each iteration is in a try/catch, so that one failure doesn't fail the whole batch
         try {
           val pageUrl = pager.getPageUrl()
           val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
@@ -126,7 +127,8 @@ class Extractor(descriptor: ExtractorDescriptor) {
       BrowserVersion.FIREFOX_17.getBrowserVersionNumeric(),
       bvf);
     val client: WebClient = new WebClient(bv)
-    client.setJavaScriptEnabled(descriptor.javascriptRequired.getOrElse(false))
+    client.getOptions().setJavaScriptEnabled(descriptor.javascriptRequired.getOrElse(false))
+    client.getOptions.setTimeout(120 * 1000)
     client
   }
 }

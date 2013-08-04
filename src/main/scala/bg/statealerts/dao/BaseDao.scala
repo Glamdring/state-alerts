@@ -21,7 +21,7 @@ class BaseDao {
   }
  
   def getLastImportDate(): DateTime = {
-    val query: TypedQuery[DateTime] = entityManager.createQuery("SELECT importTime FROM Import ORDER BY importTime DESC", classOf[DateTime])
+    val query: TypedQuery[DateTime] = entityManager.createQuery("SELECT latestDocumentDate FROM Import ORDER BY latestDocumentDate DESC", classOf[DateTime])
     query.setMaxResults(1)
     val result = query.getResultList()
     if (result.isEmpty()) {

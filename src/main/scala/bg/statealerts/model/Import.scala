@@ -9,10 +9,11 @@ import org.hibernate.annotations.Type
 
 @Entity
 class Import {
-   @Id @GeneratedValue(strategy=GenerationType.AUTO)
-   var id: Int = _
+  @Id @GeneratedValue(strategy=GenerationType.AUTO)
+  var id: Int = _
   
-   	@Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	var importTime:DateTime = _
+  @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	var latestDocumentDate:DateTime = _
 	var importedDocuments:Int = _
+  var sourceName: String = _
 }

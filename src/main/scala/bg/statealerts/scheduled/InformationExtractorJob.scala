@@ -41,8 +41,8 @@ class InformationExtractorJob {
 
   @PostConstruct
   def init() {
-    var file: File = new File(configLocation + "/extractors.json")
-    var config: ExtractorConfiguration = Json.parse[ExtractorConfiguration](file)
+    val file = new File(configLocation + "/extractors.json")
+    val config = Json.parse[ExtractorConfiguration](file)
     for (descriptor <- config.extractors) {
       validateDescriptor(descriptor) // the application fails on startup if a configuration is invalid
       var extractor = new Extractor(descriptor)
@@ -61,23 +61,26 @@ class InformationExtractorJob {
       lastImportTime = new DateTime().minusDays(14)
     }
     val now = new DateTime();
-    var total: Int = 0
     for (extractor <- extractors) {
-      val documents: List[Document] = extractor.extract(lastImportTime)
-      var persistedDocuments = List[Document]()
-      total += documents.size
-      for (document <- documents) {
-        persistedDocuments ::= service.save(document)
-      }
-      //TODO more effort to keep in sync with db
-      indexer.index(persistedDocuments)
-    }
+      try {
+        val documents: List[Document] = extractor.extract(lastImportTime)
+        var persistedDocuments = List[Document]()
+        for (document <- documents) {
+          persistedDocuments ::= service.save(document)
+        }
+        //TODO more effort to keep in sync with db
+        indexer.index(persistedDocuments)
 
-    if (total > 0) {
-      val docImport = new Import()
-      docImport.importedDocuments = total;
-      docImport.importTime = now
-      service.save(docImport)
+        if (documents.size > 0) {
+          val docImport = new Import()
+          docImport.importedDocuments = documents.size;
+          docImport.latestDocumentDate = documents(0).publishDate
+          docImport.sourceName = extractor.sourceName
+          service.save(docImport)
+        }
+      } catch {
+        case ex: Exception => ex.printStackTrace()
+      }
     }
   }
 
