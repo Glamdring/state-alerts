@@ -1,7 +1,7 @@
 package bg.statealerts.scheduled
 
 import java.io.File
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeConstants, DateTime}
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -50,19 +50,18 @@ class InformationExtractorJob {
     }
   }
 
-  @Scheduled(fixedRate = 100000)
+  @Scheduled(fixedRate = DateTimeConstants.MILLIS_PER_HOUR)
   def run() {
     if (randomSleepMaxMinutes > 0) {
       // sleep a random amount of time before running the extraction, so that it is not completely obvious to website admins it's a scraping process
       Thread.sleep(random.nextInt(randomSleepMaxMinutes * 60) * 1000)
     }
-    var lastImportTime = dao.getLastImportDate();
-    if (lastImportTime == null) {
-      lastImportTime = new DateTime().minusDays(14)
-    }
-    val now = new DateTime();
     for (extractor <- extractors) {
       try {
+        var lastImportTime = dao.getLastImportDate(extractor.sourceName);
+        if (lastImportTime == null) {
+          lastImportTime = new DateTime().minusDays(14)
+        }
         val documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
         for (document <- documents) {

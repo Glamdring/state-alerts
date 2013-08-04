@@ -63,8 +63,8 @@ class Extractor(descriptor: ExtractorDescriptor) {
     // - first obtain whatever data is configured from the table itself
     // - depending on "contentLocationType", go to a "details" page and/or parse the content - either HTML, or a downloadable document 
     loop.breakable {
-      while (true) {
-        try {
+      try {
+        while (true) {
           val pageUrl = pager.getPageUrl()
           val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
           // POST parameters are set in the request body
@@ -100,17 +100,19 @@ class Extractor(descriptor: ExtractorDescriptor) {
               }
               if (StringUtils.isNotBlank(doc.url)) {
                 doc.content = documentExtractor.extractContent(doc.url, ctx)
-                result ::= doc
               }
+            }
+            // don't add empty documents (the content of which was not obtained, for some reason)
+            if (StringUtils.isNotBlank(doc.content)) {
+              result ::= doc
             }
             rowIdx += 1
           }
           pager.next()
-        } catch {
-          case e: Exception => {
-            e.printStackTrace()
-            loop.break
-          }
+        }
+      } catch {
+        case e: Exception => {
+          e.printStackTrace()
         }
       }
     }

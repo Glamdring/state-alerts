@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.GenerationType
 import javax.persistence.Entity
-import org.hibernate.annotations.Type
+import org.hibernate.annotations.{Index, Type}
 
 @Entity
 class Import {
@@ -15,5 +15,6 @@ class Import {
   @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	var latestDocumentDate:DateTime = _
 	var importedDocuments:Int = _
+  @Index(name="sourceNameIndex")
   var sourceName: String = _
 }
