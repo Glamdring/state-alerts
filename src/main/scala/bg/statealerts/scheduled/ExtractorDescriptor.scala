@@ -7,6 +7,7 @@ case class ExtractorDescriptor(
   sourceName: String,
   documentType: String,
   tableRowPath: String,
+  entriesPerRow: Option[Int], // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
   titlePath: Option[String],
   documentPageTitlePath: Option[String],
   contentPath: Option[String],

@@ -78,35 +78,39 @@ class Extractor(descriptor: ExtractorDescriptor) {
           }
           var rowIdx = 0
           for (row <- list) {
-            val doc = new Document()
-            doc.sourceName = descriptor.sourceName
+            // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
+            val entries = ctx.descriptor.entriesPerRow.getOrElse(1)
+            for (i <- 1 to entries) {
+              val doc = new Document()
+              doc.sourceName = descriptor.sourceName
 
-            tableContentExtractor.populateDocument(doc, row, rowIdx, ctx)
-            if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
-              loop.break;
-            }
-
-            val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
-            if (contentLocationType != ContentLocationType.Table) {
-              if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
-                contentLocationType == ContentLocationType.LinkedPage) {
-                documentPageExtractor.populateDocument(doc, row, rowIdx, ctx)
-              } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
-                doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
-              }
-
+              tableContentExtractor.populateDocument(doc, row, rowIdx, ctx)
               if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
                 loop.break;
               }
-              if (StringUtils.isNotBlank(doc.url)) {
-                doc.content = documentExtractor.extractContent(doc.url, ctx)
+
+              val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
+              if (contentLocationType != ContentLocationType.Table) {
+                if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
+                  contentLocationType == ContentLocationType.LinkedPage) {
+                  documentPageExtractor.populateDocument(doc, row, rowIdx, ctx)
+                } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
+                  doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
+                }
+
+                if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
+                  loop.break;
+                }
+                if (StringUtils.isNotBlank(doc.url)) {
+                  doc.content = documentExtractor.extractContent(doc.url, ctx)
+                }
               }
+              // don't add empty documents (the content of which was not obtained, for some reason)
+              if (StringUtils.isNotBlank(doc.content)) {
+                result ::= doc
+              }
+              rowIdx += 1
             }
-            // don't add empty documents (the content of which was not obtained, for some reason)
-            if (StringUtils.isNotBlank(doc.content)) {
-              result ::= doc
-            }
-            rowIdx += 1
           }
           pager.next()
         }
