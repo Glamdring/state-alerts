@@ -21,8 +21,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage
 import bg.statealerts.model.Document
 import bg.statealerts.scheduled.ExtractorDescriptor
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.{LoggerFactory, Logger}
 
 class Extractor(descriptor: ExtractorDescriptor) {
+
+  val logger: Logger = LoggerFactory.getLogger(classOf[Extractor])
 
   val tableContentExtractor = new TableContentExtractor()
   val documentPageExtractor = new DocumentPageExtractor()
@@ -63,24 +66,26 @@ class Extractor(descriptor: ExtractorDescriptor) {
     // - first obtain whatever data is configured from the table itself
     // - depending on "contentLocationType", go to a "details" page and/or parse the content - either HTML, or a downloadable document 
     loop.breakable {
+    }
+    while (true) {
+      val pageUrl = pager.getPageUrl()
       try {
-        while (true) {
-          val pageUrl = pager.getPageUrl()
-          val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
-          // POST parameters are set in the request body
-          if (httpMethod == HttpMethod.POST) {
-            request.setRequestBody(pager.getBodyParams())
-          }
-          val htmlPage: HtmlPage = client.getPage(request)
-          val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
-          if (list.isEmpty) {
-            loop.break
-          }
-          var rowIdx = 0
-          for (row <- list) {
-            // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
-            val entries = ctx.descriptor.entriesPerRow.getOrElse(1)
-            for (i <- 1 to entries) {
+        val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
+        // POST parameters are set in the request body
+        if (httpMethod == HttpMethod.POST) {
+          request.setRequestBody(pager.getBodyParams())
+        }
+        val htmlPage: HtmlPage = client.getPage(request)
+        val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
+        if (list.isEmpty) {
+          loop.break
+        }
+        var rowIdx = 0
+        for (row <- list) {
+          // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
+          val entries = ctx.descriptor.entriesPerRow.getOrElse(1)
+          for (i <- 1 to entries) {
+            try {
               val doc = new Document()
               doc.sourceName = descriptor.sourceName
 
@@ -109,14 +114,24 @@ class Extractor(descriptor: ExtractorDescriptor) {
               if (StringUtils.isNotBlank(doc.content)) {
                 result ::= doc
               }
-              rowIdx += 1
+            } catch {
+              case e: Exception => {
+                logger.error("Problem parsing page " + pageUrl + " row " + rowIdx, e)
+                if (descriptor.failOnError.getOrElse(false)) {
+                  loop.break()
+                }
+              }
             }
+            rowIdx += 1
           }
-          pager.next()
         }
+        pager.next()
       } catch {
         case e: Exception => {
-          e.printStackTrace()
+          logger.error("Problem parsing page " + pageUrl, e)
+          if (descriptor.failOnError.getOrElse(false)) {
+            loop.break()
+          }
         }
       }
     }
