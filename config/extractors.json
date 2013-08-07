@@ -20,15 +20,15 @@
          "documentType": "HTML",
          "contentLocationType": "LinkedPage",
          "tableRowPath": "//table[@id='resultaTable']/tbody",
-         "entriesPerRow": "14",
+		 "entriesPerRow": "14",
          "url": "http://rop3-app1.aop.bg:7778/portal/page?_pageid=93,662251&_dad=portal&_schema=PORTAL",
          "httpMethod": "POST",
          "bodyParams": "go_page={x}&doc_description=&u_id=&key_word=&btn_pressed=%D0%A2%D1%8A%D1%80%D1%81%D0%B8+...",
          "pagingMultiplier": "1",
          "contentPath": "//div[@id='fullDocument']",
-      	 "documentLinkPath": ".//tr[position() mod 6 = 0]/td[2]/a",
-         "datePath": ".//tr[position() mod 8 = 0]/td[2]",
-         "titlePath": ".//tr[position() mod 11 = 0]/td[2]",
+         "documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
+         "datePath": ".//td/b[starts-with(., 'Получен на:')]/parent::td/following-sibling::td",
+         "titlePath": ".//td/b[starts-with(., 'Име:')]/parent::td/following-sibling::td",
          "dateFormat":"dd-MM-yyyy"
       }
    ]

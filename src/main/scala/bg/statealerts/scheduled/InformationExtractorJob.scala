@@ -71,6 +71,7 @@ class InformationExtractorJob {
         indexer.index(persistedDocuments)
 
         if (documents.size > 0) {
+          documents.sortBy {_.publishDate.getMillis}.reverse
           val docImport = new Import()
           docImport.importedDocuments = documents.size;
           docImport.latestDocumentDate = documents(0).publishDate
