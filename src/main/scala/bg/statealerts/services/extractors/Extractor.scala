@@ -69,11 +69,12 @@ class Extractor(descriptor: ExtractorDescriptor) {
     }
     while (true) {
       val pageUrl = pager.getPageUrl()
+      val pageBodyParams = pager.getBodyParams()
       try {
         val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
         // POST parameters are set in the request body
         if (httpMethod == HttpMethod.POST) {
-          request.setRequestBody(pager.getBodyParams())
+          request.setRequestBody(pageBodyParams)
         }
         val htmlPage: HtmlPage = client.getPage(request)
         val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
@@ -116,8 +117,9 @@ class Extractor(descriptor: ExtractorDescriptor) {
               }
             } catch {
               case e: Exception => {
-                logger.error("Problem parsing page " + pageUrl + " row " + rowIdx, e)
+                logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "] row " + rowIdx, e)
                 if (descriptor.failOnError.getOrElse(false)) {
+                  result = List() //failing - no documents are to be stored
                   loop.break()
                 }
               }
@@ -128,8 +130,9 @@ class Extractor(descriptor: ExtractorDescriptor) {
         pager.next()
       } catch {
         case e: Exception => {
-          logger.error("Problem parsing page " + pageUrl, e)
+          logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "]", e)
           if (descriptor.failOnError.getOrElse(false)) {
+            result = List() //failing - no documents are to be stored
             loop.break()
           }
         }
