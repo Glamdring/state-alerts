@@ -2,7 +2,7 @@ package bg.statealerts.util
 
 import java.lang.reflect.Method
 import org.springframework.cache.interceptor.KeyGenerator
-import org.apache.log4j.spi.LoggerFactory
+import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 import org.apache.commons.lang3.ClassUtils
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor.CacheKey
