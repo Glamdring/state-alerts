@@ -16,7 +16,7 @@ import scala.Enumeration
  *
  */
 class CacheKeyGenerator extends KeyGenerator {
-	//val logger: Logger = LoggerFactory.getLogger(classOf[DSPCacheKeyGenerator]);
+	val logger: Logger = LoggerFactory.getLogger(classOf[CacheKeyGenerator]);
 
 	val NoParamKey: Int = 0;
 	val NullParamKey: Int = 53;
@@ -37,9 +37,9 @@ class CacheKeyGenerator extends KeyGenerator {
 			} else if (param.getClass().isEnum()) {
 				key.append(param.toString());
 			} else {
-				//logger.warn("Using an object as a cache key may lead to unexpected results. "
-				//		+ "Either use @Cacheable(key=..) or implement CacheKey. Method is " + target.getClass() + "#"
-				//		+ method.getName());
+				logger.warn("Using an object as a cache key may lead to unexpected results. "
+						+ "Either use @Cacheable(key=..) or implement CacheKey. Method is " + target.getClass() + "#"
+						+ method.getName());
 				key.append(param.hashCode());
 			}
 		}

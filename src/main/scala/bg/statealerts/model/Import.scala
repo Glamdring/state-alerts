@@ -13,8 +13,10 @@ class Import {
   var id: Int = _
   
   @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	var latestDocumentDate:DateTime = _
-	var importedDocuments:Int = _
+  var latestDocumentDate:DateTime = _
+  @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+  var importTime:DateTime = _
+  var importedDocuments:Int = _
   @Index(name="sourceNameIndex")
   var sourceName: String = _
 }

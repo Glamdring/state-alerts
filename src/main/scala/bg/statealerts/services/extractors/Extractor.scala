@@ -120,7 +120,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
                 logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "] row " + rowIdx, e)
                 if (descriptor.failOnError.getOrElse(false)) {
                   result = List() //failing - no documents are to be stored
-                  loop.break()
+                  loop.break
                 }
               }
             }
@@ -133,7 +133,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
           logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "]", e)
           if (descriptor.failOnError.getOrElse(false)) {
             result = List() //failing - no documents are to be stored
-            loop.break()
+            loop.break
           }
         }
       }
