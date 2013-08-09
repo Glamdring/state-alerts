@@ -26,6 +26,14 @@ class TableContentExtractor extends DocumentDetailsExtractor {
       val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
       doc.title = element.asInstanceOf[HtmlElement].getTextContent().trim()
     }
+    if (ctx.descriptor.externalIdPath.nonEmpty) {
+      val elements = row.getByXPath(ctx.descriptor.externalIdPath.get)
+      if (elements.size() == 0) {
+        throw new IllegalStateException("Cannot find externalId element for xpath " + ctx.descriptor.externalIdPath)
+      }
+      val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
+      doc.externalId = element.asInstanceOf[HtmlElement].getTextContent().trim()
+    }
     //TODO use rowIdx
     if (ctx.descriptor.contentLocationType == ContentLocationType.Table && ctx.descriptor.contentPath.nonEmpty) {
     	doc.content = row.getFirstByXPath(ctx.descriptor.contentPath.get).asInstanceOf[HtmlElement].getTextContent().trim()

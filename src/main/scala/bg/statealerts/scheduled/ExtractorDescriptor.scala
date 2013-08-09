@@ -11,6 +11,7 @@ case class ExtractorDescriptor(
   titlePath: Option[String],
   documentPageTitlePath: Option[String],
   contentPath: Option[String],
+  externalIdPath: Option[String],
   dateFormat: String,
   datePath: Option[String],
   documentPageDatePath: Option[String],

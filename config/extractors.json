@@ -13,7 +13,8 @@
 		 "documentPageLinkPath": "//table[@class='bills']/tbody/tr[5]/td[2]/a",
 		 "datePath": ".//td[4]",
 		 "titlePath": ".//td[2]/a",
-         "dateFormat":"dd/MM/yyyy"
+         "dateFormat":"dd/MM/yyyy",
+         "externalIdPath": ".//td[3]"
       },
       {
          "sourceName": "AOP",
@@ -29,7 +30,8 @@
          "documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
          "datePath": ".//td/b[starts-with(., 'Получен на:')]/parent::td/following-sibling::td",
          "titlePath": ".//td/b[starts-with(., 'Име:')]/parent::td/following-sibling::td",
-         "dateFormat":"dd-MM-yyyy"
+         "dateFormat":"dd-MM-yyyy",
+         "externalIdPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a"
       }
    ]
 }

@@ -70,10 +70,18 @@ class InformationExtractorJob {
         val documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
         for (document <- documents) {
-          document.title = StringUtils.left(document.title, 2000);
-          document.title = StringUtils.left(document.url, 2000);
-          document.importTime = now
-          persistedDocuments ::= service.save(document)
+          try {
+	          document.title = StringUtils.left(document.title, 2000);
+	          document.title = StringUtils.left(document.url, 2000);
+	          //remove unneeded whitespaces new lines
+	          document.content = document.content.replaceAll("^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
+	          document.importTime = now
+	          persistedDocuments ::= service.save(document)
+          } catch {
+            case ex: Exception => {
+              logger.error("Error saving document", ex)
+            }
+          }
         }
         //TODO more effort to keep in sync with db
         indexer.index(persistedDocuments)

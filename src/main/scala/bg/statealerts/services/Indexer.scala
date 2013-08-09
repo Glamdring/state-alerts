@@ -53,6 +53,7 @@ class Indexer {
 	  luceneDoc.add(new LongField("id", document.id, Store.YES))
 	  luceneDoc.add(new LongField("timestamp", time.getMillis(), Store.YES))
 	  luceneDoc.add(new TextField("text", document.content, Store.YES))
+	  luceneDoc.add(new TextField("externalId", document.externalId, Store.YES))
 	  luceneDoc.add(new TextField("title", document.title, Store.YES))
 	  luceneDoc
   }
