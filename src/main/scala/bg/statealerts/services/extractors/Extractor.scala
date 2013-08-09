@@ -66,77 +66,78 @@ class Extractor(descriptor: ExtractorDescriptor) {
     // - first obtain whatever data is configured from the table itself
     // - depending on "contentLocationType", go to a "details" page and/or parse the content - either HTML, or a downloadable document 
     loop.breakable {
-    }
-    while (true) {
-      val pageUrl = pager.getPageUrl()
-      val pageBodyParams = pager.getBodyParams()
-      try {
-        val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
-        // POST parameters are set in the request body
-        if (httpMethod == HttpMethod.POST) {
-          request.setRequestBody(pageBodyParams)
-        }
-        val htmlPage: HtmlPage = client.getPage(request)
-        val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
-        if (list.isEmpty) {
-          loop.break
-        }
-        var rowIdx = 0
-        for (row <- list) {
-          // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
-          val entries = ctx.descriptor.entriesPerRow.getOrElse(1)
-          for (i <- 1 to entries) {
-            try {
-              val doc = new Document()
-              doc.sourceName = descriptor.sourceName
-
-              tableContentExtractor.populateDocument(doc, row, rowIdx, ctx)
-              if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
-                loop.break;
-              }
-
-              val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
-              if (contentLocationType != ContentLocationType.Table) {
-                if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
-                  contentLocationType == ContentLocationType.LinkedPage) {
-                  documentPageExtractor.populateDocument(doc, row, rowIdx, ctx)
-                } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
-                  doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
-                }
-
-                if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
-                  loop.break;
-                }
-                if (StringUtils.isNotBlank(doc.url)) {
-                  doc.content = documentExtractor.extractContent(doc.url, ctx)
-                }
-              }
-              // don't add empty documents (the content of which was not obtained, for some reason)
-              if (StringUtils.isNotBlank(doc.content)) {
-                result ::= doc
-              }
-            } catch {
-              case e: Exception => {
-                logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "] row " + rowIdx, e)
-                if (descriptor.failOnError.getOrElse(false)) {
-                  result = List() //failing - no documents are to be stored
-                  loop.break
-                }
-              }
-            }
-            rowIdx += 1
-          }
-        }
-        pager.next()
-      } catch {
-        case e: Exception => {
-          logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "]", e)
-          if (descriptor.failOnError.getOrElse(false)) {
-            result = List() //failing - no documents are to be stored
-            loop.break
-          }
-        }
-      }
+	    while (true) {
+	      val pageUrl = pager.getPageUrl()
+	      val pageBodyParams = pager.getBodyParams()
+	      try {
+	        logger.debug("Requesting page: " + pageUrl + "[" + pageBodyParams + "]")
+	        val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
+	        // POST parameters are set in the request body
+	        if (httpMethod == HttpMethod.POST) {
+	          request.setRequestBody(pageBodyParams)
+	        }
+	        val htmlPage: HtmlPage = client.getPage(request)
+	        val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
+	        if (list.isEmpty) {
+	          loop.break
+	        }
+	        var rowIdx = 0
+	        for (row <- list) {
+	          // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
+	          val entries = ctx.descriptor.entriesPerRow.getOrElse(1)
+	          for (i <- 1 to entries) {
+	            try {
+	              val doc = new Document()
+	              doc.sourceName = descriptor.sourceName
+	
+	              tableContentExtractor.populateDocument(doc, row, rowIdx, ctx)
+	              if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
+	                loop.break;
+	              }
+	
+	              val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
+	              if (contentLocationType != ContentLocationType.Table) {
+	                if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage ||
+	                  contentLocationType == ContentLocationType.LinkedPage) {
+	                  documentPageExtractor.populateDocument(doc, row, rowIdx, ctx)
+	                } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
+	                  doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
+	                }
+	
+	                if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
+	                  loop.break;
+	                }
+	                if (StringUtils.isNotBlank(doc.url)) {
+	                  doc.content = documentExtractor.extractContent(doc.url, ctx)
+	                }
+	              }
+	              // don't add empty documents (the content of which was not obtained, for some reason)
+	              if (StringUtils.isNotBlank(doc.content)) {
+	                result ::= doc
+	              }
+	            } catch {
+	              case e: Exception => {
+	                logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "] row " + rowIdx, e)
+	                if (descriptor.failOnError.getOrElse(false)) {
+	                  result = List() //failing - no documents are to be stored
+	                  loop.break
+	                }
+	              }
+	            }
+	            rowIdx += 1
+	          }
+	        }
+	        pager.next()
+	      } catch {
+	        case e: Exception => {
+	          logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "]", e)
+	          if (descriptor.failOnError.getOrElse(false)) {
+	            result = List() //failing - no documents are to be stored
+	            loop.break
+	          }
+	        }
+	      }
+	    }
     }
     client.closeAllWindows();
     result

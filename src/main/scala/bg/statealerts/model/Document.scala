@@ -17,5 +17,10 @@ case class Document {
   //@JsonSerialize(using=classOf[JodaSerializers])
   var publishDate: DateTime = _
   var sourceName: String = _
+  @Column(length=2000)
   var url: String = _
+  var externalId: String = _
+  
+  @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+  var importTime:DateTime = _
 }

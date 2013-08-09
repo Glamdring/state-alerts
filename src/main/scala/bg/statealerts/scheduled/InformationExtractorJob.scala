@@ -16,10 +16,14 @@ import javax.annotation.PostConstruct
 import javax.inject.Inject
 import java.util.Random
 import bg.statealerts.services.extractors.ContentLocationType
+import org.slf4j.LoggerFactory
+import org.apache.commons.lang3.StringUtils
 
 @Component
 class InformationExtractorJob {
 
+  val logger = LoggerFactory.getLogger(classOf[InformationExtractorJob]) 
+  
   var extractors: List[Extractor] = List()
 
   @Value("${statealerts.config.location}")
@@ -62,9 +66,13 @@ class InformationExtractorJob {
         if (lastImportTime == null) {
           lastImportTime = new DateTime().minusDays(14)
         }
+        val now = new DateTime()
         val documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
         for (document <- documents) {
+          document.title = StringUtils.left(document.title, 2000);
+          document.title = StringUtils.left(document.url, 2000);
+          document.importTime = now
           persistedDocuments ::= service.save(document)
         }
         //TODO more effort to keep in sync with db
@@ -76,10 +84,11 @@ class InformationExtractorJob {
           docImport.importedDocuments = documents.size;
           docImport.latestDocumentDate = documents(0).publishDate
           docImport.sourceName = extractor.sourceName
+          docImport.importTime = now
           service.save(docImport)
         }
       } catch {
-        case ex: Exception => ex.printStackTrace()
+        case ex: Exception => logger.error("Problem extracting information from source: " + extractor.sourceName, ex)
       }
     }
   }
