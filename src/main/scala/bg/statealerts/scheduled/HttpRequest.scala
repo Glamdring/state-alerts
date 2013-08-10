@@ -3,7 +3,8 @@ package bg.statealerts.scheduled
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 case class HttpRequest(
-  method: String,
+  method: Option[String],
   bodyParams: Option[String],
-  headers: Option[Map[String, String]]) {
+  headers: Option[Map[String, String]],
+  warmUpRequest: Option[Boolean]) {
 }

@@ -3,6 +3,8 @@ package bg.statealerts.services.extractors
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import bg.statealerts.model.Document
 import java.util.regex.Pattern
+import com.gargoylesoftware.htmlunit.html.DomNode
+import org.apache.commons.lang3.StringUtils
 
 class TableContentExtractor extends DocumentDetailsExtractor {
 
@@ -14,16 +16,18 @@ class TableContentExtractor extends DocumentDetailsExtractor {
       if (elements.size() == 0) {
         throw new IllegalStateException("Cannot find date element for xpath " + ctx.descriptor.datePath)
       }
-      val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-      var text = element.asInstanceOf[HtmlElement].getTextContent().trim()
-      if (ctx.descriptor.dateRegex.nonEmpty) {
-        val pattern = Pattern.compile(ctx.descriptor.dateRegex.get)
+      val element = if (elements.size() > 1 && ctx.descriptor.entriesPerRow.nonEmpty) elements.get(rowIdx) else elements.get(0)
+      var text = element.asInstanceOf[DomNode].getTextContent().trim()
+      ctx.descriptor.dateRegex.foreach(regex => {  
+        val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(text)
         if (matcher.find()) {
-          text = matcher.group()
+          text = matcher.group().trim()
         }
+      })
+      if (StringUtils.isNotBlank(text)) { 
+    	  doc.publishDate = ctx.dateFormatter.parseDateTime(text)
       }
-      doc.publishDate = ctx.dateFormatter.parseDateTime(text)
     }
 
     if (ctx.descriptor.titlePath.nonEmpty) {
@@ -31,20 +35,20 @@ class TableContentExtractor extends DocumentDetailsExtractor {
       if (elements.size() == 0) {
         throw new IllegalStateException("Cannot find title element for xpath " + ctx.descriptor.titlePath)
       }
-      val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-      doc.title = element.asInstanceOf[HtmlElement].getTextContent().trim()
+      val element = if (elements.size() > 1 && ctx.descriptor.entriesPerRow.nonEmpty) elements.get(rowIdx) else elements.get(0)
+      doc.title = element.asInstanceOf[DomNode].getTextContent().trim()
     }
     if (ctx.descriptor.externalIdPath.nonEmpty) {
       val elements = row.getByXPath(ctx.descriptor.externalIdPath.get)
       if (elements.size() == 0) {
         throw new IllegalStateException("Cannot find externalId element for xpath " + ctx.descriptor.externalIdPath)
       }
-      val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-      doc.externalId = element.asInstanceOf[HtmlElement].getTextContent().trim()
+      val element = if (elements.size() > 1 && ctx.descriptor.entriesPerRow.nonEmpty) elements.get(rowIdx) else elements.get(0)
+      doc.externalId = element.asInstanceOf[DomNode].getTextContent().trim()
     }
     //TODO use rowIdx
     if (ctx.descriptor.contentLocationType == ContentLocationType.Table && ctx.descriptor.contentPath.nonEmpty) {
-    	doc.content = row.getFirstByXPath(ctx.descriptor.contentPath.get).asInstanceOf[HtmlElement].getTextContent().trim()
+    	doc.content = row.getFirstByXPath(ctx.descriptor.contentPath.get).asInstanceOf[DomNode].getTextContent().trim()
     }
   }
 }
