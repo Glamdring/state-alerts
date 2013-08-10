@@ -37,7 +37,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
 
-  val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.bodyParams, descriptor.pagingMultiplier)
+  val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.map(_.bodyParams.get), descriptor.pagingMultiplier)
   val sourceName = descriptor.sourceName
 
   val baseUrl: String = {
@@ -54,13 +54,13 @@ class Extractor(descriptor: ExtractorDescriptor) {
       return List()
     }
     var result = List[Document]()
-    val loop = new Breaks();
+    val loop = new Breaks()
     val client = buildHtmlClient()
-    val httpMethod = HttpMethod.valueOf(descriptor.httpRequest.method.getOrElse("GET"))
+    val httpMethod = HttpMethod.valueOf(descriptor.httpRequest.map(_.method.getOrElse("GET")).getOrElse("GET"))
 
-    descriptor.httpRequest.headers.foreach(map => {
+    descriptor.httpRequest.foreach(_.headers.foreach(map => {
       map.foreach(e => client.addRequestHeader(e._1, e._2))
-    })
+    }))
     val ctx = new ExtractionContext(descriptor, baseUrl, dateTimeFormatter, client)
     //TODO get from enum field, rather than instantiating for each extraction
     var documentExtractor: DocumentFileExtractor = null
@@ -72,7 +72,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
     }
 
     // warm-up request: in case some cookies/session need to be populated first
-    descriptor.httpRequest.warmUpRequest.foreach(if (_) client.getPage(baseUrl))
+    descriptor.httpRequest.foreach(_.warmUpRequest.foreach(if (_) client.getPage(baseUrl)))
 
     // The general flow is as follows:
     // - loop all rows in the table. Continue to the next page (if any). 
@@ -93,7 +93,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 
           val htmlPage: HtmlPage = client.getPage(request)
           val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
-          println(htmlPage.getBody().getTextContent())
+          
           if (list.isEmpty) {
             loop.break
           }
@@ -107,7 +107,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 
                 tableContentExtractor.populateDocument(doc, row, entryIdx , ctx)
                 if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
-                  loop.break;
+                  loop.break
                 }
 
                 val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
@@ -117,16 +117,19 @@ class Extractor(descriptor: ExtractorDescriptor) {
                     documentPageExtractor.populateDocument(doc, row, entryIdx, ctx)
                   } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
                     if (descriptor.documentLinkPath.get.endsWith("href")) {
-                      doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
+                      doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
                     } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
-                      val documentPage: Page = row.getFirstByXPath[HtmlElement](descriptor.documentLinkPath.get).click()
+                      val link = row.getFirstByXPath[HtmlElement](descriptor.documentLinkPath.get)
+                      if (link.getAttribute("href").endsWith("#")) link.setAttribute("href", "javascript:this.click()")
+                      val documentPage: Page = link.click()
                       val bytes = IOUtils.toByteArray(documentPage.getWebResponse().getContentAsStream())
                       doc.content = documentExtractor.extractContent(bytes, ctx)
+                      documentPage.cleanUp()
                     }
                   }
 
                   if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
-                    loop.break;
+                    loop.break
                   }
                   if (StringUtils.isNotBlank(doc.url)) {
                     doc.content = documentExtractor.extractContent(doc.url, ctx)
@@ -149,7 +152,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
           }
           // no paging required
           if (descriptor.pagingMultiplier == 0) {
-            loop.break;
+            loop.break
           }
           pager.next()
         } catch {
@@ -163,7 +166,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
         }
       }
     }
-    client.closeAllWindows();
+    client.closeAllWindows()
     result
   }
 
@@ -174,7 +177,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
       BrowserVersion.FIREFOX_17.getApplicationVersion(),
       BrowserVersion.FIREFOX_17.getUserAgent(),
       BrowserVersion.FIREFOX_17.getBrowserVersionNumeric(),
-      bvf);
+      bvf)
     val client: WebClient = new WebClient(bv)
     client.getOptions().setJavaScriptEnabled(descriptor.javascriptRequired.getOrElse(false))
     client.getOptions.setTimeout(120 * 1000)
