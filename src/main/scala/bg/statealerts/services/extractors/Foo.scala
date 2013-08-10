@@ -17,17 +17,15 @@ import org.apache.pdfbox.util.PDFTextStripper
 import org.apache.lucene.index.{DirectoryReader, IndexReader}
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.search.IndexSearcher
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeFormat
 
 object Foo {
   def main(args: Array[String]) {
-    val indexReader = DirectoryReader.open(FSDirectory.open(new File("c:/config/statealerts/index")));
-    val searcher = new IndexSearcher(indexReader);
-
-    for (i <- 1 until indexReader.maxDoc()) {
-      println(indexReader.document(i).get("text"))
-    }
-    indexReader.close()
+    val str = " Брой 50, 7.6.2013 г. Съдържание на официалния раздел"
+    println(DateTimeFormat.forPattern("'*'dd.MM.yyyy'*'").parseDateTime(str))
   }
+  
   def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
     bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING

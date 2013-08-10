@@ -5,6 +5,7 @@ import bg.statealerts.services.extractors.DocumentType
 
 case class ExtractorDescriptor(
   sourceName: String,
+  enabled: Option[Boolean],
   documentType: String,
   tableRowPath: String,
   entriesPerRow: Option[Int], // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
@@ -13,6 +14,7 @@ case class ExtractorDescriptor(
   contentPath: Option[String],
   externalIdPath: Option[String],
   dateFormat: String,
+  dateRegex: Option[String], // in case the date is not in a seprate field, use regex to locate it
   datePath: Option[String],
   documentPageDatePath: Option[String],
   url: String,

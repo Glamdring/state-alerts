@@ -2,8 +2,8 @@ package bg.statealerts.services.extractors
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-
 import bg.statealerts.model.Document
+import java.util.regex.Pattern
 
 class DocumentPageExtractor extends DocumentDetailsExtractor {
 
@@ -24,18 +24,26 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
         doc.title = docPage.getFirstByXPath(ctx.descriptor.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
       }
       if (ctx.descriptor.documentPageDatePath.nonEmpty) {
-        doc.publishDate = ctx.dateFormatter.parseDateTime(docPage.getFirstByXPath(ctx.descriptor.documentPageDatePath.get).asInstanceOf[HtmlElement].getTextContent().trim())
+        var text = docPage.getFirstByXPath(ctx.descriptor.documentPageDatePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
+        if (ctx.descriptor.dateRegex.nonEmpty) {
+          val pattern = Pattern.compile(ctx.descriptor.dateRegex.get)
+          val matcher = pattern.matcher(text)
+          if (matcher.find()) {
+            text = matcher.group()
+          }
+        }
+        doc.publishDate = ctx.dateFormatter.parseDateTime(text)
       }
 
       // if the document is downloadable file, get the link to it. Otherwise set the documentUrl to be the document details page
       if (ctx.descriptor.documentPageLinkPath.nonEmpty) {
-	      val link: HtmlElement = docPage.getFirstByXPath(ctx.descriptor.documentPageLinkPath.get);
-	      if (link != null) {
-	        documentUrl = link.getAttribute("href")
-	        if (!documentUrl.startsWith("http")) {
-	          documentUrl = ctx.baseUrl + documentUrl
-	        }
-	      } else {
+        val link: HtmlElement = docPage.getFirstByXPath(ctx.descriptor.documentPageLinkPath.get);
+        if (link != null) {
+          documentUrl = link.getAttribute("href")
+          if (!documentUrl.startsWith("http")) {
+            documentUrl = ctx.baseUrl + documentUrl
+          }
+        } else {
           documentUrl = null
         }
       }

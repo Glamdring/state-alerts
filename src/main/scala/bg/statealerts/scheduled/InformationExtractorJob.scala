@@ -18,6 +18,7 @@ import java.util.Random
 import bg.statealerts.services.extractors.ContentLocationType
 import org.slf4j.LoggerFactory
 import org.apache.commons.lang3.StringUtils
+import org.joda.time.DateMidnight
 
 @Component
 class InformationExtractorJob {
@@ -62,13 +63,11 @@ class InformationExtractorJob {
     }
     for (extractor <- extractors) {
       try {
-        var lastImportTime = dao.getLastImportDate(extractor.sourceName);
-        if (lastImportTime == null) {
-          lastImportTime = new DateTime().minusDays(14)
-        }
+        var lastImportTime = dao.getLastImportDate(extractor.sourceName).getOrElse(new DateMidnight().minusDays(14));
         val now = new DateTime()
-        val documents: List[Document] = extractor.extract(lastImportTime)
+        var documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
+        var documentCount = documents.size
         for (document <- documents) {
           try {
 	          document.title = StringUtils.left(document.title, 2000);
@@ -79,6 +78,7 @@ class InformationExtractorJob {
 	          persistedDocuments ::= service.save(document)
           } catch {
             case ex: Exception => {
+              documentCount -= 1
               logger.error("Error saving document", ex)
             }
           }
@@ -87,9 +87,9 @@ class InformationExtractorJob {
         indexer.index(persistedDocuments)
 
         if (documents.size > 0) {
-          documents.sortBy {_.publishDate.getMillis}.reverse
+          documents = documents.sortBy {_.publishDate.getMillis}.reverse
           val docImport = new Import()
-          docImport.importedDocuments = documents.size;
+          docImport.importedDocuments = documentCount
           docImport.latestDocumentDate = documents(0).publishDate
           docImport.sourceName = extractor.sourceName
           docImport.importTime = now

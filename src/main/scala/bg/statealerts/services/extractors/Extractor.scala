@@ -2,14 +2,11 @@ package bg.statealerts.services.extractors
 
 import java.net.URL
 import java.util.ArrayList
-
 import scala.collection.JavaConversions.asScalaBuffer
 import scala.util.control.Breaks
-
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
-
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
 import com.gargoylesoftware.htmlunit.HttpMethod
@@ -17,11 +14,12 @@ import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.WebRequest
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-
 import bg.statealerts.model.Document
 import bg.statealerts.scheduled.ExtractorDescriptor
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.{LoggerFactory, Logger}
+import org.apache.commons.io.IOUtils
+import org.joda.time.ReadableDateTime
 
 class Extractor(descriptor: ExtractorDescriptor) {
 
@@ -44,7 +42,10 @@ class Extractor(descriptor: ExtractorDescriptor) {
     fullUrl.getProtocol() + "://" + fullUrl.getHost() + ":" + port
   }
 
-  def extract(since: DateTime): List[Document] = {
+  def extract(since: ReadableDateTime): List[Document] = {
+    if (!descriptor.enabled.getOrElse(true)) {
+      return List()
+    }
     var result = List[Document]()
     val loop = new Breaks();
     val client = buildHtmlClient()
@@ -101,7 +102,13 @@ class Extractor(descriptor: ExtractorDescriptor) {
 	                  contentLocationType == ContentLocationType.LinkedPage) {
 	                  documentPageExtractor.populateDocument(doc, row, rowIdx, ctx)
 	                } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
-	                  doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
+	                  if (descriptor.documentLinkPath.get.endsWith("href")) {
+	                	  doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent();
+	                  } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
+	                	  row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].click()
+	                	  val bytes = IOUtils.toByteArray(client.getCurrentWindow().getEnclosedPage().getWebResponse().getContentAsStream())
+	                	  doc.content = documentExtractor.extractContent(bytes, ctx)
+	                  }
 	                }
 	
 	                if (doc.publishDate != null && doc.publishDate.isBefore(since)) {

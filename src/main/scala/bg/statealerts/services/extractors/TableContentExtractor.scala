@@ -1,8 +1,8 @@
 package bg.statealerts.services.extractors
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
-
 import bg.statealerts.model.Document
+import java.util.regex.Pattern
 
 class TableContentExtractor extends DocumentDetailsExtractor {
 
@@ -15,7 +15,15 @@ class TableContentExtractor extends DocumentDetailsExtractor {
         throw new IllegalStateException("Cannot find date element for xpath " + ctx.descriptor.datePath)
       }
       val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-      doc.publishDate = ctx.dateFormatter.parseDateTime(element.asInstanceOf[HtmlElement].getTextContent().trim())
+      var text = element.asInstanceOf[HtmlElement].getTextContent().trim()
+      if (ctx.descriptor.dateRegex.nonEmpty) {
+        val pattern = Pattern.compile(ctx.descriptor.dateRegex.get)
+        val matcher = pattern.matcher(text)
+        if (matcher.find()) {
+          text = matcher.group()
+        }
+      }
+      doc.publishDate = ctx.dateFormatter.parseDateTime(text)
     }
 
     if (ctx.descriptor.titlePath.nonEmpty) {
