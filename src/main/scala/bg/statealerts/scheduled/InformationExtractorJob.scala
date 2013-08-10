@@ -71,7 +71,7 @@ class InformationExtractorJob {
         for (document <- documents) {
           try {
 	          document.title = StringUtils.left(document.title, 2000);
-	          document.title = StringUtils.left(document.url, 2000);
+	          document.url = StringUtils.left(document.url, 2000);
 	          //remove unneeded whitespaces new lines
 	          document.content = document.content.replaceAll("^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
 	          document.importTime = now
@@ -86,7 +86,7 @@ class InformationExtractorJob {
         //TODO more effort to keep in sync with db
         indexer.index(persistedDocuments)
 
-        if (documents.size > 0) {
+        if (documentCount > 0) {
           documents = documents.sortBy {_.publishDate.getMillis}.reverse
           val docImport = new Import()
           docImport.importedDocuments = documentCount

@@ -124,6 +124,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
                       val documentPage: Page = link.click()
                       val bytes = IOUtils.toByteArray(documentPage.getWebResponse().getContentAsStream())
                       doc.content = documentExtractor.extractContent(bytes, ctx)
+                      doc.url = documentPage.getUrl().toString()
                       documentPage.cleanUp()
                     }
                   }
