@@ -1,55 +1,66 @@
 {
    "extractors":[
       {
-         "sourceName": "ParliamentLawProjects",
-         "documentType": "PDF",
-         "contentLocationType": "LinkedDocumentOnLinkedPage",
-         "tableRowPath": "//table[@class='billsresult']/tbody/tr[position()>1]",
-         "url": "http://www.parliament.bg/bg/bills",
-         "httpMethod": "POST",
-         "bodyParams": "from=&to=&L_ActL_title=&L_Ses_id=&L_Act_sign=&L_Act_im_id=&A_ns_C_id=&submit=%D0%A2%D1%8A%D1%80%D1%81%D0%B8",
-         "pagingMultiplier": "1",
-		 "documentLinkPath": ".//td[2]/a",
-		 "documentPageLinkPath": "//table[@class='bills']/tbody/tr[5]/td[2]/a",
-		 "datePath": ".//td[4]",
-		 "titlePath": ".//td[2]/a",
-         "dateFormat": "dd/MM/yyyy",
-		 "externalIdPath": ".//td[3]"
+        "sourceName": "ParliamentLawProjects",
+		"enabled": "false",
+        "documentType": "PDF",
+        "contentLocationType": "LinkedDocumentOnLinkedPage",
+        "tableRowPath": "//table[@class='billsresult']/tbody/tr[position()>1]",
+        "url": "http://www.parliament.bg/bg/bills",
+		"httpRequest" : {
+			"method": "POST",
+			"bodyParams": "from=&to=&L_ActL_title=&L_Ses_id=&L_Act_sign=&L_Act_im_id=&A_ns_C_id=&submit=%D0%A2%D1%8A%D1%80%D1%81%D0%B8"
+		},
+        "pagingMultiplier": "1",
+		"documentLinkPath": ".//td[2]/a",
+		"documentPageLinkPath": "//table[@class='bills']/tbody/tr[5]/td[2]/a",
+		"datePath": ".//td[4]",
+		"titlePath": ".//td[2]/a",
+        "dateFormat": "dd/MM/yyyy",
+		"externalIdPath": ".//td[3]"
       },
       {
-         "sourceName": "AOP",
-         "documentType": "HTML",
-         "contentLocationType": "LinkedPage",
-         "tableRowPath": "//table[@id='resultaTable']/tbody",
-		 "entriesPerRow": "14",
-         "url": "http://rop3-app1.aop.bg:7778/portal/page?_pageid=93,662251&_dad=portal&_schema=PORTAL",
-         "httpMethod": "POST",
-         "bodyParams": "go_page={x}&doc_description=&u_id=&key_word=&btn_pressed=%D0%A2%D1%8A%D1%80%D1%81%D0%B8+...",
-         "pagingMultiplier": "1",
-         "contentPath": "//div[@id='fullDocument']",
-      	 "documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
-         "datePath": ".//td/b[starts-with(., 'Получен на:')]/parent::td/following-sibling::td",
-         "titlePath": ".//td/b[starts-with(., 'Име:')]/parent::td/following-sibling::td|.//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td",
-		 "failOnError": "false",
-         "dateFormat":"dd-MM-yyyy",
-		 "externalIdPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a"
+        "sourceName": "AOP",
+		"enabled": "false",
+        "documentType": "HTML",
+        "contentLocationType": "LinkedPage",
+        "tableRowPath": "//table[@id='resultaTable']/tbody",
+		"entriesPerRow": "14",
+        "url": "http://rop3-app1.aop.bg:7778/portal/page?_pageid=93,662251&_dad=portal&_schema=PORTAL",
+		"httpRequest": {
+			"method": "POST",
+			"bodyParams": "go_page={x}&doc_description=&u_id=&key_word=&btn_pressed=%D0%A2%D1%8A%D1%80%D1%81%D0%B8+..."		
+		},
+        "pagingMultiplier": "1",
+        "contentPath": "//div[@id='fullDocument']",
+      	"documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
+        "datePath": ".//td/b[starts-with(., 'Получен на:')]/parent::td/following-sibling::td",
+        "titlePath": ".//td/b[starts-with(., 'Име:')]/parent::td/following-sibling::td|.//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td",
+		"failOnError": "false",
+        "dateFormat":"dd-MM-yyyy",
+		"externalIdPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a"
       },
 	  {
-         "sourceName": "StateNewspaper",
-         "documentType": "PDF",
-         "contentLocationType": "LinkedDocumentInTable",
-         "tableRowPath": "//table[@id='broi_form:dataTable1']/tbody/tr",
-         "url": "http://dv.parliament.bg/DVWeb/broeveList.faces",
-         "httpMethod": "POST",
-         "bodyParams": "active_tab=2&broi_form%3Anot_first=1&broi_form%3A_idJsp62=&broi_form%3A_idJsp68=&broi_form%3A_idJsp70=&broi_form%3Afrom_date=&broi_form%3Ato_date=&broi_form%3Aperiod_=&broi_form%3AselectPageTop={x}&broi_form%3AselectPage={x}&broi_form_SUBMIT=1&broi_form%3A_link_hidden_=&date_izd_=&broi_form%3A_idcl=broi_form%3AchP&id_=&idObj=&razdel_=&broi_=&javax.faces.ViewState=rO0ABXVyABNbTGphdmEubGFuZy5PYmplY3Q7kM5YnxBzKWwCAAB4cAAAAAN0AAIxNXB0AA8vYnJvZXZlTGlzdC5qc3A%3D",
-         "pagingMultiplier": "1",
-      	 "documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
-         "datePath": ".//td/table/tbody/tr/td",
-         "titlePath": ".//td/table/tbody/tr/td",
-		 "failOnError": "false",
-         "dateFormat":"d.M.yyyy",
-		 "dateRegex": "\d{1,2}\.\d{1,2}\d{4}",
-		 "externalIdPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a"
+        "sourceName": "StateNewspaper",
+        "documentType": "PDF",
+        "contentLocationType": "LinkedDocumentInTable",
+        "tableRowPath": "//table[@id='broi_form:dataTable1']/tbody/tr",
+        "url": "http://dv.parliament.bg/DVWeb/broeveList.faces",
+		"httpRequest": {
+			"method": "POST",
+			"bodyParams": "active_tab=2&broi_form%3Anot_first=1&broi_form%3A_idJsp62=&broi_form%3A_idJsp68=&broi_form%3A_idJsp70=&broi_form%3Afrom_date=&broi_form%3Ato_date=&broi_form%3Aperiod_=&broi_form%3AselectPageTop={x}&broi_form%3AselectPage={x}&broi_form_SUBMIT=1&broi_form%3A_link_hidden_=&date_izd_=&broi_form%3A_idcl=broi_form%3AchP&id_=&idObj=&razdel_=&broi_=&javax.faces.ViewState=rO0ABXVyABNbTGphdmEubGFuZy5PYmplY3Q7kM5YnxBzKWwCAAB4cAAAAAN0AAIxNXB0AA8vYnJvZXZlTGlzdC5qc3A%3D",
+			"headers": {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+		},
+        "pagingMultiplier": "1",
+      	"documentLinkPath": ".//td/table/tbody/tr/td[2]/a",
+        "datePath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]",
+        "titlePath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]",
+		"failOnError": "true",
+        "dateFormat":"d.M.yyyy",
+		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\d{4}",
+		"externalIdPath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]"
       }
    ]
 }

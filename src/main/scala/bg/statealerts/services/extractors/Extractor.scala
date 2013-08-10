@@ -30,7 +30,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
 
-  val pager: Pager = new Pager(descriptor.url, descriptor.bodyParams, descriptor.pagingMultiplier)
+  val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.bodyParams, descriptor.pagingMultiplier)
   val sourceName = descriptor.sourceName
 
   val baseUrl: String = {
@@ -49,8 +49,12 @@ class Extractor(descriptor: ExtractorDescriptor) {
     var result = List[Document]()
     val loop = new Breaks();
     val client = buildHtmlClient()
-    val httpMethod = HttpMethod.valueOf(descriptor.httpMethod)
+    val httpMethod = HttpMethod.valueOf(descriptor.httpRequest.method)
 
+    descriptor.httpRequest.headers.foreach(map => {
+    	map.foreach(e => client.addRequestHeader(e._1, e._2))
+    })
+    
     val ctx = new ExtractionContext(descriptor, baseUrl, dateTimeFormatter, client)
     //TODO get from enum field, rather than instantiating for each extraction
     var documentExtractor: DocumentFileExtractor = null
@@ -79,6 +83,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 	        }
 	        val htmlPage: HtmlPage = client.getPage(request)
 	        val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
+	        println(htmlPage.getTextContent())
 	        if (list.isEmpty) {
 	          loop.break
 	        }
