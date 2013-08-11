@@ -1,36 +1,39 @@
 package bg.statealerts.services.extractors
 
-import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.html.HtmlPage
-import java.util.ArrayList
-import com.gargoylesoftware.htmlunit.html.HtmlElement
-import scala.collection.mutable.Buffer
-import scala.collection.JavaConversions
-import com.gargoylesoftware.htmlunit.WebRequest
-import com.gargoylesoftware.htmlunit.HttpMethod
 import java.net.URL
-import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
+import java.util.ArrayList
+
+import scala.collection.JavaConversions
+import scala.collection.mutable.Buffer
+
 import com.gargoylesoftware.htmlunit.BrowserVersion
-import java.io.{ InputStream, FileInputStream, File }
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.util.PDFTextStripper
-import org.apache.lucene.index.{ DirectoryReader, IndexReader }
-import org.apache.lucene.store.FSDirectory
-import org.apache.lucene.search.IndexSearcher
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimeFormat
-import java.util.regex.Pattern
+import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
+import com.gargoylesoftware.htmlunit.HttpMethod
+import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.WebRequest
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor
+import com.gargoylesoftware.htmlunit.html.HtmlElement
+import com.gargoylesoftware.htmlunit.html.HtmlPage
 
 object Foo {
   def main(args: Array[String]) {
-    val str = " Брой 50, 7.6.2013 г."
-    val regex = "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
-    val pattern = Pattern.compile(regex)
-    val matcher = pattern.matcher(str)
-    if (matcher.find()) {
-      println(matcher.group())
+    val webClient = new WebClient();
+
+    var page: HtmlPage = webClient.getPage("http://dv.parliament.bg/DVWeb/broeveList.faces").asInstanceOf[HtmlPage];
+
+    val list = page.getByXPath("//table[@id='broi_form:dataTable1']//a/img/..").asInstanceOf[ArrayList[HtmlAnchor]]
+    for (link <- JavaConversions.asScalaBuffer(list)) {
+        val commandString = link.getOnClickAttribute().replaceAll("return ", "");
+        System.out.println(commandString);
+
+        val executeJavaScript = page.executeJavaScript(commandString);
+
+        val newPage = executeJavaScript.getNewPage();
+        println(newPage.getWebResponse().getResponseHeaders())
+
+        page = webClient.getPage("http://dv.parliament.bg/DVWeb/broeveList.faces");
     }
-  }
+}
 
   def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
@@ -42,7 +45,6 @@ object Foo {
       bvf);
     val client: WebClient = new WebClient(bv)
 
-    client.setJavaScriptEnabled(false)
     //val htmlPage: HtmlPage = client.getPage("file:///C:/Users/bozho/Desktop/bills.html");
     val url = "http://www.parliament.bg/bg/bills"
     val httpMethod = "POST"
