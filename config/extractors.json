@@ -50,7 +50,7 @@
       	"documentLinkPath": ".//td/table/tbody/tr/td[2]/a",
         "datePath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]",
         "titlePath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]",
-		"failOnError": "true",
+		"failOnError": "false",
         "dateFormat":"d.M.yyyy",
 		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}",
 		"javascriptRequired": "true",
