@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import bg.statealerts.model.Document
 import java.util.regex.Pattern
+import org.joda.time.DateMidnight
 
 class DocumentPageExtractor extends DocumentDetailsExtractor {
 
@@ -32,7 +33,7 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
             text = matcher.group()
           }
         }
-        doc.publishDate = ctx.dateFormatter.parseDateTime(text)
+        doc.publishDate = new DateMidnight(ctx.dateFormatter.parseDateTime(text)).toDateTime()
       }
 
       // if the document is downloadable file, get the link to it. Otherwise set the documentUrl to be the document details page

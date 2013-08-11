@@ -19,6 +19,7 @@ import bg.statealerts.services.extractors.ContentLocationType
 import org.slf4j.LoggerFactory
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateMidnight
+import org.joda.time.DateTimeZone
 
 @Component
 class InformationExtractorJob {
@@ -46,6 +47,7 @@ class InformationExtractorJob {
 
   @PostConstruct
   def init() {
+    DateTimeZone.setDefault(DateTimeZone.UTC)
     val file = new File(configLocation + "/extractors.json")
     val config = Json.parse[ExtractorConfiguration](file)
     for (descriptor <- config.extractors) {
@@ -64,7 +66,7 @@ class InformationExtractorJob {
     for (extractor <- extractors) {
       try {
         var lastImportTime = dao.getLastImportDate(extractor.sourceName).getOrElse(new DateMidnight().minusDays(14));
-        val now = new DateTime()
+        val now = DateTime.now()
         var documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
         var documentCount = documents.size

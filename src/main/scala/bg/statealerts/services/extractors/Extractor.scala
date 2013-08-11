@@ -2,10 +2,8 @@ package bg.statealerts.services.extractors
 
 import java.net.URL
 import java.util.ArrayList
-
 import scala.collection.JavaConversions.asScalaBuffer
 import scala.util.control.Breaks
-
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
@@ -14,7 +12,6 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
 import com.gargoylesoftware.htmlunit.HttpMethod
@@ -24,9 +21,11 @@ import com.gargoylesoftware.htmlunit.WebRequest
 import com.gargoylesoftware.htmlunit.html.DomNode
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-
 import bg.statealerts.model.Document
 import bg.statealerts.scheduled.ExtractorDescriptor
+import scala.annotation.meta.param
+import java.util.regex.Pattern
+import scala.annotation.meta.param
 
 class Extractor(descriptor: ExtractorDescriptor) {
 
@@ -93,7 +92,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
 
           val htmlPage: HtmlPage = client.getPage(request)
           val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
-          
+
           if (list.isEmpty) {
             loop.break
           }
@@ -105,7 +104,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
                 val doc = new Document()
                 doc.sourceName = descriptor.sourceName
 
-                tableContentExtractor.populateDocument(doc, row, entryIdx , ctx)
+                tableContentExtractor.populateDocument(doc, row, entryIdx, ctx)
                 if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
                   loop.break
                 }
@@ -116,17 +115,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
                     contentLocationType == ContentLocationType.LinkedPage) {
                     documentPageExtractor.populateDocument(doc, row, entryIdx, ctx)
                   } else if (contentLocationType == ContentLocationType.LinkedDocumentInTable) {
-                    if (descriptor.documentLinkPath.get.endsWith("href")) {
-                      doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
-                    } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
-                      val link = row.getFirstByXPath[HtmlElement](descriptor.documentLinkPath.get)
-                      if (link.getAttribute("href").endsWith("#")) link.setAttribute("href", "javascript:this.click()")
-                      val documentPage: Page = link.click()
-                      val bytes = IOUtils.toByteArray(documentPage.getWebResponse().getContentAsStream())
-                      doc.content = documentExtractor.extractContent(bytes, ctx)
-                      doc.url = documentPage.getUrl().toString()
-                      documentPage.cleanUp()
-                    }
+                    getLinkedDocument(doc, row, documentExtractor, ctx, htmlPage)
                   }
 
                   if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
@@ -169,6 +158,42 @@ class Extractor(descriptor: ExtractorDescriptor) {
     }
     client.closeAllWindows()
     result
+  }
+
+  private def getLinkedDocument(doc: Document, row: HtmlElement, documentExtractor: DocumentFileExtractor, ctx: ExtractionContext, htmlPage: Page) = {
+    if (descriptor.heuristics.nonEmpty) {
+      // in case we know how to get to the target document without the need to click on the page
+      descriptor.heuristics.foreach(h => {
+        val paramContainer = row.getFirstByXPath[DomNode](h.parameterPath).getTextContent()
+        val pattern = Pattern.compile(h.parameterRegex)
+        val m = pattern.matcher(paramContainer)
+        if (m.find()) {
+          val param = m.group(1)
+          val request = new WebRequest(new URL(h.documentDownloadUrl.replace("{param}", param)))
+          request.setHttpMethod(HttpMethod.valueOf(h.method))
+          if (h.method.equals("POST")) {
+            request.setRequestBody(h.bodyParams.get.replace("{param}", param))
+            request.setAdditionalHeader("Content-Type", "application/x-www-form-urlencoded")
+          }
+          val documentPage: Page = htmlPage.getEnclosingWindow().getWebClient().getPage(request)
+          val bytes = IOUtils.toByteArray(documentPage.getWebResponse().getContentAsStream())
+          doc.content = documentExtractor.extractContent(bytes, ctx)
+          doc.url = documentPage.getUrl().toString()
+          documentPage.cleanUp()
+        }
+      })
+    } else if (descriptor.documentLinkPath.get.endsWith("href")) {
+      doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
+    } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
+      val link = row.getFirstByXPath[HtmlElement](descriptor.documentLinkPath.get)
+      if (link.getAttribute("href").endsWith("#")) link.setAttribute("href", "javascript:this.click()")
+      val documentPage: Page = link.click()
+      val bytes = IOUtils.toByteArray(documentPage.getWebResponse().getContentAsStream())
+      doc.content = documentExtractor.extractContent(bytes, ctx)
+      doc.url = documentPage.getUrl().toString()
+      documentPage.cleanUp()
+      htmlPage.getEnclosingWindow().getHistory().back()
+    }
   }
 
   private def buildHtmlClient(): WebClient = {

@@ -5,6 +5,8 @@ import bg.statealerts.model.Document
 import java.util.regex.Pattern
 import com.gargoylesoftware.htmlunit.html.DomNode
 import org.apache.commons.lang3.StringUtils
+import org.joda.time.DateMidnight
+import org.joda.time.DateTimeZone
 
 class TableContentExtractor extends DocumentDetailsExtractor {
 
@@ -26,7 +28,7 @@ class TableContentExtractor extends DocumentDetailsExtractor {
         }
       })
       if (StringUtils.isNotBlank(text)) { 
-    	  doc.publishDate = ctx.dateFormatter.parseDateTime(text)
+    	  doc.publishDate = new DateMidnight(ctx.dateFormatter.parseDateTime(text)).toDateTime()
       }
     }
 

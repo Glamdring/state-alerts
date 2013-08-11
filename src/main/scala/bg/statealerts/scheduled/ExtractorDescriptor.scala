@@ -19,6 +19,7 @@ case class ExtractorDescriptor(
   documentPageDatePath: Option[String],
   url: String,
   httpRequest: Option[HttpRequest],
+  heuristics: Option[Heuristics],
   contentLocationType: String,
   pagingMultiplier: Int,
   documentLinkPath: Option[String], // XPath to the document link on either the table page, or on the separate document page
