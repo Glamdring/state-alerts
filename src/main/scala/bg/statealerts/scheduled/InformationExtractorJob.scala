@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateMidnight
 import org.joda.time.DateTimeZone
+import org.joda.time.ReadableDateTime
 
 @Component
 class InformationExtractorJob {
@@ -65,7 +66,7 @@ class InformationExtractorJob {
     }
     for (extractor <- extractors) {
       try {
-        var lastImportTime = dao.getLastImportDate(extractor.sourceName).getOrElse(new DateMidnight().minusDays(14));
+        var lastImportTime = new DateMidnight(dao.getLastImportDate(extractor.sourceName).getOrElse(new DateMidnight().minusDays(14))).withZoneRetainFields(DateTimeZone.UTC)
         val now = DateTime.now()
         var documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
