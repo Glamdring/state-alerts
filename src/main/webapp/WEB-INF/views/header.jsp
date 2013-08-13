@@ -59,22 +59,18 @@ ${head}
     <div class="container">
         <div class="masthead">
             <ul class="nav nav-pills pull-right">
-                <li <c:if test="${currentPage == 'home'}">class="active"</c:if>><a href="${root}/">Home</a></li>
-                <li <c:if test="${currentPage == 'toptracks'}">class="active"</c:if>><a href="${root}/toptracks">Top Tracks</a></li>
-                <li <c:if test="${currentPage == 'toprecent'}">class="active"</c:if>><a href="${root}/toprecent">Top Recent Tracks</a></li>
-                <li <c:if test="${currentPage == 'search'}">class="active"</c:if>><a href="${root}/search">Search</a></li>
+                <li <c:if test="${currentPage == 'home'}">class="active"</c:if>><a href="${root}/">Начало</a></li>
+                <li <c:if test="${currentPage == 'search'}">class="active"</c:if>><a href="${root}/search">Търсене</a></li>
+                <li <c:if test="${currentPage == 'topalerts'}">class="active"</c:if>><a href="${root}/toprecent">Топ-известия</a></li>
                 <c:if test="${userLoggedIn}">
-                    <li <c:if test="${currentPage == 'mytracks'}">class="active"</c:if>><a href="${root}/mytracks">My Tracks</a></li>
+                    <li <c:if test="${currentPage == 'myalerts'}">class="active"</c:if>><a href="${root}/myalerts">Моите известия</a></li>
                 </c:if>
                 <c:if test="${!userLoggedIn}">
-                    <li <c:if test="${currentPage == 'signup'}">class="active"</c:if>><a href="${root}/signup">Signup</a></li>
+                    <li <c:if test="${currentPage == 'signup'}">class="active"</c:if>><a href="${root}/signup">Регистрация</a></li>
                 </c:if>
-                <li <c:if test="${currentPage == 'about'}">class="active"</c:if>><a href="${root}/about">About</a></li>
+                <li <c:if test="${currentPage == 'about'}">class="active"</c:if>><a href="${root}/about">За сайта</a></li>
                 <c:if test="${userLoggedIn}">
-                    <li><a href="${root}/logout" onclick="navigator.id.logout();">Logout</a></li>
-                </c:if>
-                <c:if test="${stripeEnabled || bitcoinEnabled}">
-                    <li <c:if test="${currentPage == 'cart'}">class="active"</c:if>><a href="https://${pageContext.request.serverName}${root}/cart"><img src="${staticRoot}/img/cart.png" style="width: 16px; height: 16px; margin-right: 5px; border-style: none"/>Cart</a></li>
+                    <li><a href="${root}/logout" onclick="navigator.id.logout();">Изход</a></li>
                 </c:if>
             </ul>
             <a href="${root}/"><img src="${staticRoot}/img/logo.png" class="logo" /><h3 class="muted">Известия</h3></a>
