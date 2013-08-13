@@ -20,6 +20,7 @@
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
 	
+	<import resource="social.xml" />
     <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
         <property name="driverClassName" value="${database.driverClassName}"/>
         <property name="url" value="${database.url}/${database.name}"/>
