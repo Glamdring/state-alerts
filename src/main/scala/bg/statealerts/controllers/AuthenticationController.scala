@@ -148,7 +148,7 @@ class AuthenticationController {
     @RequestMapping(Array("/logout"))
     def logout(session: HttpSession, request: HttpServletRequest, response: HttpServletResponse): String = {
         session.invalidate()
-        val cookie = WebUtils.getCookie(request, Constants.AUTH_TOKEN_COOKIE_NAME)
+        val cookie = WebUtils.getCookie(request, Constants.AuthTokenCookieName)
         if (cookie != null) {
             cookie.setMaxAge(0)
             cookie.setDomain(".computoser.com")
@@ -156,7 +156,7 @@ class AuthenticationController {
             response.addCookie(cookie)
         }
 
-        val seriesCookie = WebUtils.getCookie(request, Constants.AUTH_TOKEN_SERIES_COOKIE_NAME)
+        val seriesCookie = WebUtils.getCookie(request, Constants.AuthTokenSeriesCookieName)
         if (seriesCookie != null) {
             seriesCookie.setMaxAge(0)
             seriesCookie.setDomain(".computoser.com")

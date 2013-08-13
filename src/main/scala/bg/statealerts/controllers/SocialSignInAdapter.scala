@@ -35,14 +35,14 @@ class SocialSignInAdapter extends SignInAdapter {
     }
 
     def addPermanentCookies(user: User, response: HttpServletResponse) = {
-        val authTokenCookie = new Cookie(Constants.AUTH_TOKEN_COOKIE_NAME, user.loginToken);
-        authTokenCookie.setMaxAge(Constants.COOKIE_AGE);
+        val authTokenCookie = new Cookie(Constants.AuthTokenCookieName, user.loginToken);
+        authTokenCookie.setMaxAge(Constants.CookieAge);
         authTokenCookie.setPath("/");
         authTokenCookie.setDomain(".statealerts.com");
         response.addCookie(authTokenCookie);
 
-        val seriesCookie = new Cookie(Constants.AUTH_TOKEN_SERIES_COOKIE_NAME, user.loginSeries);
-        seriesCookie.setMaxAge(Constants.COOKIE_AGE);
+        val seriesCookie = new Cookie(Constants.AuthTokenSeriesCookieName, user.loginSeries);
+        seriesCookie.setMaxAge(Constants.CookieAge);
         seriesCookie.setPath("/");
         seriesCookie.setDomain(".statealerts.com");
         response.addCookie(seriesCookie);
