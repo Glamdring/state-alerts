@@ -151,7 +151,7 @@ class AuthenticationController {
         val cookie = WebUtils.getCookie(request, Constants.AuthTokenCookieName)
         if (cookie != null) {
             cookie.setMaxAge(0)
-            cookie.setDomain(".computoser.com")
+            cookie.setDomain(".statealerts.com")
             cookie.setPath("/")
             response.addCookie(cookie)
         }
@@ -159,7 +159,7 @@ class AuthenticationController {
         val seriesCookie = WebUtils.getCookie(request, Constants.AuthTokenSeriesCookieName)
         if (seriesCookie != null) {
             seriesCookie.setMaxAge(0)
-            seriesCookie.setDomain(".computoser.com")
+            seriesCookie.setDomain(".statealerts.com")
             seriesCookie.setPath("/")
             response.addCookie(seriesCookie)
         }

@@ -11,7 +11,6 @@ import bg.statealerts.dao.UserDao
 import bg.statealerts.services.UserService
 import java.util.ArrayList
 
-@Service
 class JpaUsersConnectionRepository extends UsersConnectionRepository {
     @Inject
     var userDao: UserDao = _
