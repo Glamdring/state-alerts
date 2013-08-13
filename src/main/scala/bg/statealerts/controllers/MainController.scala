@@ -19,6 +19,11 @@ class MainController {
   @Inject
   var searcher: SearchService = _
 
+  @RequestMapping(Array("/"))
+  def index(): String = {
+    return "index"
+  }
+
   @RequestMapping(Array("/search"))
   def search(@RequestParam keywords: String, response: HttpServletResponse): Unit = {
     val buffer: Buffer[Document] = searcher.search(keywords).toBuffer
