@@ -8,15 +8,14 @@
 <link href="${staticRoot}/styles/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" media="screen"/>
 <link href="${staticRoot}/styles/main.css" rel="stylesheet" type="text/css" media="screen"/>
 <link href="${staticRoot}/playerSkins/jplayer.blue.monday.css" rel="stylesheet" type="text/css" media="screen"/>
-<link href="${baseUrl}/${root}/rss" title="Computoser - computer-generated tracks feed" type="application/rss+xml" rel="alternate" />
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://login.persona.org/include.js"></script>
 <script type="text/javascript" src="${staticRoot}/scripts/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="${staticRoot}/scripts/bootstrap.min.js"></script>
 ${head}
-<meta name="description" content="Algorithmic computer-generated music that can be used for anything - listening to, building upon or commercial purposes (stock audio/elevator music)." />
-<meta name="keywords" content="stock,audio,algorithm,music,algorithmic,computser-generated,elevator,supermarket" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
 <script type="text/javascript">
     var loggedInUser = ${context.user != null ? '"' + context.user.email + '"' : 'null'};
     var userRequestedAuthentication = false;
@@ -78,7 +77,7 @@ ${head}
                     <li <c:if test="${currentPage == 'cart'}">class="active"</c:if>><a href="https://${pageContext.request.serverName}${root}/cart"><img src="${staticRoot}/img/cart.png" style="width: 16px; height: 16px; margin-right: 5px; border-style: none"/>Cart</a></li>
                 </c:if>
             </ul>
-            <a href="${root}/"><img src="${staticRoot}/img/logo.png" class="logo" /><h3 class="muted">Computoser</h3></a>
+            <a href="${root}/"><img src="${staticRoot}/img/logo.png" class="logo" /><h3 class="muted">Известия</h3></a>
         </div>
         <hr style="width: 100%;"/>
         <c:if test="${!empty param.message}">

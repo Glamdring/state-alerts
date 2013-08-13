@@ -6,7 +6,7 @@
             var signinLink = $("#personaSignin");
             signinLink.click(function() {
                 userRequestedAuthentication = true;
-                navigator.id.request({siteName: 'Computoser'});
+                navigator.id.request({siteName: 'State Document Alerts'});
             });
         });
     </script>
