@@ -1,14 +1,12 @@
 package bg.statealerts.dao
 
-import org.joda.time.DateTime
+import scala.collection.JavaConversions
+
 import org.springframework.stereotype.Repository
+
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
-import javax.persistence.TypedQuery
-import org.joda.time.DateMidnight
-import org.joda.time.ReadableDateTime
 import javax.persistence.Query
-import scala.collection.JavaConversions
 
 @Repository
 class BaseDao {
@@ -24,18 +22,6 @@ class BaseDao {
     entityManager.find(clazz, id);
   }
  
-  def getLastImportDate(sourceName: String): Option[ReadableDateTime] = {
-    val query: TypedQuery[DateTime] = entityManager.createQuery("SELECT latestDocumentDate FROM Import WHERE sourceName = :sourceName ORDER BY latestDocumentDate DESC", classOf[DateTime])
-    query.setMaxResults(1)
-    query.setParameter("sourceName", sourceName)
-
-    val result = query.getResultList()
-    if (result.isEmpty()) {
-      return None
-    } else {
-      return Some(new DateMidnight(result.get(0)))
-    }
-  }
   
     def getResult[T](result: List[T]): Option[T] = {
         if (!result.isEmpty) {

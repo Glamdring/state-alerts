@@ -38,6 +38,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -126,12 +131,12 @@
 		<dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-core</artifactId>
-            <version>1.0.2.RELEASE</version>
+            <version>1.0.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-web</artifactId>
-            <version>1.0.2.RELEASE</version>
+            <version>1.0.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>

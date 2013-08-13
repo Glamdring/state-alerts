@@ -1,7 +1,5 @@
 package bg.statealerts.services.auth
 
-package com.music.service.auth
-
 import java.util.Set
 import javax.inject.Inject
 import org.springframework.social.connect.Connection
