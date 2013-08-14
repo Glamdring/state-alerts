@@ -58,14 +58,6 @@ class AuthenticationController {
     	val template = new RestTemplate()
         template.getMessageConverters().add(new FormHttpMessageConverter())
         template.getMessageConverters().add(new StringHttpMessageConverter())
-        template.getMessageConverters().add(new ScalaJsonHttpMessageConverter())
-        val it = template.getMessageConverters().iterator()
-        while (it.hasNext()) {
-          val converter = it.next()
-          if (converter.isInstanceOf[MappingJackson2HttpMessageConverter] || converter.isInstanceOf[MappingJacksonHttpMessageConverter]) {
-            it.remove()
-          }
-        }
         template
     }
 	val emailValidator = new EmailValidator()
