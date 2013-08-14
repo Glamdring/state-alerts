@@ -1,38 +1,43 @@
 package bg.statealerts.controllers
 
+import java.io.IOException
+import org.apache.commons.lang3.StringUtils
+import org.hibernate.validator.internal.constraintvalidators.EmailValidator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
-import org.springframework.social.connect.web.ProviderSignInController
-import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.context.request.NativeWebRequest
-import org.springframework.web.servlet.view.RedirectView
-import bg.statealerts.services.UserService
-import javax.inject.Inject
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.ui.Model
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
 import org.springframework.social.connect.web.ProviderSignInAttempt
-import org.springframework.social.twitter.api.TwitterProfile
-import org.springframework.social.facebook.api.FacebookProfile
-import bg.statealerts.model.User
-import org.springframework.web.context.request.RequestAttributes
-import org.apache.commons.lang3.StringUtils
+import org.springframework.social.connect.web.ProviderSignInController
 import org.springframework.social.facebook.api.Facebook
 import org.springframework.social.twitter.api.Twitter
-import org.hibernate.validator.internal.constraintvalidators.EmailValidator
-import javax.servlet.http.HttpServletResponse
-import java.io.IOException
-import javax.servlet.http.HttpServletRequest
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.ui.Model
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.context.request.RequestAttributes
+import org.springframework.web.servlet.view.RedirectView
 import org.springframework.web.util.WebUtils
+import bg.statealerts.model.User
+import bg.statealerts.services.UserService
+import bg.statealerts.util.ScalaJsonHttpMessageConverter
+import javax.inject.Inject
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.springframework.web.bind.annotation.RequestMethod
+import com.codahale.jerkson.Json
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.StringReader
 
 @Controller
 class AuthenticationController {
@@ -47,12 +52,20 @@ class AuthenticationController {
     @Inject
     var context: UserContext = _
 
+    val mapper = new ObjectMapper()
+    
     val restTemplate = {
     	val template = new RestTemplate()
-        val formHttpMessageConverter = new FormHttpMessageConverter()
-        val stringHttpMessageConverternew = new StringHttpMessageConverter()
-        template.getMessageConverters().add(formHttpMessageConverter)
-        template.getMessageConverters().add(stringHttpMessageConverternew)
+        template.getMessageConverters().add(new FormHttpMessageConverter())
+        template.getMessageConverters().add(new StringHttpMessageConverter())
+        template.getMessageConverters().add(new ScalaJsonHttpMessageConverter())
+        val it = template.getMessageConverters().iterator()
+        while (it.hasNext()) {
+          val converter = it.next()
+          if (converter.isInstanceOf[MappingJackson2HttpMessageConverter] || converter.isInstanceOf[MappingJacksonHttpMessageConverter]) {
+            it.remove()
+          }
+        }
         template
     }
 	val emailValidator = new EmailValidator()
@@ -124,11 +137,12 @@ class AuthenticationController {
         val params = new LinkedMultiValueMap[String, String]()
         params.add("assertion", assertion)
         params.add("audience", request.getScheme() + "://" + request.getServerName() + ":" + (if (request.getServerPort() == 80) "" else request.getServerPort()))
-        val response = restTemplate.postForObject("https://verifier.login.persona.org/verify", params, classOf[PersonaVerificationResponse])
-        if (response.status.equals("okay")) {
-            val user = userService.getUserByEmail(response.email)
+        val entity = restTemplate.postForEntity("https://verifier.login.persona.org/verify", params, classOf[String])
+        val response = mapper.readTree(entity.getBody())
+        if (response.get("status").asText().equals("okay")) {
+            val user = userService.getUserByEmail(response.get("email").asText())
             if (user.isEmpty && userRequestedAuthentication) {
-                return "/socialSignUp?email=" + response.email
+                return "/socialSignUp?email=" + response.get("email").asText()
             } else if (user.nonEmpty){
                 if (userRequestedAuthentication || user.get.loginAutomatically) {
                     signInAdapter.signIn(user.get, httpResponse, true)
@@ -140,7 +154,7 @@ class AuthenticationController {
                 return "" //in case this is not a user-requested operation, do nothing
             }
         } else {
-            logger.warn("Persona authentication failed due to reason: " + response.reason)
+            logger.warn("Persona authentication failed due to reason: " + response.get("reason").asText())
             throw new IllegalStateException("Authentication failed")
         }
     }
@@ -170,12 +184,5 @@ class AuthenticationController {
     def unsubscribe(@PathVariable id: Long, @RequestParam hash: String): String = {
         userService.unsubscribe(id, hash)
         return "redirect:/?message=Successfully unsubscribed"
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    private case class PersonaVerificationResponse(
-        status: String,
-        email: String,
-        reason: String){
     }
 }
