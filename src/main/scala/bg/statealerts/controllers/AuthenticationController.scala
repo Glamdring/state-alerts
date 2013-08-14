@@ -7,8 +7,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
 import org.springframework.social.connect.web.ProviderSignInAttempt
 import org.springframework.social.connect.web.ProviderSignInController
 import org.springframework.social.facebook.api.Facebook
@@ -27,17 +25,15 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.web.servlet.view.RedirectView
 import org.springframework.web.util.WebUtils
+import com.fasterxml.jackson.databind.ObjectMapper
 import bg.statealerts.model.User
 import bg.statealerts.services.UserService
-import bg.statealerts.util.ScalaJsonHttpMessageConverter
 import javax.inject.Inject
+import javax.persistence.Entity
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import org.springframework.web.bind.annotation.RequestMethod
-import com.codahale.jerkson.Json
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.StringReader
 
 @Controller
 class AuthenticationController {
