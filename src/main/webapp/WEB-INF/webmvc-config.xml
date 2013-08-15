@@ -30,12 +30,23 @@
 		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="lang" />
 	</mvc:interceptors>
 
+	<!-- mapping images, js and styles with separate mappings. Otherwise it conflicts with ResourceController mapping. -->
+    <mvc:resources mapping="/static/img/**" location="/img/" cache-period="0" />
+    <mvc:resources mapping="/static/scripts/**" location="/scripts/" cache-period="0" />
+    <mvc:resources mapping="/static/styles/**" location="/styles/" cache-period="0" />
+    <mvc:resources mapping="/static/playerSkins/**" location="/playerSkins/" cache-period="0" />
+
+
 	<!-- Selects a static view for rendering without the need for an explicit controller -->
 	<mvc:view-controller path="/" view-name="index" />
 	<mvc:view-controller path="/exceptions/uncaughtException" />
 	<mvc:view-controller path="/exceptions/resourceNotFound" />
 	<mvc:view-controller path="/exceptions/dataAccessFailure" />
 
+ 	<bean class="org.springframework.social.connect.web.ProviderSignInController">
+        <property name="signUpUrl" value="/socialSignUp"/>
+    </bean>
+    
 	<!-- Resolves localized messages*.properties and application.properties files in the application to allow for internationalization. 
 		The messages*.properties files translate Roo generated messages which are part of the admin interface, the application.properties 
 		resource bundle localizes all application specific messages such as entity names and menu items. -->

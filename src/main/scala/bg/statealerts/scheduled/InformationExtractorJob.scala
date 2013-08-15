@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import com.codahale.jerkson.Json
-import bg.statealerts.dao.BaseDao
+import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import bg.statealerts.model.Import
 import bg.statealerts.services.DocumentService
@@ -39,7 +39,7 @@ class InformationExtractorJob {
   var service: DocumentService = _
 
   @Inject
-  var dao: BaseDao = _
+  var dao: DocumentDao = _
 
   @Inject
   var indexer: Indexer = _
