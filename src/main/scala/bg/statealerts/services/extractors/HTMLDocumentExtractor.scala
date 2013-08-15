@@ -7,7 +7,7 @@ class HTMLDocumentExtractor extends DocumentFileExtractor {
 
   def extractContent(documentUrl: String, ctx: ExtractionContext): String = {
     var docPage: HtmlPage = ctx.client.getPage(documentUrl)
-    docPage.getFirstByXPath(ctx.descriptor.contentPath.get).asInstanceOf[HtmlElement].getTextContent()
+    docPage.getFirstByXPath(ctx.descriptor.paths.contentPath.get).asInstanceOf[HtmlElement].getTextContent()
   }
   
   def extractContent(bytes: Array[Byte], ctx: ExtractionContext): String = {

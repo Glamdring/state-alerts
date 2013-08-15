@@ -20,12 +20,13 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import org.joda.time.DateTime
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil
+import org.apache.lucene.analysis.bg.BulgarianAnalyzer
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
 class SearchService {
 
-  val analyzer: Analyzer = new StandardAnalyzer(Version.LUCENE_43)
+  val analyzer: Analyzer = new BulgarianAnalyzer(Version.LUCENE_43)
 
   @Value("${index.path}")
   var indexPath: String = _
