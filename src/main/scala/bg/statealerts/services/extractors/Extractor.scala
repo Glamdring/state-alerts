@@ -190,11 +190,13 @@ class Extractor(descriptor: ExtractorDescriptor) {
       doc.url = row.getFirstByXPath(descriptor.paths.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
     } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
       val link = row.getFirstByXPath[HtmlElement](descriptor.paths.documentLinkPath.get)
-      val commandString = link.getOnClickAttribute().replaceAll("return ", "");
-      val executeJavaScript = htmlPage.executeJavaScript(commandString);
-      val documentPage = executeJavaScript.getNewPage()
-      populateDocumentWithDownloadedContent(doc, documentPage, ctx)
-      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+      if (link != null) {
+	      val commandString = link.getOnClickAttribute().replaceAll("return ", "")
+	      val executeJavaScript = htmlPage.executeJavaScript(commandString)
+	      val documentPage = executeJavaScript.getNewPage()
+	      populateDocumentWithDownloadedContent(doc, documentPage, ctx)
+	      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+      }
     }
   }
 

@@ -7,6 +7,7 @@ import javax.persistence.Id
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import java.util.ArrayList
+import javax.persistence.ManyToOne
 
 @Entity
 class Alert {
@@ -19,5 +20,8 @@ class Alert {
   var name: String = _
   @ElementCollection
   var keywords: java.util.List[String] = new ArrayList();
+  
+  @ManyToOne
+  var user: User = _
   
 }
