@@ -8,8 +8,7 @@ import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 import javax.persistence.Query
 
-@Repository
-class BaseDao {
+trait BaseDao {
 
   @PersistenceContext
   var entityManager: EntityManager = _

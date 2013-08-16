@@ -15,12 +15,13 @@
 	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd">
 
     <context:property-placeholder location="file:${statealerts.config.location}/*.properties" order="1" ignore-unresolvable="true" />
-	
+
     <context:component-scan base-package="bg.statealerts">
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
 	
 	<import resource="social.xml" />
+    <import resource="mail.xml" />
     <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
         <property name="driverClassName" value="${database.driverClassName}"/>
         <property name="url" value="${database.url}/${database.name}"/>
@@ -37,7 +38,7 @@
     <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
-    
+
     <tx:annotation-driven transaction-manager="transactionManager" />
     
     <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
