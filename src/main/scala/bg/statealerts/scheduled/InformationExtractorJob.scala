@@ -106,21 +106,21 @@ class InformationExtractorJob {
 
   def validateDescriptor(descriptor: ExtractorDescriptor) {
     val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
-    if (contentLocationType == ContentLocationType.Table && (!descriptor.titlePath.nonEmpty || !descriptor.datePath.nonEmpty)) {
+    if (contentLocationType == ContentLocationType.Table && (!descriptor.paths.titlePath.nonEmpty || !descriptor.paths.datePath.nonEmpty)) {
       throw new IllegalStateException("Required extractor configuration parameters are not present for " + descriptor.sourceName + ". For contentLocationType=Table, 'titlePath' and 'datePath' are required")
     }
-    if (contentLocationType == ContentLocationType.LinkedDocumentInTable && !descriptor.documentLinkPath.nonEmpty) {
+    if (contentLocationType == ContentLocationType.LinkedDocumentInTable && !descriptor.paths.documentLinkPath.nonEmpty) {
       throw new IllegalStateException("Required extractor configuration parameters are not present for " + descriptor.sourceName + ". For contentLocationType=LinkedDocumentInTable, 'documentLinkPath' is required")
     }
-    if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage && (!descriptor.documentLinkPath.nonEmpty || !descriptor.documentPageLinkPath.nonEmpty)) {
+    if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage && (!descriptor.paths.documentLinkPath.nonEmpty || !descriptor.paths.documentPageLinkPath.nonEmpty)) {
       throw new IllegalStateException("Required extractor configuration parameters are not present for " + descriptor.sourceName + ". For contentLocationType=LinkedDocumentOnLinkedPage, 'documentLinkPath' and 'documentPageLinkPath' are required")
     }
 
     if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || contentLocationType == ContentLocationType.LinkedPage) {
-      if (!descriptor.titlePath.nonEmpty && !descriptor.documentPageTitlePath.nonEmpty) {
+      if (!descriptor.paths.titlePath.nonEmpty && !descriptor.paths.documentPageTitlePath.nonEmpty) {
         throw new IllegalStateException("Extractor " + descriptor.sourceName + " must have either 'titlePath' or 'documentPageTitlePath'")
       }
-      if (!descriptor.datePath.nonEmpty && !descriptor.documentPageDatePath.nonEmpty) {
+      if (!descriptor.paths.datePath.nonEmpty && !descriptor.paths.documentPageDatePath.nonEmpty) {
         throw new IllegalStateException("Extractor " + descriptor.sourceName + " must have either 'datePath' or 'documentPageDatePath'")
       }
     }

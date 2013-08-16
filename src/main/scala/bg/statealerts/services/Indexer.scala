@@ -18,6 +18,7 @@ import org.apache.lucene.document.LongField
 import org.apache.lucene.document.TextField
 import org.apache.lucene.document.Field.Store
 import org.joda.time.DateTime
+import org.apache.lucene.analysis.bg.BulgarianAnalyzer
 
 @Service
 class Indexer {
@@ -26,10 +27,13 @@ class Indexer {
   @Value("${index.path}")
   var indexPath: String = _
 
+  @Value("${lucene.analyzer.class}")
+  var analyzerClass: String = _
+  
   @PostConstruct
   def init() = {
     val dir: Directory = FSDirectory.open(new File(indexPath))
-    val analyzer: Analyzer = new StandardAnalyzer(Version.LUCENE_43)
+    val analyzer: Analyzer = Class.forName(analyzerClass).getConstructor(classOf[Version]).newInstance(Version.LUCENE_43).asInstanceOf[Analyzer]
     val config: IndexWriterConfig = new IndexWriterConfig(Version.LUCENE_43, analyzer)
     config.setOpenMode(OpenMode.CREATE_OR_APPEND)
     writer = new IndexWriter(dir, config)

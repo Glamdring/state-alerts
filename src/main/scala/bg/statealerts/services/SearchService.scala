@@ -20,15 +20,19 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import org.joda.time.DateTime
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil
+import org.apache.lucene.analysis.bg.BulgarianAnalyzer
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
 class SearchService {
 
-  val analyzer: Analyzer = new StandardAnalyzer(Version.LUCENE_43)
+  var analyzer: Analyzer = _
 
   @Value("${index.path}")
   var indexPath: String = _
+  @Value("${lucene.analyzer.class}")
+  var analyzerClass: String = _
+  
   var indexReader: IndexReader = _
   var searcher: IndexSearcher = _
 
@@ -36,12 +40,14 @@ class SearchService {
   def init() = {
     indexReader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
     searcher = new IndexSearcher(indexReader);
+    analyzer = Class.forName(analyzerClass).getConstructor(classOf[Version]).newInstance(Version.LUCENE_43).asInstanceOf[Analyzer]
   }
 
   @PreDestroy
   def destroy() = {
     indexReader.close()
   }
+  
   def search(keywords: String): List[Document] = {
     val escapedKeywords = QueryParserUtil.escape(keywords)
     val parser: QueryParser = new QueryParser(Version.LUCENE_43, "text", analyzer);

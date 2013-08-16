@@ -97,7 +97,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
           }
 
           htmlPage = client.getPage(request)
-          val list = asScalaBuffer(htmlPage.getByXPath(descriptor.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
+          val list = asScalaBuffer(htmlPage.getByXPath(descriptor.paths.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
 
           if (list.isEmpty) {
             loop.break
@@ -186,15 +186,17 @@ class Extractor(descriptor: ExtractorDescriptor) {
           documentPage.getEnclosingWindow().getHistory().back()
         }
       })
-    } else if (descriptor.documentLinkPath.get.endsWith("href")) {
-      doc.url = row.getFirstByXPath(descriptor.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
+    } else if (descriptor.paths.documentLinkPath.get.endsWith("href")) {
+      doc.url = row.getFirstByXPath(descriptor.paths.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
     } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
-      val link = row.getFirstByXPath[HtmlElement](descriptor.documentLinkPath.get)
-      val commandString = link.getOnClickAttribute().replaceAll("return ", "");
-      val executeJavaScript = htmlPage.executeJavaScript(commandString);
-      val documentPage = executeJavaScript.getNewPage()
-      populateDocumentWithDownloadedContent(doc, documentPage, ctx)
-      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+      val link = row.getFirstByXPath[HtmlElement](descriptor.paths.documentLinkPath.get)
+      if (link != null) {
+	      val commandString = link.getOnClickAttribute().replaceAll("return ", "")
+	      val executeJavaScript = htmlPage.executeJavaScript(commandString)
+	      val documentPage = executeJavaScript.getNewPage()
+	      populateDocumentWithDownloadedContent(doc, documentPage, ctx)
+	      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+      }
     }
   }
 

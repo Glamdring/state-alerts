@@ -10,5 +10,4 @@
 <p class="lead">Получете известие за всяко срещане на избрана от вас ключова дума в държавни документи</p>
 <%@ include file="signin.jsp" %>
 
-</div>
 <%@ include file="footer.jsp" %>
