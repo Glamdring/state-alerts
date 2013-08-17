@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    <property name="host" value="${mail.host}" />
+    <property name="host" value="${mail.host:locahost}" />
+    <property name="port" value="${mail.port:}" />
+    <property name="username" value="${mail.username:}" />
+    <property name="password" value="${mail.password:}" />
+    <property name="defaultEncoding" value="utf-8" />
+    <property name="javaMailProperties">
+        <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+            <property name="location" value="file:${statealerts.config.location}/mail.properties" />
+            <property name="ignoreResourceNotFound" value="true" />
+        </bean>
+    </property>
   </bean>
 </beans>
