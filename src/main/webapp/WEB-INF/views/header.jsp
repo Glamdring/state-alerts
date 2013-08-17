@@ -7,11 +7,9 @@
 <link href="${staticRoot}/styles/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
 <link href="${staticRoot}/styles/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" media="screen"/>
 <link href="${staticRoot}/styles/main.css" rel="stylesheet" type="text/css" media="screen"/>
-<link href="${staticRoot}/playerSkins/jplayer.blue.monday.css" rel="stylesheet" type="text/css" media="screen"/>
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://login.persona.org/include.js"></script>
-<script type="text/javascript" src="${staticRoot}/scripts/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="${staticRoot}/scripts/bootstrap.min.js"></script>
 ${head}
 <meta name="description" content="" />

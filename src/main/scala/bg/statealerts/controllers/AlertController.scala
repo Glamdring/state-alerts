@@ -8,6 +8,7 @@ import bg.statealerts.services.AlertService
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestParam
 import scala.collection.JavaConversions
+import org.springframework.web.bind.annotation.ModelAttribute
 
 @Controller
 @RequestMapping(Array("/alerts"))
@@ -27,16 +28,16 @@ class AlertController {
   @RequestMapping(value=Array("/save"))
   def saveAlert(alert: Alert): String = {
     if (ctx.user == null) {
-      return "alertList"
+      return "redirect:/"
     }
     alertService.saveAlert(alert, ctx.user)
-    return "alertList"
+    return "redirect:/alerts/list"
   }
   
   @RequestMapping(value=Array("/list"))
-  def saveAlert(model: Model): String = {
+  def list(model: Model): String = {
     if (ctx.user == null) {
-      return "/"
+      return "redirect:/"
     }
     model.addAttribute("alerts", JavaConversions.asJavaList(alertService.getAlerts(ctx.user)))
     return "alertList"
@@ -45,6 +46,11 @@ class AlertController {
   @RequestMapping(value=Array("/delete"))
   def saveAlert(@RequestParam id: Long): String = {
     alertService.delete(id)
-    return "alertList"
+    return "redirect:/alerts/list"
   }
+  
+   @ModelAttribute("userContext")
+    def getUserContext(): UserContext = {
+	  return ctx
+    }
 }
