@@ -49,9 +49,4 @@ class AlertController {
   def saveAlert(@RequestParam id: Int) = {
     alertService.delete(id)
   }
-
-  @ModelAttribute("userContext")
-  def getUserContext(): UserContext = {
-    return ctx
-  }
 }

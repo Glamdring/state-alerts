@@ -58,11 +58,11 @@ ${head}
         <div class="masthead">
             <ul class="nav nav-pills pull-right">
                 <li <c:if test="${currentPage == 'home'}">class="active"</c:if>><a href="${root}/">${msg.home}</a></li>
+                <c:if test="${userLoggedIn}">
+                    <li <c:if test="${currentPage == 'myalerts'}">class="active"</c:if>><a href="${root}/alerts/list">${msg.myAlerts}</a></li>
+                </c:if>
                 <li <c:if test="${currentPage == 'search'}">class="active"</c:if>><a href="${root}/search">${msg.search}</a></li>
                 <li <c:if test="${currentPage == 'topalerts'}">class="active"</c:if>><a href="${root}/toprecent">${msg.topAlerts}</a></li>
-                <c:if test="${userLoggedIn}">
-                    <li <c:if test="${currentPage == 'myalerts'}">class="active"</c:if>><a href="${root}/myalerts">${msg.myAlerts}</a></li>
-                </c:if>
                 <c:if test="${!userLoggedIn}">
                     <li <c:if test="${currentPage == 'signup'}">class="active"</c:if>><a href="${root}/signup">${msg.signup}</a></li>
                 </c:if>

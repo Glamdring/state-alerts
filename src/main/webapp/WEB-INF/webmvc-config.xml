@@ -27,6 +27,7 @@
 	<!-- Register "global" interceptor beans to apply to all registered HandlerMappings -->
 	<mvc:interceptors>
 		<bean class="bg.statealerts.util.web.I18nShorthandInterceptor"/>
+		<bean class="bg.statealerts.util.web.RequestScopedDataSettingInterceptor"/>
 	</mvc:interceptors>
 
 	<!-- mapping images, js and styles with separate mappings. Otherwise it conflicts with ResourceController mapping. -->

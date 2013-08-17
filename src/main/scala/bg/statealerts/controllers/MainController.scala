@@ -12,12 +12,16 @@ import scala.collection.mutable.Buffer
 import com.codahale.jerkson.Json
 import javax.servlet.http.HttpServletResponse
 import org.apache.commons.io.IOUtils
+import org.springframework.web.bind.annotation.ModelAttribute
 
 @Controller
 class MainController {
 
   @Inject
   var searcher: SearchService = _
+
+  @Inject
+  var ctx: UserContext = _
 
   @RequestMapping(Array("/"))
   def index(): String = {
