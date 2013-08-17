@@ -26,8 +26,7 @@
 
 	<!-- Register "global" interceptor beans to apply to all registered HandlerMappings -->
 	<mvc:interceptors>
-		<bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor" />
-		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="lang" />
+		<bean class="bg.statealerts.util.web.I18nShorthandInterceptor"/>
 	</mvc:interceptors>
 
 	<!-- mapping images, js and styles with separate mappings. Otherwise it conflicts with ResourceController mapping. -->

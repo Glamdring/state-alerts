@@ -31,7 +31,7 @@ class AlertService {
   }
 
   @Transactional
-  def delete(id: Long) = {
+  def delete(id: Int) = {
     dao.delete(classOf[Alert], id)
   }
 }

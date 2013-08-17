@@ -22,7 +22,10 @@ trait BaseDao {
   }
   
   def delete[T](clazz: Class[T], id: Any) = {
-    entityManager.remove(get(clazz, id));
+    val entity = get(clazz, id)
+    if (entity != null) {
+    	entityManager.remove(entity);
+    }
   }
 
 

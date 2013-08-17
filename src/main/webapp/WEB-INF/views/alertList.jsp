@@ -4,9 +4,9 @@
 <c:set var="head">
 <title>Известия</title>
 <script type="text/javascript">
-function delete(id) {
+function deleteAlert(id) {
   $.post("${root}/alerts/delete", {id: id}, function() {
-    $("#alert-" + id).fadeOut(500, function() {
+    $("#row-" + id).fadeOut(500, function() {
     	$(this).remove();
     });
   }); 
@@ -16,13 +16,13 @@ function delete(id) {
 <%@ include file="header.jsp" %>
 
 <a href="${root}/alerts/new">Ново известие</a>
-<table>
+<table class="table table-bordered table-striped">
 <thead>
 <tr>
-	<td>Име</td>
-    <td>Ключови думи</td>
-    <td>Email</td>
-    <td>Период</td>
+	<td>${msg.name}</td>
+    <td>${msg.keywords}</td>
+    <td>${msg.email}</td>
+    <td>${msg.period}</td>
     <td></td>
 </tr>
 </thead>
@@ -33,7 +33,7 @@ function delete(id) {
 	<td>${alert.keywords}</td>
 	<td>${alert.email}</td>
 	<td></td>
-	<td><a href="javascript:void(0);" onclick="delete(${alert.id})">изтрий</a></td>
+	<td><a href="javascript:void(0);" onclick="deleteAlert(${alert.id});">${msg.delete}</a></td>
 </tr>
 </c:forEach>
 </tbody>

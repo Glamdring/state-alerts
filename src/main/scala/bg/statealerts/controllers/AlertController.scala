@@ -9,6 +9,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestParam
 import scala.collection.JavaConversions
 import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 @RequestMapping(Array("/alerts"))
@@ -16,16 +17,16 @@ class AlertController {
 
   @Inject
   var ctx: UserContext = _
-  
+
   @Inject
   var alertService: AlertService = _
-  
-  @RequestMapping(value=Array("/new"))
+
+  @RequestMapping(value = Array("/new"))
   def newAlert(): String = {
     return "alert";
   }
-  
-  @RequestMapping(value=Array("/save"))
+
+  @RequestMapping(value = Array("/save"))
   def saveAlert(alert: Alert): String = {
     if (ctx.user == null) {
       return "redirect:/"
@@ -33,8 +34,8 @@ class AlertController {
     alertService.saveAlert(alert, ctx.user)
     return "redirect:/alerts/list"
   }
-  
-  @RequestMapping(value=Array("/list"))
+
+  @RequestMapping(value = Array("/list"))
   def list(model: Model): String = {
     if (ctx.user == null) {
       return "redirect:/"
@@ -42,15 +43,15 @@ class AlertController {
     model.addAttribute("alerts", JavaConversions.asJavaList(alertService.getAlerts(ctx.user)))
     return "alertList"
   }
-  
-  @RequestMapping(value=Array("/delete"))
-  def saveAlert(@RequestParam id: Long): String = {
+
+  @RequestMapping(value = Array("/delete"))
+  @ResponseBody
+  def saveAlert(@RequestParam id: Int) = {
     alertService.delete(id)
-    return "redirect:/alerts/list"
   }
-  
-   @ModelAttribute("userContext")
-    def getUserContext(): UserContext = {
-	  return ctx
-    }
+
+  @ModelAttribute("userContext")
+  def getUserContext(): UserContext = {
+    return ctx
+  }
 }
