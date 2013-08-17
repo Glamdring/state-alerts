@@ -1,26 +1,26 @@
 package bg.statealerts.scheduled
 
 import java.io.File
-import org.joda.time.{DateTimeConstants, DateTime}
+import java.util.Random
+import org.apache.commons.lang3.StringUtils
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import com.codahale.jerkson.Json
 import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import bg.statealerts.model.Import
 import bg.statealerts.services.DocumentService
 import bg.statealerts.services.Indexer
+import bg.statealerts.services.extractors.ContentLocationType
 import bg.statealerts.services.extractors.Extractor
 import javax.annotation.PostConstruct
 import javax.inject.Inject
-import java.util.Random
-import bg.statealerts.services.extractors.ContentLocationType
-import org.slf4j.LoggerFactory
-import org.apache.commons.lang3.StringUtils
-import org.joda.time.DateMidnight
-import org.joda.time.DateTimeZone
-import org.joda.time.ReadableDateTime
+import org.joda.time.DateTimeConstants
 
 @Component
 class InformationExtractorJob {
@@ -66,7 +66,7 @@ class InformationExtractorJob {
     }
     for (extractor <- extractors) {
       try {
-        var lastImportTime = new DateMidnight(dao.getLastImportDate(extractor.sourceName).getOrElse(new DateMidnight().minusDays(14))).withZoneRetainFields(DateTimeZone.UTC)
+        var lastImportTime = dao.getLastImportDate(extractor.sourceName).getOrElse(new DateTime().minusDays(14).withTimeAtStartOfDay()).withZoneRetainFields(DateTimeZone.UTC)
         val now = DateTime.now()
         var documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()

@@ -3,7 +3,6 @@ package bg.statealerts.services.extractors
 import java.util.regex.Pattern
 
 import org.apache.commons.lang3.StringUtils
-import org.joda.time.DateMidnight
 
 import com.gargoylesoftware.htmlunit.html.DomNode
 import com.gargoylesoftware.htmlunit.html.HtmlElement
@@ -30,7 +29,7 @@ class TableContentExtractor extends DocumentDetailsExtractor {
         }
       })
       if (StringUtils.isNotBlank(text)) { 
-    	  doc.publishDate = new DateMidnight(ctx.dateFormatter.parseDateTime(text)).toDateTime()
+    	  doc.publishDate = ctx.dateFormatter.parseDateTime(text).withTimeAtStartOfDay() 
       }
     })
 
