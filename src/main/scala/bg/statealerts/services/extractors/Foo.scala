@@ -21,8 +21,9 @@ import org.apache.lucene.index.Term
 object Foo {
   def main(args: Array[String]) {
 	  val indexReader = DirectoryReader.open(FSDirectory.open(new File("c:/config/statealerts/index")));
+	  println(indexReader.maxDoc())
 	  val searcher = new IndexSearcher(indexReader)
-	  println(searcher.search(new TermQuery(new Term("text", "адрес за контакти")), 50).totalHits)
+	  println(searcher.search(new TermQuery(new Term("text", "технологии")), 50).totalHits)
   }
 
   def maina(args: Array[String]) {

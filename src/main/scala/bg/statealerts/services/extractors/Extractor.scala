@@ -114,7 +114,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                 doc.sourceDisplayName = descriptor.sourceDisplayName.getOrElse(descriptor.sourceKey)
 
                 tableContentExtractor.populateDocument(doc, row, entryIdx, ctx)
-                if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
+                if (doc.publishDate != null && !doc.publishDate.isAfter(since)) {
                   loop.break
                 }
 
@@ -127,7 +127,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                     getLinkedDocument(doc, row, ctx, request)
                   }
 
-                  if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
+                  if (doc.publishDate != null && !doc.publishDate.isAfter(since)) {
                     loop.break
                   }
                   if (StringUtils.isNotBlank(doc.url)) {
