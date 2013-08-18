@@ -33,6 +33,8 @@
 
 	<import resource="social.xml" />
 	<import resource="mail.xml" />
+	<import resource="jmx.xml" />
+	
 	<bean class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" id="dataSource">
 		<property name="driverClassName" value="${database.driverClassName}" />
