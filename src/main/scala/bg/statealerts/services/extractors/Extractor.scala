@@ -135,7 +135,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                   }
                 }
                 // don't add empty documents (the content of which was not obtained, for some reason)
-                // also, // do not import documents from the current day, as new ones may appear later, and normally we don't get the hour of upload, only the date
+                // also, do not import documents from the current day, as new ones may appear later, and normally we don't get the hour of upload, only the date
                 if (StringUtils.isNotBlank(doc.content) && doc.publishDate != null && doc.publishDate.isBefore(today)) {
                   result ::= doc
                 }

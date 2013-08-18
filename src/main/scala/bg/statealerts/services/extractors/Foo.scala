@@ -1,39 +1,29 @@
 package bg.statealerts.services.extractors
 
+import java.io.File
 import java.net.URL
 import java.util.ArrayList
-
 import scala.collection.JavaConversions
 import scala.collection.mutable.Buffer
-
+import org.apache.lucene.index.DirectoryReader
+import org.apache.lucene.search.IndexSearcher
+import org.apache.lucene.search.TermQuery
+import org.apache.lucene.store.FSDirectory
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.BrowserVersionFeatures
 import com.gargoylesoftware.htmlunit.HttpMethod
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.WebRequest
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
+import org.apache.lucene.index.Term
 
 object Foo {
   def main(args: Array[String]) {
-    val webClient = new WebClient();
-
-    var page: HtmlPage = webClient.getPage("http://dv.parliament.bg/DVWeb/broeveList.faces").asInstanceOf[HtmlPage];
-
-    val list = page.getByXPath("//table[@id='broi_form:dataTable1']//a/img/..").asInstanceOf[ArrayList[HtmlAnchor]]
-    for (link <- JavaConversions.asScalaBuffer(list)) {
-        val commandString = link.getOnClickAttribute().replaceAll("return ", "");
-        System.out.println(commandString);
-
-        val executeJavaScript = page.executeJavaScript(commandString);
-
-        val newPage = executeJavaScript.getNewPage();
-        println(newPage.getWebResponse().getResponseHeaders())
-
-        page = webClient.getPage("http://dv.parliament.bg/DVWeb/broeveList.faces");
-    }
-}
+	  val indexReader = DirectoryReader.open(FSDirectory.open(new File("c:/config/statealerts/index")));
+	  val searcher = new IndexSearcher(indexReader)
+	  println(searcher.search(new TermQuery(new Term("text", "адрес за контакти")), 50).totalHits)
+  }
 
   def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)

@@ -2,8 +2,6 @@ package bg.statealerts.dao
 
 import scala.collection.JavaConversions
 
-import org.springframework.stereotype.Repository
-
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 import javax.persistence.Query
@@ -82,5 +80,27 @@ trait BaseDao {
         val result = findByQuery(details)
 
         return result;
+    }
+    
+    
+    def listPaged[T](clazz: Class[T], start: Int, pageSize: Int): List[T] = {
+      val details = new QueryDetails()
+      details.query = "from " + clazz.getName() + " ORDER BY id"
+      details.start = start
+      details.count = pageSize
+      return findByQuery(details);
+    }
+    
+    def performBatched[T](clazz: Class[T], pageSize: Int, operation: List[T] => Unit): Unit = {
+      var page = 0;
+	    while (true) {
+	        val data = listPaged(clazz, page * pageSize, pageSize);
+	        page += 1;
+	        operation(data);
+	        // final batch
+	        if (data.size < pageSize) {
+	            return
+	        }
+	    }
     }
 }

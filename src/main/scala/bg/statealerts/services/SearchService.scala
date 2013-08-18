@@ -57,7 +57,7 @@ class SearchService {
   @Transactional(readOnly=true)
   def search(keywords: String): List[Document] = {
     val escapedKeywords = QueryParserUtil.escape(keywords)
-    val q = new TermQuery(new Term("text", escapedKeywords))
+    val q = new TermQuery(new Term("text", escapedKeywords + "*"))
     val sort = new Sort(new SortField("timestamp", SortField.Type.LONG, true))
     val result: TopDocs = searcher.search(q, null, 50, sort)
 

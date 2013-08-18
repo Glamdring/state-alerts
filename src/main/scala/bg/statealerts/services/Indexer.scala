@@ -19,6 +19,8 @@ import org.apache.lucene.document.TextField
 import org.apache.lucene.document.Field.Store
 import org.joda.time.DateTime
 import org.apache.lucene.analysis.bg.BulgarianAnalyzer
+import bg.statealerts.dao.DocumentDao
+import javax.inject.Inject
 
 @Service
 class Indexer {
@@ -29,6 +31,9 @@ class Indexer {
 
   @Value("${lucene.analyzer.class}")
   var analyzerClass: String = _
+  
+  @Inject
+  var documentDao: DocumentDao = _
   
   @PostConstruct
   def init() = {
@@ -49,6 +54,17 @@ class Indexer {
     for (document <- documents) {
 	    writer.addDocument(getLuceneDocument(document, now))
     }
+    writer.commit()
+  }
+  
+  def reindex() = {
+    writer.deleteAll()
+    val now = new DateTime()
+    documentDao.performBatched(classOf[Document], 200, (data: List[Document]) => {
+      for (document <- data) {
+    	writer.addDocument(getLuceneDocument(document, now))
+      }
+    })
     writer.commit()
   }
   
