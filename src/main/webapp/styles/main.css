@@ -14,10 +14,6 @@
     text-align: center;
 }
 
-#trackTitle {
-    min-height: 20px;
-}
-
 .alert-message {
     opacity: 50%;
     background-color: #FFF8DC;
@@ -45,6 +41,8 @@
     margin-right: 5px;
 }
 
-.searchForm label {
-    font-size: 0.9em;
+.radioLabel {
+   display: inline;
+   vertical-align: middle;
+   margin-right: 10px;
 }

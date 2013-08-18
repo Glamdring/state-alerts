@@ -7,10 +7,10 @@ import javax.persistence.TypedQuery
 
 @Repository
 class DocumentDao extends BaseDao {
-  def getLastImportDate(sourceName: String): Option[DateTime] = {
-    val query: TypedQuery[DateTime] = entityManager.createQuery("SELECT latestDocumentDate FROM Import WHERE sourceName = :sourceName ORDER BY latestDocumentDate DESC", classOf[DateTime])
+  def getLastImportDate(sourceKey: String): Option[DateTime] = {
+    val query: TypedQuery[DateTime] = entityManager.createQuery("SELECT latestDocumentDate FROM Import WHERE sourceKey = :sourceKey ORDER BY latestDocumentDate DESC", classOf[DateTime])
     query.setMaxResults(1)
-    query.setParameter("sourceName", sourceName)
+    query.setParameter("sourceKey", sourceKey)
 
     val result = query.getResultList()
     if (result.isEmpty()) {

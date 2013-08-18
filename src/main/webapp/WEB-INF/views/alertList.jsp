@@ -22,7 +22,7 @@ function deleteAlert(id) {
 	<td>${msg.name}</td>
     <td>${msg.keywords}</td>
     <td>${msg.email}</td>
-    <td>${msg.period}</td>
+    <td style="width: 120px;">${msg.period}</td>
     <td></td>
 </tr>
 </thead>
@@ -32,7 +32,7 @@ function deleteAlert(id) {
 	<td>${alert.name}</td>
 	<td>${alert.keywords}</td>
 	<td>${alert.email}</td>
-	<td></td>
+	<td>${msg[alert.period.toLowerCase()]}</td>
 	<td><a href="javascript:void(0);" onclick="deleteAlert(${alert.id});">${msg.delete}</a></td>
 </tr>
 </c:forEach>

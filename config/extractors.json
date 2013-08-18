@@ -1,7 +1,8 @@
 {
    "extractors":[
       {
-        "sourceName": "ParliamentLawProjects",
+        "sourceKey": "ParliamentLawProjects",
+        "sourceDisplayName": "Законопроекти",
 		"enabled": "false",
         "documentType": "PDF",
         "contentLocationType": "LinkedDocumentOnLinkedPage",
@@ -22,7 +23,8 @@
         "dateFormat": "dd/MM/yyyy"
       },
       {
-        "sourceName": "AOP",
+        "sourceKey": "AOP",
+        "sourceDisplayName": "Агенция за обществени поръчки",
 		"enabled": "false",
         "documentType": "HTML",
         "contentLocationType": "LinkedPage",
@@ -45,7 +47,8 @@
         "dateFormat":"dd-MM-yyyy"
       },
       {
-        "sourceName": "StateNewspaper",
+        "sourceKey": "StateNewspaper",
+        "sourceDisplayName": "Държавен вестник",
         "documentType": "PDF",
         "contentLocationType": "LinkedDocumentInTable",
         "url": "http://dv.parliament.bg/DVWeb/broeveList.faces",

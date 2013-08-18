@@ -23,7 +23,7 @@
 	<td>${entry.externalId}</td>
 	<td>${entry.title}</td>
 	<td>${entry.content.substring(0, 100)}</td>
-	<td>${entry.sourceName}</td>
+	<td>${entry.sourceDisplayName}</td>
 	<td><fmt:formatDate value="${entry.publishDate.toDate()}" pattern="dd.MM.yyyy" /></td>
 	<td><a href="${entry.url}">${msg.open}</a></td>
 </tr>

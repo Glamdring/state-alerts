@@ -21,12 +21,14 @@ import bg.statealerts.services.extractors.Extractor
 import javax.annotation.PostConstruct
 import javax.inject.Inject
 import org.joda.time.DateTimeConstants
+import javax.annotation.Resource
 
 @Component
 class InformationExtractorJob {
 
   val logger = LoggerFactory.getLogger(classOf[InformationExtractorJob]) 
   
+  @Resource(name="extractors")
   var extractors: List[Extractor] = List()
 
   @Value("${statealerts.config.location}")
@@ -46,18 +48,6 @@ class InformationExtractorJob {
 
   val random = new Random()
 
-  @PostConstruct
-  def init() {
-    DateTimeZone.setDefault(DateTimeZone.UTC)
-    val file = new File(configLocation + "/extractors.json")
-    val config = Json.parse[ExtractorConfiguration](file)
-    for (descriptor <- config.extractors) {
-      validateDescriptor(descriptor) // the application fails on startup if a configuration is invalid
-      var extractor = new Extractor(descriptor)
-      extractors ::= extractor
-    }
-  }
-
   @Scheduled(fixedRate = DateTimeConstants.MILLIS_PER_HOUR)
   def run() {
     if (randomSleepMaxMinutes > 0) {
@@ -66,7 +56,7 @@ class InformationExtractorJob {
     }
     for (extractor <- extractors) {
       try {
-        var lastImportTime = dao.getLastImportDate(extractor.sourceName).getOrElse(new DateTime().minusDays(14).withTimeAtStartOfDay()).withZoneRetainFields(DateTimeZone.UTC)
+        var lastImportTime = dao.getLastImportDate(extractor.descriptor.sourceKey).getOrElse(new DateTime().minusDays(14).withTimeAtStartOfDay()).withZoneRetainFields(DateTimeZone.UTC)
         val now = DateTime.now()
         var documents: List[Document] = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
@@ -94,35 +84,14 @@ class InformationExtractorJob {
           val docImport = new Import()
           docImport.importedDocuments = documentCount
           docImport.latestDocumentDate = documents(0).publishDate
-          docImport.sourceName = extractor.sourceName
+          docImport.sourceKey = extractor.descriptor.sourceKey
           docImport.importTime = now
           service.save(docImport)
         }
       } catch {
-        case ex: Exception => logger.error("Problem extracting information from source: " + extractor.sourceName, ex)
+        case ex: Exception => logger.error("Problem extracting information from source: " + extractor.descriptor.sourceKey, ex)
       }
     }
   }
-
-  def validateDescriptor(descriptor: ExtractorDescriptor) {
-    val contentLocationType = ContentLocationType.withName(descriptor.contentLocationType)
-    if (contentLocationType == ContentLocationType.Table && (!descriptor.paths.titlePath.nonEmpty || !descriptor.paths.datePath.nonEmpty)) {
-      throw new IllegalStateException("Required extractor configuration parameters are not present for " + descriptor.sourceName + ". For contentLocationType=Table, 'titlePath' and 'datePath' are required")
-    }
-    if (contentLocationType == ContentLocationType.LinkedDocumentInTable && !descriptor.paths.documentLinkPath.nonEmpty) {
-      throw new IllegalStateException("Required extractor configuration parameters are not present for " + descriptor.sourceName + ". For contentLocationType=LinkedDocumentInTable, 'documentLinkPath' is required")
-    }
-    if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage && (!descriptor.paths.documentLinkPath.nonEmpty || !descriptor.paths.documentPageLinkPath.nonEmpty)) {
-      throw new IllegalStateException("Required extractor configuration parameters are not present for " + descriptor.sourceName + ". For contentLocationType=LinkedDocumentOnLinkedPage, 'documentLinkPath' and 'documentPageLinkPath' are required")
-    }
-
-    if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || contentLocationType == ContentLocationType.LinkedPage) {
-      if (!descriptor.paths.titlePath.nonEmpty && !descriptor.paths.documentPageTitlePath.nonEmpty) {
-        throw new IllegalStateException("Extractor " + descriptor.sourceName + " must have either 'titlePath' or 'documentPageTitlePath'")
-      }
-      if (!descriptor.paths.datePath.nonEmpty && !descriptor.paths.documentPageDatePath.nonEmpty) {
-        throw new IllegalStateException("Extractor " + descriptor.sourceName + " must have either 'datePath' or 'documentPageDatePath'")
-      }
-    }
-  }
+  
 }

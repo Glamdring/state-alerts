@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import scala.collection.JavaConversions
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.ResponseBody
+import bg.statealerts.services.extractors.Extractor
+import javax.annotation.Resource
 
 @Controller
 @RequestMapping(Array("/alerts"))
@@ -21,6 +23,14 @@ class AlertController {
   @Inject
   var alertService: AlertService = _
 
+  @Resource(name="extractors")
+  var extractors: List[Extractor] = _
+  
+  @ModelAttribute("sources")
+  def getSource() = {
+    extractors
+  }
+  
   @RequestMapping(value = Array("/new"))
   def newAlert(): String = {
     return "alert";
@@ -46,7 +56,7 @@ class AlertController {
 
   @RequestMapping(value = Array("/delete"))
   @ResponseBody
-  def saveAlert(@RequestParam id: Int) = {
+  def delete(@RequestParam id: Int) = {
     alertService.delete(id)
   }
 }

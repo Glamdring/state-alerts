@@ -2,9 +2,11 @@ package bg.statealerts.scheduled
 
 import bg.statealerts.services.extractors.ContentLocationType
 import bg.statealerts.services.extractors.DocumentType
+import scala.beans.BeanProperty
 
 case class ExtractorDescriptor(
-  sourceName: String,
+  @BeanProperty sourceKey: String,
+  @BeanProperty sourceDisplayName: Option[String],
   enabled: Option[Boolean],
   documentType: String,
   entriesPerRow: Option[Int], // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter

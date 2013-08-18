@@ -1,9 +1,15 @@
 package bg.statealerts.model
 
+import scala.beans.BeanProperty
+import org.hibernate.annotations.Index
 import org.hibernate.annotations.Type
 import org.joda.time.DateTime
-import javax.persistence._
-import scala.beans.BeanProperty
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.Lob
+import javax.persistence.GenerationType
 
 @Entity
 case class Document {
@@ -25,7 +31,11 @@ case class Document {
   var publishDate: DateTime = _
   
   @BeanProperty
-  var sourceName: String = _
+  @Index(name="sourceKeyIndex")
+  var sourceKey: String = _
+  
+  @BeanProperty
+  var sourceDisplayName: String = _
   
   @Column(length=2000)
   @BeanProperty

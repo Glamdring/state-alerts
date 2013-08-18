@@ -27,8 +27,9 @@ import scala.annotation.meta.param
 import java.util.regex.Pattern
 import scala.annotation.meta.param
 import com.gargoylesoftware.htmlunit.WebWindowListener
+import scala.beans.BeanProperty
 
-class Extractor(descriptor: ExtractorDescriptor) {
+class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 
   val logger: Logger = LoggerFactory.getLogger(classOf[Extractor])
 
@@ -38,8 +39,7 @@ class Extractor(descriptor: ExtractorDescriptor) {
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
 
   val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.map(_.bodyParams.get), descriptor.pagingMultiplier)
-  val sourceName = descriptor.sourceName
-
+  
   val baseUrl: String = {
     val fullUrl = new URL(descriptor.url)
     var port = fullUrl.getPort()
@@ -108,7 +108,8 @@ class Extractor(descriptor: ExtractorDescriptor) {
             for (entryIdx <- 0 until entries) {
               try {
                 val doc = new Document()
-                doc.sourceName = descriptor.sourceName
+                doc.sourceKey = descriptor.sourceKey
+                doc.sourceDisplayName = descriptor.sourceDisplayName.getOrElse(descriptor.sourceKey)
 
                 tableContentExtractor.populateDocument(doc, row, entryIdx, ctx)
                 if (doc.publishDate != null && doc.publishDate.isBefore(since)) {
