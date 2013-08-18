@@ -67,6 +67,8 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     if (!descriptor.enabled.getOrElse(true)) {
       return List()
     }
+    val today = new DateTime().withTimeAtStartOfDay()
+    
     var result = List[Document]()
     val loop = new Breaks()
     val httpMethod = HttpMethod.valueOf(descriptor.httpRequest.map(_.method.getOrElse("GET")).getOrElse("GET"))
@@ -133,7 +135,8 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                   }
                 }
                 // don't add empty documents (the content of which was not obtained, for some reason)
-                if (StringUtils.isNotBlank(doc.content)) {
+                // also, // do not import documents from the current day, as new ones may appear later, and normally we don't get the hour of upload, only the date
+                if (StringUtils.isNotBlank(doc.content) && doc.publishDate != null && doc.publishDate.isBefore(today)) {
                   result ::= doc
                 }
               } catch {
