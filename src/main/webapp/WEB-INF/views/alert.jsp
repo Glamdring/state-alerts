@@ -7,9 +7,11 @@
 <%@ include file="header.jsp" %>
 
 <form action="${root}/alerts/save" method="POST">
-Име: <input type="text" name="name" />
-Email: <input type="text" name="email" value="${userContext.user.email}" />
-Ключови думи: <input type="text" name="keywords" />
-<input type="submit" value="Запиши" />
+<table>
+<tr><td>Име:</td><td><input type="text" name="name" /></td></tr>
+<tr><td>Email:</td><td><input type="text" name="email" value="${userContext.user.email}" /></td></tr>
+<tr><td>Ключови думи:</td><td><input type="text" name="keywords" /> (${msg.commaSeparated})</td></tr>
+<tr><td></td><td><input type="submit" value="Запиши" class="btn" /></td></tr>
+</table>
 </form>
 <%@ include file="footer.jsp" %>

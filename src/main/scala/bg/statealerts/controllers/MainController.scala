@@ -13,6 +13,7 @@ import com.codahale.jerkson.Json
 import javax.servlet.http.HttpServletResponse
 import org.apache.commons.io.IOUtils
 import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.ui.Model
 
 @Controller
 class MainController {
@@ -29,10 +30,13 @@ class MainController {
   }
 
   @RequestMapping(Array("/search"))
-  def search(@RequestParam keywords: String, response: HttpServletResponse): Unit = {
-    val buffer: Buffer[Document] = searcher.search(keywords).toBuffer
-    response.setContentType("application/json; charset=UTF-8")
-    val result = Json.generate(bufferAsJavaList(buffer))
-    IOUtils.write(result, response.getOutputStream())
+  def search(@RequestParam keywords: String, model: Model): String = {
+    val results = asJavaList(searcher.search(keywords))
+    model.addAttribute("results", results)
+    "searchResults"
   }
+  
+  // serializing to JSON (using the built-in mechanisms doesn't work well)
+  // val result = Json.generate(bufferAsJavaList(buffer))
+  // IOUtils.write(result, response.getOutputStream())
 }

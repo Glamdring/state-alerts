@@ -14,7 +14,7 @@ function deleteAlert(id) {
 </script>
 </c:set>
 <%@ include file="header.jsp" %>
-
+<h2>${msg.alertsList}</h2>
 <a href="${root}/alerts/new">Ново известие</a>
 <table class="table table-bordered table-striped">
 <thead>
