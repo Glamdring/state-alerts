@@ -20,9 +20,9 @@
 		<scala.version>${scala.binaryVersion}.1</scala.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>3.2.4.RELEASE</spring.version>
-		<spring-security.version>3.2.0.M2</spring-security.version>
+		<spring-security.version>3.2.0.RC1</spring-security.version>
 		<lucene.version>4.3.1</lucene.version>
-		<hibernate.version>4.2.2.Final</hibernate.version>
+		<hibernate.version>4.2.4.Final</hibernate.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -207,12 +207,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.3.1.Final</version>
+			<version>5.0.1.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
+			<version>1.1.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
@@ -419,7 +419,7 @@
 		<repository>
 			<id>spring-maven-milestone</id>
 			<name>Spring Maven Milestone Repository</name>
-			<url>http://maven.springframework.org/milestone</url>
+			<url>http://repo.springsource.org/milestone</url>
 		</repository>
 		<repository>
             <snapshots>
@@ -455,6 +455,7 @@
 				</executions>
 				<configuration>
 					<args>
+						<arg>-deprecation</arg>
 						<arg>-make:transitive</arg>
 						<arg>-dependencyfile</arg>
 						<arg>${project.build.directory}/.scala_dependencies</arg>
