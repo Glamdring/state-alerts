@@ -479,6 +479,9 @@
 					<artifactId>jetty-maven-plugin</artifactId>
 					<version>8.1.12.v20130726</version>
 					<configuration>
+						<stopPort>8090</stopPort>
+						<stopKey>die</stopKey>
+						<jvmArgs>-Xmx128m -Dstatealerts.config.location=${project.basedir}/config</jvmArgs>
 						<systemProperties>
 							<systemProperty>
 								<name>statealerts.config.location</name>

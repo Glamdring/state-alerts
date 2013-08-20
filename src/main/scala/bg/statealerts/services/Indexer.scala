@@ -44,6 +44,7 @@ class Indexer {
     val config: IndexWriterConfig = new IndexWriterConfig(Version.LUCENE_43, analyzer)
     config.setOpenMode(OpenMode.CREATE_OR_APPEND)
     writer = new IndexWriter(dir, config)
+    writer.commit()
   }
 
   @PreDestroy
