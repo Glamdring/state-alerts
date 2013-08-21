@@ -28,12 +28,12 @@ class AlertController {
   
   @ModelAttribute("sources")
   def getSource() = {
-    extractors
+    JavaConversions.seqAsJavaList(extractors)
   }
   
   @RequestMapping(value = Array("/new"))
-  def newAlert(): String = {
-    return "alert";
+  def newAlert() = {
+    "alert"
   }
 
   @RequestMapping(value = Array("/save"))
@@ -50,7 +50,7 @@ class AlertController {
     if (ctx.user == null) {
       return "redirect:/"
     }
-    model.addAttribute("alerts", JavaConversions.asJavaList(alertService.getAlerts(ctx.user)))
+    model.addAttribute("alerts", JavaConversions.seqAsJavaList(alertService.getAlerts(ctx.user)))
     return "alertList"
   }
 
