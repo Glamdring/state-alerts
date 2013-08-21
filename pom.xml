@@ -23,6 +23,7 @@
 		<spring-security.version>3.2.0.RC1</spring-security.version>
 		<lucene.version>4.3.1</lucene.version>
 		<hibernate.version>4.2.4.Final</hibernate.version>
+        <statealerts.config.location>${project.basedir}/config</statealerts.config.location>
 	</properties>
 	
 	<dependencyManagement>
@@ -471,7 +472,7 @@
 					<version>2.1</version>
 					<configuration>
 						<systemProperties>
-							<statealerts.config.location>${project.basedir}/config</statealerts.config.location>
+							<statealerts.config.location>${statealerts.config.location}</statealerts.config.location>
 						</systemProperties>
 					</configuration>
 				</plugin>
@@ -482,11 +483,11 @@
 					<configuration>
 						<stopPort>8090</stopPort>
 						<stopKey>die</stopKey>
-						<jvmArgs>-Xmx128m -Dstatealerts.config.location=${project.basedir}/config</jvmArgs>
+						<jvmArgs>-Xmx128m -Dstatealerts.config.location=${statealerts.config.location}</jvmArgs>
 						<systemProperties>
 							<systemProperty>
 								<name>statealerts.config.location</name>
-								<value>${project.basedir}/config</value>
+								<value>${statealerts.config.location}</value>
 							</systemProperty>
 						</systemProperties>
 					</configuration>
