@@ -10,14 +10,14 @@ trait HibernateScrolling {
 
   var entityManager: EntityManager
 
-  def stream[T](query: StatelessSession => ScrollableResults): Stream[T] = {
+  def stream[T](query: StatelessSession => ScrollableResults)(mapper: Array[Object] => T): Stream[T] = {
 
     val session = entityManager.unwrap(classOf[Session]).getSessionFactory().openStatelessSession()
     val results = query(session)
 
       def stream0(): Stream[T] =
         if (results.next()) {
-          Stream.cons(results.get(0).asInstanceOf[T], stream0())
+          Stream.cons(mapper(results.get()), stream0())
         }
         else {
           results.close()

@@ -63,12 +63,12 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.dialect">bg.statealerts.util.StateAlertsDialect</prop>
 				<prop key="hibernate.cache.use_query_cach">true</prop>
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.archive.autodetection">class</prop>
-				<prop key="net.sf.ehcache.configurationResourceName">file://${statealerts.config.location}/ehcache.xml
-				</prop>
+				<prop key="net.sf.ehcache.configurationResourceName">file://${statealerts.config.location}/ehcache.xml</prop>
+                <prop key="show_sql">false</prop>
 			</props>
 		</property>
 	</bean>

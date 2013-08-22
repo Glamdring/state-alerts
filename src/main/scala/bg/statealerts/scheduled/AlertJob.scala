@@ -1,17 +1,15 @@
 package bg.statealerts.scheduled
 
 import scala.collection.JavaConversions._
-
 import org.springframework.mail.javamail.MimeMailMessage
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
-
 import bg.statealerts.model.Alert
 import bg.statealerts.model.Document
 import bg.statealerts.services.AlertService
 import bg.statealerts.services.MailService
 import bg.statealerts.services.SearchService
 import javax.inject.Inject
+import bg.statealerts.model.AlertInfo
 
 @Component
 class AlertJob {
@@ -28,14 +26,14 @@ class AlertJob {
   //TODO: @Scheduled()
   def run() {
     for (alert <- alertService.getAllAlerts) {
-      val keywords = alert.keywords.mkString(" ")
+      val keywords = alert.keywords
       val documents = searchService.search(keywords)
       mailService.send(prepareMail(alert, documents))
     }
   }
 
   // TODO: use some templating for mails.
-  private def prepareMail(alert: Alert, documents: Seq[Document])(message: MimeMailMessage) {
+  private def prepareMail(alert: AlertInfo, documents: Seq[Document])(message: MimeMailMessage) {
       def subject() =
         {
           val alertName = alert.name
