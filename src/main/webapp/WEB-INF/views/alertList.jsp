@@ -32,7 +32,7 @@ function deleteAlert(id) {
 	<td>${alert.name}</td>
 	<td>${alert.keywords}</td>
 	<td>${alert.email}</td>
-	<td>${msg[fn:toUpperCase(alert.period)]}</td>
+	<td>${msg[fn:toLowerCase(alert.period)]}</td>
 	<td><a href="javascript:void(0);" onclick="deleteAlert(${alert.id});">${msg.delete}</a></td>
 </tr>
 </c:forEach>

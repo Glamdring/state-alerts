@@ -1,7 +1,7 @@
 
 <%@ page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="${pageContext.response.locale.language}">
 <head>
 <link rel="shortcut icon" href="${staticRoot}/img/favicon.png" />
 <link href="${staticRoot}/styles/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
@@ -71,7 +71,7 @@ ${head}
                     <li><a href="${root}/logout" onclick="navigator.id.logout();">${msg.logout}</a></li>
                 </c:if>
             </ul>
-            <a href="${root}/"><img src="${staticRoot}/img/logo.png" class="logo" /><h3 class="muted">Известия</h3></a>
+            <h3><a href="${root}/" class="muted"><img src="${staticRoot}/img/logo.png" class="logo" />Известия</a></h3>
         </div>
         <hr style="width: 100%;"/>
         <c:if test="${!empty param.message}">
