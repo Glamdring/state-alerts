@@ -13,7 +13,7 @@
     </bean>
 
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
-        <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING" />
+        <property name="registrationPolicy" value="REPLACE_EXISTING" />
         <property name="assembler" ref="assembler"/>
         <property name="namingStrategy" ref="namingStrategy"/>
         <property name="autodetect" value="true"/>
