@@ -44,6 +44,16 @@
 				<artifactId>spring-web</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-compiler</artifactId>
+				<version>${scala.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-reflect</artifactId>
+				<version>${scala.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -413,6 +423,11 @@
                     <artifactId>activation</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.fusesource.scalate</groupId>
+        	<artifactId>scalate-core_${scala.binaryVersion}</artifactId>
+        	<version>1.6.1</version>
         </dependency>
 	</dependencies>
 

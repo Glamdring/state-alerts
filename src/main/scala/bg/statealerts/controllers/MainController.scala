@@ -28,6 +28,10 @@ class MainController {
   def index(): String = {
     return "index"
   }
+  @RequestMapping(Array("/new-index"))
+  def scalateIndex(): String = {
+    return "new-index"
+  }
 
   @RequestMapping(Array("/search"))
   def search(@RequestParam keywords: String, model: Model): String = {
