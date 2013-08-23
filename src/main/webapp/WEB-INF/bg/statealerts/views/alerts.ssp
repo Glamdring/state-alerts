@@ -1,0 +1,31 @@
+<%@ val alerts: Seq[Alert] %>
+<% attributes("title") = "Известия" %>
+<% attributes("currentPage") = "myalerts" %>
+
+#set (head)
+<script type="text/javascript">
+function deleteAlert(id) {
+  $.post("${root}/alerts/delete", {id: id}, function() {
+    $("#row-" + id).fadeOut(500, function() {
+    	$(this).remove();
+    });
+  }); 
+}
+</script>
+#end
+<h2>${msg("alertsList")}</h2>
+<a href="${root}/alerts/new">Ново известие</a>
+<table class="table table-bordered table-striped">
+<thead>
+<tr>
+	<td>${msg("name")}</td>
+    <td>${msg("keywords")}</td>
+    <td>${msg("email")}</td>
+    <td style="width: 120px;">${msg("period")}</td>
+    <td></td>
+</tr>
+</thead>
+<tbody>
+<% collection(alerts, "row") %>
+</tbody>
+</table>

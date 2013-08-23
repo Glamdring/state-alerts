@@ -1,0 +1,10 @@
+<%@ import val it: Alert %>
+<tr id="row-${id}">
+  <td>${name}</td>
+  <td>${keywords}</td>
+  <td>${email}</td>
+  <td>${msg(period.toLowerCase)}</td>
+  <td>
+  	<a href="javascript:void(0);" onclick="deleteAlert(${id});">${msg("delete")}</a>
+  </td>
+</tr>

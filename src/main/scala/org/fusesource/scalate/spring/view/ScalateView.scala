@@ -97,10 +97,8 @@ abstract class ScalateUrlView extends AbstractScalateView with ScalateRenderStra
 
 }
 
-class ScalateView extends AbstractScalateView with ViewScalateRenderStrategy {
+abstract class ScalateView extends AbstractScalateView with ScalateRenderStrategy {
 
-  override def checkResource(locale: Locale) = true;
-  
   override def isUrlRequired() = false
 
 }

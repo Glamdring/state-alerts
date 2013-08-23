@@ -1,4 +1,4 @@
-package scalate
+package bg.statealerts
 
 import org.fusesource.scalate.Binding
 import org.fusesource.scalate.TemplateSource

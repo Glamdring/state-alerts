@@ -23,6 +23,7 @@ import org.springframework.web.servlet.view.AbstractTemplateViewResolver
 import org.springframework.web.servlet.view.AbstractUrlBasedView
 import org.springframework.web.context.ServletConfigAware
 import org.fusesource.scalate.servlet.ServletTemplateEngine
+import org.fusesource.scalate.servlet.Config
 import javax.servlet.ServletConfig
 import javax.servlet.ServletContext
 import java.util.Enumeration
@@ -34,16 +35,28 @@ class ScalateViewResolver() extends UrlBasedViewResolver with ServletConfigAware
   var templateEngine: ServletTemplateEngine = _
 
   override def setServletConfig(config: ServletConfig) {
-    val ste = new ServletTemplateEngine(config)
-    ServletTemplateEngine(config.getServletContext()) = ste
-    templateEngine = ste;
+    ensureTemplateEngie(config)
+  }
+  
+  private def ensureTemplateEngie(config: => Config) {
+    if (templateEngine == null)
+    {
+    	val ste = createTemplateEngine(config)
+    	ServletTemplateEngine(config.getServletContext) = ste
+    	templateEngine = ste
+    }
+  }
+  
+  
+  protected def createTemplateEngine(config: Config) = {
+    new ServletTemplateEngine(config)
   }
 
   override def initServletContext(servletContext: ServletContext) {
     super.initServletContext(servletContext);
 
-    setServletConfig(new ServletConfig() {
-      def getServletName(): String = "unknown"
+    ensureTemplateEngie(new Config() {
+      def getName(): String = "unknown"
       def getServletContext(): ServletContext = servletContext
       def getInitParameterNames(): Enumeration[String] = List[String]().iterator.asJavaEnumeration
       def getInitParameter(s: String) = null;
@@ -52,7 +65,7 @@ class ScalateViewResolver() extends UrlBasedViewResolver with ServletConfigAware
 
   setViewClass(requiredViewClass())
 
-  override def requiredViewClass(): java.lang.Class[_] = classOf[org.fusesource.scalate.spring.view.ScalateView]
+  override def requiredViewClass(): java.lang.Class[_] = classOf[AbstractScalateView]
 
   var exposePathVariables: Option[Boolean] = None
   override def setExposePathVariables(exposePathVariables: java.lang.Boolean) {
@@ -68,7 +81,7 @@ class ScalateViewResolver() extends UrlBasedViewResolver with ServletConfigAware
     var view: AbstractScalateView = null
 
     if (viewName == "view") {
-      view = new ScalateView
+      view = new ScalateView with ViewScalateRenderStrategy
     }
     else if (viewName.startsWith("layout:")) {
       val urlView = new ScalateUrlView with LayoutScalateRenderStrategy
