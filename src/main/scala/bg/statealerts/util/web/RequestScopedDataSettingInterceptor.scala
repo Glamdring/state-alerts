@@ -12,11 +12,11 @@ import bg.statealerts.controllers.UserContext
 
 class RequestScopedDataSettingInterceptor extends HandlerInterceptorAdapter {
 
-    @Inject
-    var userContext: UserContext = _
-    
-    override def preHandle(request: HttpServletRequest,response: HttpServletResponse, handler: Object ): Boolean = {
-        request.setAttribute("userContext", userContext)
-        return true;
-    }
+  @Inject
+  var userContext: UserContext = _
+
+  override def preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Object): Boolean = {
+    request.setAttribute("userContext", userContext)
+    true
+  }
 }

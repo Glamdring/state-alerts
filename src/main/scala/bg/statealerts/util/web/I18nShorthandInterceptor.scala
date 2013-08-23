@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletResponse
 
 class I18nShorthandInterceptor extends HandlerInterceptorAdapter {
 
-    @Inject
-    var messageSource: MessageSource = _
+  @Inject
+  var messageSource: MessageSource = _
 
-    override def preHandle(request: HttpServletRequest,response: HttpServletResponse, handler: Object ): Boolean = {
-        request.setAttribute("msg", new DelegatingI18nMap(messageSource, RequestContextUtils.getLocale(request)))
-        true
-    }
+  override def preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Object): Boolean = {
+    request.setAttribute(MSG_ATTRIBUTE_NAME, new DelegatingI18nMap(messageSource, RequestContextUtils.getLocale(request)))
+    true
+  }
 }
+

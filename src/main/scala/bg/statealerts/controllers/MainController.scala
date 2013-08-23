@@ -30,7 +30,7 @@ class MainController {
   }
   @RequestMapping(Array("/new-index"))
   def scalateIndex(): String = {
-    return "new-index"
+    return "layout:new-index"
   }
 
   @RequestMapping(Array("/search"))

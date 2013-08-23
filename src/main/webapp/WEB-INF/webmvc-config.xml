@@ -65,7 +65,7 @@
 	<bean class="org.springframework.web.servlet.theme.CookieThemeResolver" id="themeResolver" p:cookieName="theme"
 		p:defaultThemeName="standard" />
 
-	
+
 	<!-- Enable this for integration of file upload functionality -->
 	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver" />
 
@@ -73,6 +73,7 @@
 		<property name="prefix" value="/WEB-INF/scalate/" />
 		<property name="suffix" value=".ssp" />
 		<property name="order" value="0" />
+        <property name="contentType" value="text/html;charset=utf-8" />
 	</bean>
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/views/" />

@@ -1,0 +1,57 @@
+<%@ val body: String %>
+<%@ val title: String = "Известия за държавни документи" %>
+<%@ val user: User = null %>
+#{
+val lang = response.getLocale.getLanguage
+}#
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+<link rel="shortcut icon" href="${staticRoot}/img/favicon.png" />
+<link href="${staticRoot}/styles/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="${staticRoot}/styles/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="${staticRoot}/styles/main.css" rel="stylesheet" type="text/css" media="screen"/>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://login.persona.org/include.js"></script>
+<script type="text/javascript" src="${staticRoot}/scripts/bootstrap.min.js"></script>
+
+<title>${title}</title>
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<script type="text/javascript">
+    var loggedInUser = ${if (user != null) """"  + user.email + """" else "null"};
+    var userRequestedAuthentication = false;
+    $(document).ready(function() {
+        navigator.id.watch({
+            loggedInUser : loggedInUser,
+            onlogin : function(assertion) {
+                $.ajax({
+                    type : 'POST',
+                    url : '${root}/persona/auth',
+                    data : {assertion : assertion, userRequestedAuthentication : userRequestedAuthentication},
+                    success : function(data) {
+                        if (data != '') {
+                            window.location.href = '${root}' + data;
+                        }
+                    },
+                    error : function(xhr, status, err) {
+                        alert("Authentication failure: " + err);
+                    }
+                });
+            },
+            onlogout : function() {
+                window.locaiton.open("${root}/logout");
+            }
+        });
+    });
+</script>
+</head>
+<body>
+<div class="container">
+${include("/scalate/layouts/header.ssp")}
+${unescape(body)}
+</div>
+${include("/scalate/layouts/footer.ssp")}
+</body>
+</html>

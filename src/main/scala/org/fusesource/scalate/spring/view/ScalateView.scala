@@ -74,7 +74,7 @@ trait AbstractScalateView extends AbstractUrlBasedView {
   override def renderMergedOutputModel(model: java.util.Map[String, Object],
     request: HttpServletRequest,
     response: HttpServletResponse): Unit = {
-
+    response.setContentType(getContentType())
     val context = new ServletRenderContext(templateEngine, request, response, getServletContext)
     RenderContext.using(context) {
       render(context, model.asInstanceOf[java.util.Map[String, Any]].toMap)

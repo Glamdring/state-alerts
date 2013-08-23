@@ -1,0 +1,30 @@
+<%@ val currentPage: String = "home" %>
+#if (currentPage == "home")
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+#end
+<div class="masthead">
+    <ul class="nav nav-pills pull-right">
+        <li 
+        #if (currentPage == "home") 
+            class="active"
+        #end
+        ><a href="${root}/">${msg("home")}</a></li>
+        #if (userLoggedIn)
+            <li
+            #if (currentPage == "myalerts")
+                class="active"
+            #end
+            ><a href="${root}/alerts/list">${msg("myAlerts")}</a></li>
+        #end
+    </ul>
+    <h3><a href="${root}/" class="muted"><img src="${staticRoot}/img/logo.png" class="logo" />Известия</a></h3>
+</div>
+<hr style="width: 100%;"/>
