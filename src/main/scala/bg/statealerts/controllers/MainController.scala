@@ -25,13 +25,13 @@ class MainController {
   var ctx: UserContext = _
 
   @RequestMapping(Array("/"))
-  def index(): String = {
-    return "layout:index"
+  def index = {
+    "layout:index"
   }
 
   @RequestMapping(Array("/search"))
   def search(@RequestParam keywords: String, model: Model): String = {
-    val results = asJavaList(searcher.search(keywords))
+    val results = seqAsJavaList(searcher.search(keywords))
     model.addAttribute("results", results)
     "searchResults"
   }

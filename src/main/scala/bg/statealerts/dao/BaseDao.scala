@@ -5,6 +5,7 @@ import scala.collection.JavaConversions
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 import javax.persistence.Query
+import scala.reflect.ClassTag
 
 trait BaseDao {
 
@@ -34,7 +35,7 @@ trait BaseDao {
     return None
   }
 
-  def findByQuery[T: ClassManifest](details: QueryDetails): List[T] = {
+  def findByQuery[T: ClassTag](details: QueryDetails): List[T] = {
     var q: Query = null;
     if (details.queryName != null) {
       q = entityManager.createNamedQuery(details.queryName);
