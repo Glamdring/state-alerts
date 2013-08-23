@@ -16,7 +16,7 @@ class RequestScopedDataSettingInterceptor extends HandlerInterceptorAdapter {
   var userContext: UserContext = _
 
   override def preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Object): Boolean = {
-    request.setAttribute("userContext", userContext)
+    request.setAttribute(USER_CONTEXT_ATTRIBUTE_NAME, userContext)
     true
   }
 }
