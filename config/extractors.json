@@ -19,7 +19,7 @@
 			"titlePath": ".//td[2]/a",
 			"externalIdPath": ".//td[3]"
 		},
-        "pagingMultiplier": "1",
+        "pagingMultiplier": "0",
         "dateFormat": "dd/MM/yyyy"
       },
       {

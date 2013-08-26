@@ -40,7 +40,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 
   val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.map(_.bodyParams.get), descriptor.pagingMultiplier)
   
-  val baseUrl: String = {
+  var baseUrl: String = {
     val fullUrl = new URL(descriptor.url)
     var port = fullUrl.getPort()
     if (port == -1) {
@@ -160,8 +160,8 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
             logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "]", e)
             if (descriptor.failOnError.getOrElse(false)) {
               result = List() //failing - no documents are to be stored
-              loop.break
             }
+            loop.break // always break in this "catch", otherwise endless loops will occur
           }
         }
       }
