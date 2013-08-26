@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.junit.Test
 import org.junit.Assert
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(Array("classpath*:/applicationContext.xml"))
+//@RunWith(classOf[SpringJUnit4ClassRunner])
+//@ContextConfiguration(Array("classpath*:/applicationContext.xml"))
 class AlertServiceTest {
 
   @Autowired var service: AlertService = _

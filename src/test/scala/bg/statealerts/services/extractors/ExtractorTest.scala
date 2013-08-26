@@ -2,17 +2,16 @@ package bg.statealerts.services.extractors
 
 import java.io.File
 import java.io.FileOutputStream
-
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-
 import bg.statealerts.scheduled.ElementPaths
 import bg.statealerts.scheduled.ExtractorDescriptor
 import bg.statealerts.scheduled.HttpRequest
+import org.junit.runner.RunWith
 
 class ExtractorTest {
 
