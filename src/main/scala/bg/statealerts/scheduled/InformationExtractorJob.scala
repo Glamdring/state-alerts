@@ -22,8 +22,10 @@ import javax.annotation.PostConstruct
 import javax.inject.Inject
 import org.joda.time.DateTimeConstants
 import javax.annotation.Resource
+import bg.statealerts.util.TestProfile
 
 @Component
+@TestProfile.Disabled
 class InformationExtractorJob {
 
   val logger = LoggerFactory.getLogger(classOf[InformationExtractorJob]) 
