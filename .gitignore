@@ -14,3 +14,11 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+webapp/target
+webapp/.settings
+webapp/.project
+webapp/.classpath
+scraper/target
+scraper/.settings
+scraper/.project
+scraper/.classpath
