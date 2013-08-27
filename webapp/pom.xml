@@ -2,8 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>bg.statealerts</groupId>
-	<artifactId>statealerts</artifactId>
 
 	<parent>
 		<groupId>bg.statealerts</groupId>
@@ -11,6 +9,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
+	<groupId>bg.statealerts</groupId>
+	<artifactId>statealerts</artifactId>
 	<packaging>war</packaging>
 
 	<name>state-alerts</name>
@@ -20,7 +20,6 @@
 		<spring-security.version>3.2.0.RC1</spring-security.version>
 		<lucene.version>4.3.1</lucene.version>
 		<hibernate.version>4.2.4.Final</hibernate.version>
-		<statealerts.config.location>${project.basedir}/config</statealerts.config.location>
 	</properties>
 
 	<dependencyManagement>
@@ -368,6 +367,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
@@ -397,7 +397,6 @@
 				<configuration>
 					<args>
 						<arg>-deprecation</arg>
-						<arg>-make:transitive</arg>
 						<arg>-dependencyfile</arg>
 						<arg>${project.build.directory}/.scala_dependencies</arg>
 					</args>
@@ -441,38 +440,6 @@
 						<argLine>-Xmx128m
 							-Dstatealerts.config.location=${statealerts.config.location}
 							-Dspring.profiles.active=test-profile</argLine>
-					</configuration>
-				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											build-helper-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.8,)
-										</versionRange>
-										<goals>
-											<goal>add-source</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
 			</plugins>

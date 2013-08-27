@@ -27,7 +27,7 @@ class ExtractorTest {
         enabled = Some(true), 
         documentType = "PDF", 
         contentLocationType = "LinkedDocumentOnLinkedPage",
-        url = "file://" + tmpDir + "bills.htm",
+        url = "file://" + tmpDir + "/bills.htm",
         httpRequest = Some(new HttpRequest(
             method = Some("POST"),
             bodyParams = Some("from=&to=&L_ActL_title=&L_Ses_id=&L_Act_sign=&L_Act_im_id=&A_ns_C_id=&submit=%D0%A2%D1%8A%D1%80%D1%81%D0%B8"),
