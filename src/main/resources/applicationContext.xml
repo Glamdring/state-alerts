@@ -89,7 +89,7 @@
 		<property name="shared" value="true" />
 		<property name="cacheManagerName" value="statealerts" />
 		<property name="configLocation"
-			value="file://${statealerts.config.location}/ehcache.xml" />
+			value="file:///${statealerts.config.location}/ehcache.xml" />
 	</bean>
 
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
