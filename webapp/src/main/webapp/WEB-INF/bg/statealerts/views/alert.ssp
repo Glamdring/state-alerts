@@ -1,5 +1,5 @@
 <%@ val userContext: UserContext = null %>
-<%@ val sources: List[bg.statealerts.services.extractors.Extractor] %>
+<%@ val sources: List[bg.statealerts.scraper.config.ExtractorDescriptor] %>
 <% attributes("title") = "Известия" %>
 <% attributes("currentPage") = "myalerts" %>
 
@@ -17,7 +17,7 @@
 <tr><td>${msg("source")}:</td>
 <td>
 #for (source <- sources)
-    <input type="checkbox" name="sources" value="${source.descriptor.sourceKey}" id="source_${source.descriptor.sourceKey}" />&nbsp;<label for="source_${source.descriptor.sourceKey}" class="radioLabel">${source.descriptor.sourceDisplayName}</label>
+    <input type="checkbox" name="sources" value="${source.sourceKey}" id="source_${source.sourceKey}" />&nbsp;<label for="source_${source.sourceKey}" class="radioLabel">${source.sourceDisplayName}</label>
 #end
 </td></tr>
 <tr><td></td><td><input type="submit" value="${msg("save")}" class="btn" style="margin-top: 10px;" /></td></tr>

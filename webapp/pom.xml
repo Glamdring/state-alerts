@@ -9,7 +9,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>bg.statealerts</groupId>
 	<artifactId>statealerts</artifactId>
 	<packaging>war</packaging>
 
@@ -197,7 +196,11 @@
 			<artifactId>rome</artifactId>
 			<version>1.0</version>
 		</dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -361,27 +364,8 @@
 	</repositories>
 
 	<build>
-		<sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/main/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
@@ -389,6 +373,7 @@
 				<executions>
 					<execution>
 						<goals>
+                            <goal>add-source</goal>
 							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>

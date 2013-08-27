@@ -28,7 +28,7 @@ class AlertController {
   
   @ModelAttribute("sources")
   def getSource() = {
-    extractors
+    extractors.map(_.descriptor)
   }
 
   @RequestMapping(value = Array("/new"))
