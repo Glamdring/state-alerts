@@ -6,6 +6,7 @@ import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.document.Field.Store
 import org.apache.lucene.document.LongField
 import org.apache.lucene.document.TextField
+import org.apache.lucene.document.{Document => LuceneDocument}
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
 import org.apache.lucene.index.IndexWriterConfig.OpenMode
@@ -72,7 +73,7 @@ class Indexer {
   }
   
   def getLuceneDocument(document: Document, time: DateTime) = {
-	  val luceneDoc = new org.apache.lucene.document.Document()
+	  val luceneDoc = new LuceneDocument()
 	  luceneDoc.add(new LongField("id", document.id, Store.YES))
 	  luceneDoc.add(new LongField("timestamp", time.getMillis(), Store.YES))
 	  luceneDoc.add(new TextField("text", document.content, Store.YES))

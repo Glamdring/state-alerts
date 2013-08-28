@@ -61,7 +61,7 @@ class InformationExtractorJob {
       try {
         var lastImportTime = dao.getLastImportDate(extractor.descriptor.sourceKey).getOrElse(new DateTime().minusDays(14).withTimeAtStartOfDay()).withZoneRetainFields(DateTimeZone.UTC)
         val now = DateTime.now()
-        var documents: List[bg.statealerts.scraper.model.Document] = extractor.extract(lastImportTime)
+        var documents = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
         var documentCount = documents.size
         for (doc <- documents) {
