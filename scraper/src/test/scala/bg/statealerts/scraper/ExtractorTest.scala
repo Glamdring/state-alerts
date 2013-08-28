@@ -18,7 +18,10 @@ class ExtractorTest {
   @Test
   @throws(classOf[Exception])
   def linkedDocumentOnLinkedPageTest() = {
-    val tmpDir = System.getProperty("java.io.tmpdir")
+    var tmpDir = System.getProperty("java.io.tmpdir")
+    if (!tmpDir.startsWith("/")) {
+      tmpDir = "/" + tmpDir
+    }
     copyFiles(tmpDir)
     
     val descriptor = new ExtractorDescriptor(
