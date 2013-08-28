@@ -6,7 +6,7 @@ import org.springframework.social.connect.Connection
 
 object AuthUtils {
 
-  def connectionToAuth(connection: Connection[_]): SocialAuthentication = {
+  implicit def connectionToAuth(connection: Connection[_]): SocialAuthentication = {
         val auth = new SocialAuthentication()
         val data = connection.createData()
         auth.providerId = data.getProviderId()

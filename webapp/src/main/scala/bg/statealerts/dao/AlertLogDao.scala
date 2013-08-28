@@ -28,7 +28,7 @@ trait AlertLogDao extends BaseDao {
 }
 
 @Repository("alertLogDao")
-class HibernateAlertDao extends HibernateScrolling with AlertLogDao {
+class HibernateAlertLogDao extends HibernateScrolling with AlertLogDao {
 
   @Value("1000")
   var fetchSize: Int = _

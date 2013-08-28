@@ -16,6 +16,7 @@ import org.joda.time.DateTime
 import bg.statealerts.util.SecurityUtils
 import org.joda.time.Period
 import bg.statealerts.services.auth.AuthUtils
+import bg.statealerts.model.SocialAuthentication
 
 @Service
 class UserService {
@@ -71,7 +72,8 @@ class UserService {
         user.receiveEmails = true
         user = userDao.save(user)
         if (connection != null) {
-            val auth = AuthUtils.connectionToAuth(connection)
+            import AuthUtils.connectionToAuth
+            val auth: SocialAuthentication = connection
             auth.user = user
             userDao.save(auth)
         }

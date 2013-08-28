@@ -17,6 +17,6 @@ class Import {
   @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   var importTime:DateTime = _
   var importedDocuments:Int = _
-  @Index(name="sourceKeyIndex")
+  @Index(name="importSourceKeyIndex")
   var sourceKey: String = _
 }

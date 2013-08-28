@@ -23,15 +23,14 @@
 		<property name="nullValue" value="" />
 	</bean>
 
-	<context:component-scan base-package="bg.statealerts">
-		<context:exclude-filter expression="org.springframework.stereotype.Controller"
-			type="annotation" />
-	</context:component-scan>
-
 	<import resource="social.xml" />
 	<import resource="mail.xml" />
 	<import resource="jmx.xml" />
-	
+
+	<context:component-scan base-package="bg.statealerts">
+		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
+	</context:component-scan>
+
 	<bean class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" id="dataSource">
 		<property name="driverClassName" value="${database.driverClassName}" />
@@ -60,8 +59,8 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.dialect">bg.statealerts.util.StateAlertsDialect</prop>
-				<prop key="hibernate.cache.use_query_cach">true</prop>
+				<prop key="hibernate.dialect_resolvers">bg.statealerts.util.StateAlertsDialectResolver</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.archive.autodetection">class</prop>
 				<prop key="net.sf.ehcache.configurationResourceName">file:///${statealerts.config.location}/ehcache.xml</prop>

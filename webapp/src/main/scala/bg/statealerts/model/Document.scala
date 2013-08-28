@@ -31,7 +31,7 @@ case class Document {
   var publishDate: DateTime = _
   
   @BeanProperty
-  @Index(name="sourceKeyIndex")
+  @Index(name="documentSourceKeyIndex")
   var sourceKey: String = _
   
   @BeanProperty
