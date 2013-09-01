@@ -76,6 +76,7 @@ class InformationExtractorJob {
 	          document.externalId = doc.externalId
 	          document.sourceDisplayName = doc.sourceDisplayName
 	          document.sourceKey = doc.sourceKey
+	          document.publishDate = doc.publishDate
 	          persistedDocuments ::= service.save(document)
           } catch {
             case ex: Exception => {
