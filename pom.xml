@@ -126,4 +126,10 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
+	
+	<profiles>
+		<profile>
+			<id>openshift</id>
+		</profile>
+	</profiles>
 </project>
