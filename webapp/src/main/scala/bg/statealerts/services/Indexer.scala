@@ -28,7 +28,6 @@ import javax.persistence.Entity
 @Service
 class Indexer {
 
-  var writer: IndexWriter = _
   @Value("${index.path}")
   var indexPath: String = _
 
@@ -40,28 +39,32 @@ class Indexer {
   
   @PostConstruct
   def init() = {
+    val writer = getWriter()
+    writer.commit()
+    writer.close()
+  }
+
+  private def getWriter() = {
     val dir: Directory = FSDirectory.open(new File(indexPath))
     val analyzer: Analyzer = Class.forName(analyzerClass).getConstructor(classOf[Version]).newInstance(Version.LUCENE_43).asInstanceOf[Analyzer]
     val config: IndexWriterConfig = new IndexWriterConfig(Version.LUCENE_43, analyzer)
     config.setOpenMode(OpenMode.CREATE_OR_APPEND)
-    writer = new IndexWriter(dir, config)
-    writer.commit()
-  }
-
-  @PreDestroy
-  def destroy() = {
-    writer.close()
+    val writer = new IndexWriter(dir, config)
+    writer
   }
   
   def index(documents: List[Document]) = {
+    val writer = getWriter()
     val now = new DateTime()
     for (document <- documents) {
 	    writer.addDocument(getLuceneDocument(document, now))
     }
     writer.commit()
+    writer.close()
   }
   
   def reindex() = {
+    val writer = getWriter()
     writer.deleteAll()
     val now = new DateTime()
     documentDao.performBatched(classOf[Document], 200, (data: List[Document]) => {

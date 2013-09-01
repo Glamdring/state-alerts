@@ -1,7 +1,6 @@
 package bg.statealerts.services
 
 import java.io.File
-
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.index.Term
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil
@@ -25,12 +24,13 @@ import org.springframework.context.annotation.DependsOn
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
 import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.inject.Inject
+import org.apache.lucene.index.ReaderManager
+import org.apache.lucene.search.IndexSearcher
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
@@ -46,17 +46,17 @@ class SearchService {
   @Value("${lucene.analyzer.class}")
   var analyzerClass: String = _
   
-  var searcherManager: SearcherManager = _
+  var readerManager: ReaderManager = _
   
   @PostConstruct
   def init() = {
-    searcherManager = new SearcherManager(FSDirectory.open(new File(indexPath)), new SearcherFactory())
+    readerManager = new ReaderManager(FSDirectory.open(new File(indexPath)))
     analyzer = Class.forName(analyzerClass).getConstructor(classOf[Version]).newInstance(Version.LUCENE_43).asInstanceOf[Analyzer]
   }
 
   @PreDestroy
   def destroy() = {
-    searcherManager.close()
+    readerManager.close()
   }
   
   @Transactional(readOnly=true)
@@ -83,9 +83,10 @@ class SearchService {
   }
   
   private def getDocuments(query: Query, limit: Int): List[Document] = {
-    val searcher = searcherManager.acquire()
+    val reader = readerManager.acquire()
     
     try {
+    	val searcher = new IndexSearcher(reader)
 	    val sort = new Sort(new SortField("publishTimestamp", SortField.Type.LONG, true))
 	    val result: TopDocs = searcher.search(query, null, limit, sort)
 	
@@ -100,12 +101,12 @@ class SearchService {
 	    }
 	    documents
     } finally {
-      searcherManager.release(searcher)
+      readerManager.release(reader)
     }
   }
   
   @Scheduled(fixedRate = 600000) // 10 minutes
   def refreshSearchers() = {
-    searcherManager.maybeRefresh()
+    readerManager.maybeRefresh()
   }
 }
