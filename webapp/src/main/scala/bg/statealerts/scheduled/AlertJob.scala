@@ -10,8 +10,12 @@ import bg.statealerts.services.MailService
 import bg.statealerts.services.SearchService
 import javax.inject.Inject
 import bg.statealerts.model.AlertInfo
+import bg.statealerts.util.TestProfile
+import org.joda.time.DateTime
+import bg.statealerts.model.AlertPeriod
 
 @Component
+@TestProfile.Disabled
 class AlertJob {
 
   @Inject
@@ -27,7 +31,12 @@ class AlertJob {
   def run() {
     for (alert <- alertService.getAllAlerts) {
       val keywords = alert.keywords
-      val documents = searchService.search(keywords)
+      val since: DateTime = alert.period match {
+        case AlertPeriod.Daily => new DateTime().minusDays(1)
+        case AlertPeriod.Weekly => new DateTime().minusWeeks(1)
+        case AlertPeriod.Monthly => new DateTime().minusMonths(1)
+      }
+      val documents = searchService.search(keywords, since)
       mailService.send(prepareMail(alert, documents))
     }
   }

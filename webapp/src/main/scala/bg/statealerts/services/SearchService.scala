@@ -24,6 +24,10 @@ import org.apache.lucene.search.SortField
 import bg.statealerts.dao.DocumentDao
 import javax.inject.Inject
 import org.springframework.transaction.annotation.Transactional
+import org.apache.lucene.search.BooleanQuery
+import org.apache.lucene.search.BooleanClause
+import org.apache.lucene.search.NumericRangeQuery
+import org.apache.lucene.search.Query
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
@@ -59,7 +63,28 @@ class SearchService {
     val escapedKeywords = QueryParserUtil.escape(keywords)
     val q = new TermQuery(new Term("text", escapedKeywords))
     val sort = new Sort(new SortField("timestamp", SortField.Type.LONG, true))
-    val result: TopDocs = searcher.search(q, null, 50, sort)
+    
+    getDocuments(q, 50)
+  }
+  
+  @Transactional(readOnly=true)
+  def search(keywords: String, since: DateTime): List[Document] = {
+    val sinceMillis = since.getMillis()
+    val nowMillis = System.currentTimeMillis()
+    
+    val escapedKeywords = QueryParserUtil.escape(keywords)
+    val textQuery = new TermQuery(new Term("text", escapedKeywords))
+    val timestampQuery = NumericRangeQuery.newLongRange("timestamp", sinceMillis, nowMillis, true, true)
+    val query = new BooleanQuery()
+    query.add(textQuery, BooleanClause.Occur.MUST)
+    query.add(timestampQuery, BooleanClause.Occur.MUST)
+    
+    getDocuments(query, 50)
+  }
+  
+  private def getDocuments(query: Query, limit: Int): List[Document] = {
+    val sort = new Sort(new SortField("timestamp", SortField.Type.LONG, true))
+    val result: TopDocs = searcher.search(query, null, limit, sort)
 
     var documents = List[Document]()
 
