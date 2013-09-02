@@ -36,7 +36,7 @@ Change the contents of _statealerts.properties_ to look like
     
 Commit your changes
 
-    git add webapps .openshift
+    git add webapps config .openshift
     git commit  -m "Inital commit for state alerts app."
 
 To deploy the application execute
