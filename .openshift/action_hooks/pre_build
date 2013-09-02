@@ -1,6 +1,0 @@
-if [ ! -d "~/config"]; then
-   mkdir ~/config
-fi
-
-cp $HOME/webapp/config/*.* ~/config
-export MAVEN_ARGS="-Dstatealerts.config.location=~/config"
