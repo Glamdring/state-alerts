@@ -2,9 +2,13 @@
 <%@ include file="includes.jsp" %>
 <c:set var="currentPage" value="search" />
 <c:set var="head">
-<title>Резултати от търсене за: ${params.keywords}</title>
+<title>Резултати от търсене за: ${param.keywords}</title>
 </c:set>
 <%@ include file="header.jsp" %>
+
+<c:if test="${userContext.user != null}">
+	<a href="<c:url value="/alerts/new?keywords=${param.keywords}" />">${msg.createNewAlert}</a>
+</c:if>
 
 <table class="table table-bordered table-striped">
 <thead>

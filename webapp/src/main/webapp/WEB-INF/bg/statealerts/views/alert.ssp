@@ -2,12 +2,15 @@
 <%@ val sources: List[bg.statealerts.scraper.config.ExtractorDescriptor] %>
 <% attributes("title") = "Известия" %>
 <% attributes("currentPage") = "myalerts" %>
+#{
+val keywords = Option(parameter("keywords")).getOrElse("")
+}#
 
 <form action="${root}/alerts/save" method="POST">
 <table>
 <tr><td>${msg("name")}:</td><td><input type="text" name="name" /></td></tr>
 <tr><td>${msg("email")}:</td><td><input type="text" name="email" value="${userContext.user.email}" /></td></tr>
-<tr><td>${msg("keywords")}:</td><td><input type="text" name="keywords" /> (${msg("commaSeparated")})</td></tr>
+<tr><td>${msg("keywords")}:</td><td><input type="text" name="keywords" value="${keywords}" /> (${msg("commaSeparated")})</td></tr>
 <tr><td>${msg("receiveAlerts")}:</td>
 <td>
 <input type="radio" name="period" value="Daily" id="daily" />&nbsp;<label for="daily" class="radioLabel">${msg("daily")}</label>
@@ -17,7 +20,7 @@
 <tr><td>${msg("source")}:</td>
 <td>
 #for (source <- sources)
-    <input type="checkbox" name="sources" value="${source.sourceKey}" id="source_${source.sourceKey}" />&nbsp;<label for="source_${source.sourceKey}" class="radioLabel">${source.sourceDisplayName}</label>
+    <input type="checkbox" name="sources" value="${source.sourceKey}" checked="checked" id="source_${source.sourceKey}" />&nbsp;<label for="source_${source.sourceKey}" class="radioLabel">${source.sourceDisplayName}</label>
 #end
 </td></tr>
 <tr><td></td><td><input type="submit" value="${msg("save")}" class="btn" style="margin-top: 10px;" /></td></tr>
