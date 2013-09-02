@@ -1,9 +1,9 @@
 Deploying on Openshift
 ======================
 
-Register for openshift account and create a scaling tomcat 7 app with mysql support
+Register for openshift account and create a tomcat 7 app with mysql support
 
-    rhc app create -a statealerts -s jbossews-2.0 mysql-5.1
+    rhc app create -a statealerts jbossews-2.0 mysql-5.1
 
 Delete the _src_ folder and _pom.xml_ file from the template
 
@@ -33,6 +33,10 @@ Change the contents of _statealerts.properties_ to look like
     random.sleep.max.minutes=10
 
     ui.locale=bg
+    
+Commit your changes
+
+    git commit -a -m "Inital commit for state alerts app."
 
 To deploy the application execute
 
