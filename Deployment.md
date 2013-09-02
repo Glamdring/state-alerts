@@ -14,6 +14,16 @@ Copy the prebuid war into _webapps_ folder as _ROOT.war_
 
     cp <path-to-source>/webapp/target/statealerts-0.0.1-SNAPSHOT.war webapps/ROOT.war
 
+In _.openshift/config/server.xml_ find _Connector_ element and add _URIEncoding="utf-8"_ attribbute so it looks like
+
+    <Connector address="${OPENSHIFT_JBOSSEWS_IP}"
+               port="${OPENSHIFT_JBOSSEWS_HTTP_PORT}"
+               protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               URIEncoding="utf-8"
+               redirectPort="8443"/>
+
+
 In _.openshift/action_hooks_ folder create an executable called _pre_start_jbossews_ with following contents
 
     export CATALINA_OPTS="-Dstatealerts.config.location=${OPENSHIFT_REPO_DIR}/config"
