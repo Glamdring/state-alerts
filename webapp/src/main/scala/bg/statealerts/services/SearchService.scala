@@ -107,7 +107,6 @@ class SearchService {
   
   @Scheduled(fixedRate = 60000) // 10 minutes
   def refreshReaderManager(): Unit = {
-    println("ALABALA")
     readerManager.maybeRefresh()
   }
 }

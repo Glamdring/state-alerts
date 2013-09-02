@@ -20,7 +20,7 @@
 <tr><td>${msg.source}:</td>
 <td>
 <c:forEach items="${sources}" var="source">
-    <input type="checkbox" name="sources" value="${source.descriptor.sourceKey}" id="source_${source.descriptor.sourceKey}" />&nbsp;<label for="source_${source.descriptor.sourceKey}" class="radioLabel">${source.descriptor.sourceDisplayName}</label>
+    <input type="checkbox" name="sources" checked="checked" value="${source.descriptor.sourceKey}" id="source_${source.descriptor.sourceKey}" />&nbsp;<label for="source_${source.descriptor.sourceKey}" class="radioLabel">${source.descriptor.sourceDisplayName}</label>
 </c:forEach>
 </td></tr>
 <tr><td></td><td><input type="submit" value="${msg.save}" class="btn" style="margin-top: 10px;" /></td></tr>

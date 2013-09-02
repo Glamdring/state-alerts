@@ -1,4 +1,4 @@
-package bg.statealerts.services.extractors
+package bg.statealerts.services
 
 import java.io.File
 import java.net.URL

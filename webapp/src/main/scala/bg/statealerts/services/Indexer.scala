@@ -73,6 +73,7 @@ class Indexer {
       }
     })
     writer.commit()
+    writer.close()
   }
   
   def getLuceneDocument(document: Document, time: DateTime) = {
