@@ -36,7 +36,8 @@ Change the contents of _statealerts.properties_ to look like
     
 Commit your changes
 
-    git commit -a -m "Inital commit for state alerts app."
+    git add webapps/
+    git commit  -m "Inital commit for state alerts app."
 
 To deploy the application execute
 
