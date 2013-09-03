@@ -3,7 +3,7 @@ package bg.statealerts.dao
 import org.joda.time.DateTime
 import org.springframework.stereotype.Repository
 import bg.statealerts.model.AlertLog
-import scala.collection.JavaConversions
+import scala.collection.JavaConversions._
 import bg.statealerts.model.AlertState
 import org.springframework.beans.factory.annotation.Value
 import bg.statealerts.model.AlertPeriod
@@ -18,10 +18,10 @@ trait AlertLogDao extends BaseDao {
     query.executeUpdate()
   }
 
-  def getAlertLogsWithState(status: AlertStatus) = {
-    val query = entityManager.createQuery[AlertLog]("from AlertLog where state = :state.status order by status.date", classOf[AlertLog])
-    query.setParameter("state", status.toString())
-    JavaConversions.asScalaBuffer(query.getResultList())
+  def getAlertLogsWithStatus(status: AlertStatus): Seq[AlertLog] = {
+    val query = entityManager.createQuery[AlertLog]("from AlertLog where state.statusName = :status order by state.date", classOf[AlertLog])
+    query.setParameter("status", status.toString())
+    query.getResultList()
   }
 
   def getAlerts(): Seq[AlertInfo]
@@ -30,7 +30,7 @@ trait AlertLogDao extends BaseDao {
 @Repository("alertLogDao")
 class HibernateAlertLogDao extends HibernateScrolling with AlertLogDao {
 
-  @Value("1000")
+  @Value("${alerts.fetch.size:1000}")
   var fetchSize: Int = _
 
   def getAlerts(): Stream[AlertInfo] = stream(session => {

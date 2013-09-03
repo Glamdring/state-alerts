@@ -1,22 +1,23 @@
 package bg.statealerts.scheduled
 
-import scala.collection.JavaConversions._
 import org.springframework.mail.javamail.MimeMailMessage
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import bg.statealerts.model.Alert
+import bg.statealerts.model.AlertLog
+import bg.statealerts.model.AlertStatus._
 import bg.statealerts.model.Document
 import bg.statealerts.services.AlertService
 import bg.statealerts.services.MailService
 import bg.statealerts.services.SearchService
-import javax.inject.Inject
-import bg.statealerts.model.AlertInfo
 import bg.statealerts.util.TestProfile
+import javax.inject.Inject
 import org.joda.time.DateTime
-import bg.statealerts.model.AlertPeriod
+import org.springframework.beans.factory.annotation.Value
+import bg.statealerts.util.Logging
 
 @Component
 @TestProfile.Disabled
-class AlertJob {
+class AlertJob extends Logging {
 
   @Inject
   var alertService: AlertService = _
@@ -27,25 +28,45 @@ class AlertJob {
   @Inject
   var searchService: SearchService = _
 
-  //TODO: @Scheduled()
-  def run() {
-    for (alert <- alertService.getAllAlerts) {
-      val keywords = alert.keywords
-      val since: DateTime = alert.period match {
-        case AlertPeriod.Daily => new DateTime().minusDays(1)
-        case AlertPeriod.Weekly => new DateTime().minusWeeks(1)
-        case AlertPeriod.Monthly => new DateTime().minusMonths(1)
+  @Value("${alert.job.max_failures:5}")
+  var maxFailures: Int = _
+
+  @Scheduled(cron = "${alert.job.prepare.schedule:0 0 0 * * *}")
+  def send() {
+    log.debug("start sending alerts")
+    val now = DateTime.now
+    for (alertInfo <- alertService.getAllAlerts()) {
+      val maybeAlertLog = alertService.prepareAlertLog(alertInfo, now)
+      if (maybeAlertLog.isDefined) {
+          sendAlert(maybeAlertLog.get);
       }
-      val documents = searchService.search(keywords, since)
-      mailService.send(prepareMail(alert, documents))
+    }
+    log.debug("done sending alerts")
+  }
+
+  @Scheduled(cron = "${alert.job.prepare.schedule:0 0 12 * * *}")
+  def resendFailed() {
+    for (alertLog <- alertService getAlertLogsWithStatus Failed) {
+      if (alertLog.state.statusCount > maxFailures) {
+        alertService.updateAlertLogStatus(alertLog, Abandoned)
+      }
+      else {
+        sendAlert(alertLog)
+      }
     }
   }
 
+  def sendAlert(alertLog: AlertLog) = {
+    val documents = searchService.search(alertLog.keywords, alertLog.interval)
+    val mailSent = mailService.send(prepareMail(alertLog.email, alertLog.name, documents))
+    val status = if (mailSent) Sent else Failed
+    alertService.updateAlertLogStatus(alertLog, status)
+  }
+
   // TODO: use some templating for mails.
-  private def prepareMail(alert: AlertInfo, documents: Seq[Document])(message: MimeMailMessage) {
+  private def prepareMail(email: String, alertName: String, documents: Seq[Document])(message: MimeMailMessage) {
       def subject() =
         {
-          val alertName = alert.name
           val numberOfDocuments = documents.size
           s"[state-alerts] $numberOfDocuments documents matched your $alertName alert"
         }
@@ -56,7 +77,7 @@ class AlertJob {
           s"$title [$url]"
         }).mkString("\n")
       }
-    message.setTo(alert.email)
+    message.setTo(email)
     message.setSubject(subject())
     message.setText(text())
   }

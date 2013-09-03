@@ -36,13 +36,13 @@ class AlertServiceTest {
     alert1.keywords = Seq("word", "test 1")
     alert1.period = Daily.toString
     service.saveAlert(alert1, user1)
-    
+
     val alert2 = new Alert()
     alert2.name = "alert 2"
     alert2.period = Weekly.toString
     alert2.keywords = Seq("word", "test 2")
     service.saveAlert(alert2, user2)
-    
+
     val all = service.getAllAlerts()
     Assert.assertEquals(2, all.size)
     Assert.assertEquals("word,test 1", all(0).keywords)

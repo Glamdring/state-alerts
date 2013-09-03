@@ -31,6 +31,7 @@ import javax.annotation.PreDestroy
 import javax.inject.Inject
 import org.apache.lucene.index.ReaderManager
 import org.apache.lucene.search.IndexSearcher
+import org.joda.time.Interval
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
@@ -66,22 +67,20 @@ class SearchService {
     
     getDocuments(q, 50)
   }
-  
+
   @Transactional(readOnly=true)
-  def search(keywords: String, since: DateTime): List[Document] = {
-    val sinceMillis = since.getMillis()
-    val nowMillis = System.currentTimeMillis()
-    
+  def search(keywords: String, interval: Interval): List[Document] = {
+
     val escapedKeywords = QueryParserUtil.escape(keywords)
     val textQuery = new TermQuery(new Term("text", escapedKeywords))
-    val timestampQuery = NumericRangeQuery.newLongRange("indexTimestamp", sinceMillis, nowMillis, true, true)
+    val timestampQuery = NumericRangeQuery.newLongRange("indexTimestamp", interval.getStartMillis(), interval.getEndMillis(), true, true)
     val query = new BooleanQuery()
     query.add(textQuery, BooleanClause.Occur.MUST)
     query.add(timestampQuery, BooleanClause.Occur.MUST)
-    
+
     getDocuments(query, 50)
   }
-  
+
   private def getDocuments(query: Query, limit: Int): List[Document] = {
     val reader = readerManager.acquire()
     

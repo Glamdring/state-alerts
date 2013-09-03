@@ -48,10 +48,9 @@ class AlertService {
   }
 
   @Transactional
-  def prepareAlertLog(alert: AlertInfo, initialStatus: AlertStatus = Pending): AlertLog = {
+  def prepareAlertLog(alertInfo: AlertInfo, now: DateTime = DateTime.now(), initialStatus: AlertStatus = New): Option[AlertLog] = {
 
-    val now = DateTime.now()
-    val from = alert.period match {
+    val from = alertInfo.period match {
       case Daily   => now.minusDays(1)
       case Weekly  => now.minusWeeks(1)
       case Monthly => now.minusMonths(1)
@@ -59,24 +58,27 @@ class AlertService {
     val interval: Interval = new Interval(from, now)
 
     val alertLog = new AlertLog()
-    alertLog.name = alert.name
-    alertLog.email = alert.email
+    alertLog.name = alertInfo.name
+    alertLog.email = alertInfo.email
     alertLog.interval = interval
-    alertLog.keywords = alert.keywords
+    alertLog.keywords = alertInfo.keywords
     alertLog.state = AlertState(now, initialStatus)
-    
-    alertLogDao.save(alertLog)
+    // TODO retun none if this alert is already pending... or add instead of option introduce new status??? 
+
+    Some(alertLogDao.save(alertLog))
   }
 
   @Transactional
-  def updateAlertLogStatus(alertLog: AlertLog, status: AlertStatus) = {
-    alertLog.state = AlertState(DateTime.now(), status)
+  def updateAlertLogStatus(alertLog: AlertLog, status: AlertStatus, date: DateTime = DateTime.now) = {
+    val statusNotChanged = alertLog.state.status == status
+    val statusCount = if (statusNotChanged) alertLog.state.statusCount + 1 else 1
+    alertLog.state = AlertState(date, status, statusCount)
     alertLogDao.save(alertLog)
   }
 
   @Transactional(readOnly = true)
-  def getAlertLogs(status: AlertStatus): Seq[AlertLog] = {
-    alertLogDao.getAlertLogsWithState(status)
+  def getAlertLogsWithStatus(status: AlertStatus): Seq[AlertLog] = {
+    alertLogDao.getAlertLogsWithStatus(status)
   }
 
   @Transactional
