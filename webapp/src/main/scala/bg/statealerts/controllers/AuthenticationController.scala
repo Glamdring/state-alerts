@@ -58,6 +58,11 @@ class AuthenticationController {
     }
 	val emailValidator = new EmailValidator()
 	
+	@RequestMapping(value=Array("/signup"), method=Array(RequestMethod.GET))
+    def signup(): String = {
+        return "signup";
+    }
+	
     @RequestMapping(value=Array("/signin/{providerId}"), method=Array(RequestMethod.GET), params=Array("home")) //param to discriminate from the cancellation url (ugly, I know)
     def signin(@PathVariable providerId: String, request: NativeWebRequest): RedirectView = {
         return signInController.signIn(providerId, request)
