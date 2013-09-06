@@ -5,9 +5,11 @@ import org.springframework.stereotype.Component
 import javax.inject.Inject
 import org.springframework.jmx.export.annotation.ManagedOperation
 import bg.statealerts.scheduled.AlertJob
+import bg.statealerts.util.TestProfile
 
 @ManagedResource
 @Component
+@TestProfile.Disabled
 class ManagementService {
 
   @Inject
