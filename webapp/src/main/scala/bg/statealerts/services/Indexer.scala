@@ -3,10 +3,10 @@ package bg.statealerts.services
 import java.io.File
 
 import org.apache.lucene.analysis.Analyzer
+import org.apache.lucene.document.{Document => LuceneDocument}
 import org.apache.lucene.document.Field.Store
 import org.apache.lucene.document.LongField
 import org.apache.lucene.document.TextField
-import org.apache.lucene.document.{Document => LuceneDocument}
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
 import org.apache.lucene.index.IndexWriterConfig.OpenMode
@@ -15,13 +15,12 @@ import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.util.Version
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.jmx.export.annotation.ManagedOperation
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 
 import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
 import javax.inject.Inject
 import javax.persistence.Entity
 
