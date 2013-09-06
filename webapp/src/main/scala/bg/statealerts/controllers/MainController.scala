@@ -38,7 +38,7 @@ class MainController {
   
   @RequestMapping(Array("/about"))
   def about(): String = {
-    "about"
+    "layout:about"
   }
   
   // serializing to JSON (using the built-in mechanisms doesn't work well)

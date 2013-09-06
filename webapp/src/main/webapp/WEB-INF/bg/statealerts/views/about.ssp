@@ -1,4 +1,7 @@
 <% attributes("title") = msg("about") %>
-<% attributes("currentPage") = "myalerts" %>
+<% attributes("currentPage") = "about" %>
 
-<div class="lead">msg("aboutText")</div>
+<div class="lead">
+	<p>${msg("aboutText")}</p>
+	<p>${msg("projectAt")} <a href="https://github.com/Glamdring/state-alerts">GitHub</a>.</p>
+</div>
