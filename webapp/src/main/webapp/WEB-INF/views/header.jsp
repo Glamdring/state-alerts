@@ -1,11 +1,10 @@
-
 <%@ page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="${pageContext.response.locale.language}">
 <head>
 <link rel="shortcut icon" href="${staticRoot}/img/favicon.png" />
-<link href="${staticRoot}/styles/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="${staticRoot}/styles/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js" rel="stylesheet" type="text/css" media="screen"/>
 <link href="${staticRoot}/styles/main.css" rel="stylesheet" type="text/css" media="screen"/>
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
