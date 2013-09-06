@@ -36,6 +36,11 @@ class MainController {
     "searchResults"
   }
   
+  @RequestMapping(Array("/about"))
+  def about(): String = {
+    "about"
+  }
+  
   // serializing to JSON (using the built-in mechanisms doesn't work well)
   // val result = Json.generate(bufferAsJavaList(buffer))
   // IOUtils.write(result, response.getOutputStream())

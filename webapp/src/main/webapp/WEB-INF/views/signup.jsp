@@ -7,7 +7,7 @@
 <%@ include file="header.jsp" %>
 
 <div class="main">
-   <div class="lead">Currently authentication works via Facebook, Twitter and Mozilla Persona:</div>
+   <div class="lead">${msg.signupPageText}</div>
    <%@ include file="signin.jsp" %>
 </div>
 <%@ include file="footer.jsp" %>

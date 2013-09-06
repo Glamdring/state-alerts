@@ -1,0 +1,4 @@
+<% attributes("title") = msg("about") %>
+<% attributes("currentPage") = "myalerts" %>
+
+<div class="lead">msg("aboutText")</div>
