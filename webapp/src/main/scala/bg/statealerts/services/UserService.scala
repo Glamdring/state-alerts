@@ -66,7 +66,6 @@ class UserService {
         var user = new User()
         user.email = email
         user.names = names
-        user.username = username
         user.loginAutomatically = loginAutomatically
         user.registrationTime = new DateTime()
         user.receiveEmails = true
