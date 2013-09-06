@@ -34,7 +34,7 @@ class AlertController {
   @RequestMapping(value = Array("/new"))
   def newAlert() = {
     if (ctx.user == null) {
-      "redirect:/"
+      "redirect:/signup"
     }
     else {
       "layout:alert"
@@ -53,7 +53,7 @@ class AlertController {
   @RequestMapping(value = Array("/list"))
   def list(model: Model): String = {
     if (ctx.user == null) {
-      return "redirect:/"
+      return "redirect:/signup"
     }
     model.addAttribute("alerts", alertService.getAlerts(ctx.user))
     return "layout:alerts"
