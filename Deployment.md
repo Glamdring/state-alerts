@@ -27,10 +27,9 @@ In _.openshift/config/server.xml_ find _Connector_ element and add _URIEncoding=
                URIEncoding="utf-8"
                redirectPort="8443"/>
 
-
 In _.openshift/action_hooks_ folder create a file called _pre_start_jbossews_ with following contents
 
-    export CATALINA_OPTS="-Dstatealerts.config.location=${OPENSHIFT_REPO_DIR}/config"
+    export CATALINA_OPTS="-Dstatealerts.config.location=${OPENSHIFT_REPO_DIR}/config -Duser.timezone=UTC"
     
 In repository root folder create folder called _config_ and copy there all files from _project-root/config_ (at least the following configuration files _statealert.properties_, _extractors.json_, _ehcache.xml_)
 
