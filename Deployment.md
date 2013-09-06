@@ -1,10 +1,14 @@
 Deploying on Openshift
 ======================
 
-Register for openshift account and create a tomcat 7 app with mysql support
+Register for openshift account and create a tomcat 7 app with mysql support. Execute the following command in a newly-created directory (e.g. statealerts-deployment)
 
     rhc app create -a statealerts jbossews-2.0 mysql-5.1
 
+Clone the openshift git repo:
+
+    git clone <your repo>
+    
 Delete the _src_ folder and _pom.xml_ file from the template
 
     cd statealerts
@@ -24,26 +28,12 @@ In _.openshift/config/server.xml_ find _Connector_ element and add _URIEncoding=
                redirectPort="8443"/>
 
 
-In _.openshift/action_hooks_ folder create an executable called _pre_start_jbossews_ with following contents
+In _.openshift/action_hooks_ folder create a file called _pre_start_jbossews_ with following contents
 
     export CATALINA_OPTS="-Dstatealerts.config.location=${OPENSHIFT_REPO_DIR}/config"
     
-In repository root folder create folder called _config_ and copy there at least following configuration files _statealert.properties_, _extractors.json_, _ehcache.xml_.
+In repository root folder create folder called _config_ and copy there all files from _project-root/config_ (at least the following configuration files _statealert.properties_, _extractors.json_, _ehcache.xml_)
 
-Change the contents of _statealerts.properties_ to look like
-
-    database.driverClassName=com.mysql.jdbc.Driver
-    database.url=jdbc\:mysql\://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}?characterEncoding=utf8
-    database.username=${OPENSHIFT_MYSQL_DB_USERNAME}
-    database.password=${OPENSHIFT_MYSQL_DB_PASSWORD}
-
-    index.path=${OPENSHIFT_DATA_DIR}/index
-    lucene.analyzer.class=org.apache.lucene.analysis.bg.BulgarianAnalyzer
-
-    random.sleep.max.minutes=10
-
-    ui.locale=bg
-    
 Commit your changes
 
     git add webapps config .openshift

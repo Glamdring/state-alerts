@@ -76,11 +76,9 @@ class AuthenticationController {
                 val profile = api.asInstanceOf[Facebook].userOperations().getUserProfile()
                 user.email = profile.getEmail()
                 user.names = profile.getName()
-                user.username = profile.getUsername()
             } else if (api.isInstanceOf[Twitter]) {
                 val profile = api.asInstanceOf[Twitter].userOperations().getUserProfile()
                 user.names = profile.getName()
-                user.username = profile.getScreenName()
             }
         } else {
             user.email = email

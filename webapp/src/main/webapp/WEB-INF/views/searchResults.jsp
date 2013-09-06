@@ -6,6 +6,10 @@
 </c:set>
 <%@ include file="header.jsp" %>
 
+<form action="${request.getContextPath}/search" method="GET">
+	<input type="text" name="keywords" style="width: 400px; margin-bottom: 0px;" value="${param.keywords}" />&nbsp;&nbsp;<input type="submit" class="btn" value="${msg("search")}" />
+</form>
+
 <c:if test="${userContext.user != null}">
 	<a href="<c:url value="/alerts/new?keywords=${param.keywords}" />">${msg.createNewAlert}</a>
 </c:if>

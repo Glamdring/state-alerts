@@ -20,10 +20,6 @@ case class User extends Serializable {
     @Column(name = "id", columnDefinition = "INT(11) UNSIGNED")
     var id: Long = _
 
-    @Column
-    @BeanProperty
-    var username: String = _
-
     @Column(unique=true)
     @Email
     @BeanProperty

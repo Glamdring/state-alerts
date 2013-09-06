@@ -2,7 +2,7 @@
 <%@ include file="includes.jsp" %>
 <c:set var="currentPage" value="signup" />
 <c:set var="head">
-<title>Signup - Computoser</title>
+<title>${msg.signup}</title>
 </c:set>
 <%@ include file="header.jsp" %>
 

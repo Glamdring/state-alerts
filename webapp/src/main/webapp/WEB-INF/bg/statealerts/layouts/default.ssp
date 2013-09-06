@@ -78,11 +78,6 @@ ${unescape(head)}
             ><a href="${root}/alerts/list">${msg("myAlerts")}</a></li>
         #end
         <li 
-        #if (currentPage == "search") 
-            class="active"
-        #end
-        ><a href="${root}/search">${msg("search")}</a></li>
-        <li 
         #if (currentPage == "topalerts") 
             class="active"
         #end
