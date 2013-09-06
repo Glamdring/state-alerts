@@ -3,7 +3,7 @@
       {
         "sourceKey": "ParliamentLawProjects",
         "sourceDisplayName": "Законопроекти",
-        "enabled": "false",
+        "enabled": "true",
         "documentType": "PDF",
         "contentLocationType": "LinkedDocumentOnLinkedPage",
         "url": "http://www.parliament.bg/bg/bills",
@@ -25,7 +25,7 @@
       {
         "sourceKey": "AOP",
         "sourceDisplayName": "Агенция за обществени поръчки",
-        "enabled": "false",
+        "enabled": "true",
         "documentType": "HTML",
         "contentLocationType": "LinkedPage",
         "entriesPerRow": "14",
