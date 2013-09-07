@@ -7,19 +7,25 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping(Array("/mgmt"))
-//TODO password-protect
 class ManagementController {
 
   @Inject
   var managmentService: ManagementService = _
+
+  @Inject
+  var userContext: UserContext = _
   
   @RequestMapping(Array("/reindex"))
   def reindex() = {
-    managmentService.reindex
+    if (userContext.getUser != null && userContext.getUser.admin) {
+    	managmentService.reindex
+    }
   }  
   
   @RequestMapping(Array("/sendAlerts"))
   def sendAlerts() = {
-    managmentService.sendAlerts
+    if (userContext.getUser != null && userContext.getUser.admin) {
+    	managmentService.sendAlerts
+    }
   }
 }

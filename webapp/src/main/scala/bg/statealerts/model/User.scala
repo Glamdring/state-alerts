@@ -47,4 +47,8 @@ case class User extends Serializable {
     var loginToken: String = _
     @Column
     var loginSeries: String = _
+    
+    @Column(nullable=false)
+    @BeanProperty
+    var admin: Boolean = _
 }
