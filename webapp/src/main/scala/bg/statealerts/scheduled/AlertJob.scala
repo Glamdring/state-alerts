@@ -31,6 +31,10 @@ class AlertJob extends Logging {
   @Value("${alert.job.max_failures:5}")
   var maxFailures: Int = _
 
+  @Value("${mail.address}")
+  var from: String = _
+
+  
   @Scheduled(cron = "${alert.job.prepare.schedule:0 0 0 * * *}")
   def send() {
     log.debug("start sending alerts")
@@ -77,6 +81,7 @@ class AlertJob extends Logging {
           s"$title [$url]"
         }).mkString("\n")
       }
+    message.setFrom(from);
     message.setTo(email)
     message.setSubject(subject())
     message.setText(text())
