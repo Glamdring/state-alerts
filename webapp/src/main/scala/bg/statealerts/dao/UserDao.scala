@@ -34,14 +34,14 @@ class UserDao extends BaseDao {
         query.executeUpdate()
     }
 
-    def getLoginFromAuthToken(token: String, series: String): Option[User] = {
-      val details = new QueryDetails()
-      details.query = "SELECT user FROM User user WHERE user.loginToken=:token AND user.loginSeries=:series"
-      details.paramNames = Array("token", "series")
-      details.paramValues = Array(token, series)
-      val result = findByQuery(details)
+  def getLoginFromAuthToken(token: String, series: String): Option[User] = {
+    val details = QueryDetails(
+      query = "SELECT user FROM User user WHERE user.loginToken=:token AND user.loginSeries=:series",
+      params = Map("token" -> token, "series" -> series)
+    )
+    val result = findByQuery(details)
 
-      return getResult(result)
-    }
-    
+    return getResult(result)
+  }
+
 }

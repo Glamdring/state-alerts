@@ -14,17 +14,23 @@ class ManagementService {
 
   @Inject
   var indexer: Indexer = _
-  
+
   @Inject
   var alertJob: AlertJob = _
-  
+
   @ManagedOperation
   def reindex() = {
     indexer.reindex
   }
-  
+
   @ManagedOperation
   def sendAlerts() = {
     alertJob.send
   }
+
+  @ManagedOperation
+  def resendFailedAlerts() = {
+    alertJob.resendFailed
+  }
+
 }

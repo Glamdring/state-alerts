@@ -1,11 +1,27 @@
 package bg.statealerts.dao
 
-case class QueryDetails {
-    var query: String = _
-    var queryName: String = _
-    var paramNames: Array[String] = new Array[String](0)
-    var paramValues: Array[Any] = new Array[Any](0)
-    var start: Int = -1
-    var count: Int = -1
-    var cacheable: Boolean = _
+sealed trait BaseQueryDetails {
+  def params: Map[String, Any]
+  def pagination: Pagination
+  def cacheOptions: Option[CacheOptions]
 }
+case class CacheOptions(cacheable: Option[Boolean] = None, cacheMode: Option[String] = None)
+
+sealed trait Pagination
+object NoPagination extends Pagination
+case class DefaultPagination(start: Int, count: Int) extends Pagination
+
+
+case class NamedQueryDetails(
+     queryName: String,
+     params: Map[String, Any] = Map(),
+     pagination: Pagination = NoPagination,
+     cacheOptions: Option[CacheOptions] = None) extends BaseQueryDetails
+
+
+case class QueryDetails (
+  query: String,
+  params: Map[String, Any] = Map(),
+  pagination: Pagination = NoPagination,
+  cacheOptions: Option[CacheOptions] = None) extends BaseQueryDetails
+

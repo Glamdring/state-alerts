@@ -16,6 +16,12 @@ import javax.persistence.Entity
 import javax.inject.Inject
 import bg.statealerts.model.AlertPeriod._
 import org.junit.Assert
+import org.hamcrest.CoreMatchers
+import org.joda.time.DateTime
+import org.apache.commons.lang3.ArrayUtils
+import scala.collection.mutable.ListBuffer
+import bg.statealerts.model.AlertExecution
+import bg.statealerts.model.AlertTrigger
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(Array("classpath*:/applicationContext.xml"))
@@ -28,8 +34,8 @@ class AlertServiceTest {
 
   @Test
   def test() {
-    val user1 = userService.completeUserRegistration(null, null, null, null,  false)
-    val user2 = userService.completeUserRegistration(null, null, null, null,  false)
+    val user1 = userService.completeUserRegistration(null, null, null,  false)
+    val user2 = userService.completeUserRegistration(null, null, null,  false)
 
     val alert1 = new Alert()
     alert1.name = "alert 1"
@@ -39,14 +45,26 @@ class AlertServiceTest {
 
     val alert2 = new Alert()
     alert2.name = "alert 2"
-    alert2.period = Weekly.toString
+    alert2.period = Daily.toString
     alert2.keywords = Seq("word", "test 2")
     service.saveAlert(alert2, user2)
 
-    val all = service.getAllAlerts()
+    val all = ListBuffer[(AlertExecution, AlertTrigger)]()
+    service.forAlertExecution(DateTime.now.plusDays(1).plusSeconds(10)) {
+      (alert: AlertExecution, trigger: AlertTrigger) =>
+        val e = (alert, trigger)
+        all += e
+    }
+     
     Assert.assertEquals(2, all.size)
-    Assert.assertEquals("word,test 1", all(0).keywords)
-    Assert.assertEquals("word,test 2", all(1).keywords)
+    val executionKeywords1 = all(0)._1.keywords.split(',')
+    val executionKeywords2 = all(1)._1.keywords.split(',')
+    Assert.assertEquals(2, executionKeywords1.size)
+    Assert.assertTrue(executionKeywords1.contains("word"))
+    Assert.assertTrue(executionKeywords1.contains("test 1"))
+    Assert.assertEquals(2, executionKeywords2.size)
+    Assert.assertTrue(executionKeywords2.contains("word"))
+    Assert.assertTrue(executionKeywords2.contains("test 2"))
 
   }
 }

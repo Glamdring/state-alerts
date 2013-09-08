@@ -61,16 +61,14 @@ class Indexer {
     writer.commit()
     writer.close()
   }
-  
+
   def reindex() = {
     val writer = getWriter()
     writer.deleteAll()
     val now = new DateTime()
-    documentDao.performBatched(classOf[Document], 200, (data: List[Document]) => {
-      for (document <- data) {
-    	writer.addDocument(getLuceneDocument(document, now))
-      }
-    })
+    documentDao.performBatched(
+      document => writer.addDocument(getLuceneDocument(document, now))
+    )
     writer.commit()
     writer.close()
   }

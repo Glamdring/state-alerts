@@ -1,19 +1,22 @@
 package bg.statealerts.scheduled
 
-import org.springframework.mail.javamail.MimeMailMessage
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Component
 import bg.statealerts.model.AlertLog
+import bg.statealerts.model.AlertState
 import bg.statealerts.model.AlertStatus._
 import bg.statealerts.model.Document
+import bg.statealerts.model.AlertExecution
+import bg.statealerts.model.AlertTrigger
 import bg.statealerts.services.AlertService
 import bg.statealerts.services.MailService
 import bg.statealerts.services.SearchService
+import bg.statealerts.util.Logging
 import bg.statealerts.util.TestProfile
 import javax.inject.Inject
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
-import bg.statealerts.util.Logging
+import org.springframework.mail.javamail.MimeMailMessage
+import org.springframework.stereotype.Component
+import org.springframework.scheduling.annotation.Scheduled
 
 @Component
 @TestProfile.Disabled
@@ -34,41 +37,61 @@ class AlertJob extends Logging {
   @Value("${mail.address}")
   var from: String = _
 
-  
-  @Scheduled(cron = "${alert.job.prepare.schedule:0 0 0 * * *}")
+  @Scheduled(cron = "${alert.job.send.schedule:0 0 0 * * *}")
   def send() {
-    log.debug("start sending alerts")
-    val now = DateTime.now
-    for (alertInfo <- alertService.getAllAlerts()) {
-      val maybeAlertLog = alertService.prepareAlertLog(alertInfo, now)
-      if (maybeAlertLog.isDefined) {
-          sendAlert(maybeAlertLog.get);
-      }
+    log.debug("start preparing alerts")
+    val prepareTime = DateTime.now
+    alertService.forAlertExecution(prepareTime) {
+      (alertExecution: AlertExecution, alertTrigger: AlertTrigger) =>
+        val alertLog = alertService.prepareAlertExecution(alertExecution, Some(alertTrigger), prepareTime)
+        if (alertLog.state.status == New) {
+            sendAlert(alertLog);
+        } else {
+          // TODO: better logging 
+          log.warn("Not sending alert.")
+        }
     }
     log.debug("done sending alerts")
   }
 
-  @Scheduled(cron = "${alert.job.prepare.schedule:0 0 12 * * *}")
+  @Scheduled(cron = "${alert.job.resend_failed.schedule:0 0 12 * * *}")
   def resendFailed() {
-    for (alertLog <- alertService getAlertLogsWithStatus Failed) {
-      if (alertLog.state.statusCount > maxFailures) {
-        alertService.updateAlertLogStatus(alertLog, Abandoned)
-      }
-      else {
-        sendAlert(alertLog)
-      }
+    log.debug("checking for failed alert logs")
+    val failedLogs = alertService.getAlertLogsWithStatus(Failed)
+    if (!failedLogs.isEmpty) {
+      log.info("{} failed alert logs found. will try to resend them now", failedLogs.size)
+    }
+    for (alertLog <- failedLogs) {
+      sendAlert(alertLog)
     }
   }
 
   def sendAlert(alertLog: AlertLog) = {
     val documents = searchService.search(alertLog.keywords, alertLog.interval)
-    val mailSent = mailService.send(prepareMail(alertLog.email, alertLog.name, documents))
-    val status = if (mailSent) Sent else Failed
-    alertService.updateAlertLogStatus(alertLog, status)
+    val (status, description) =
+      if (documents.isEmpty) {
+        (Abandoned, "No matching documents.")
+      }
+      else {
+        val successfullySent = mailService.send(prepareMail(alertLog.email, alertLog.name, alertLog.state, documents))
+        if (successfullySent) {
+          val count = documents.size
+          (Sent, s"Mail with $count documents successfully sent.")
+        }
+        else {
+          if (alertLog.state.status == Failed && alertLog.state.statusCount > maxFailures) {
+            (Abandoned, s"Maximum failures ($maxFailures) exceeded.")
+          }
+          else {
+            (Failed, "Mail sending failed.")
+          }
+        }
+      }
+    alertService.updateAlertLogStatus(alertLog, status, description)
   }
 
   // TODO: use some templating for mails.
-  private def prepareMail(email: String, alertName: String, documents: Seq[Document])(message: MimeMailMessage) {
+  private def prepareMail(email: String, alertName: String, alertState: AlertState, documents: Seq[Document])(message: MimeMailMessage) {
       def subject() =
         {
           val numberOfDocuments = documents.size

@@ -1,22 +1,22 @@
 package bg.statealerts.services
 
 import javax.inject.Inject
-import bg.statealerts.model.Alert
-import org.springframework.stereotype.Service
-import bg.statealerts.model.User
-import javax.annotation.Resource
 import org.springframework.transaction.annotation.Transactional
-import bg.statealerts.dao.AlertDao
-import bg.statealerts.dao.AlertLogDao
-import bg.statealerts.model.AlertLog
+import org.springframework.stereotype.Service
 import org.joda.time.Interval
+import org.joda.time.DateTime
+import bg.statealerts.model.Alert
+import bg.statealerts.model.User
+import bg.statealerts.model.AlertLog
 import bg.statealerts.model.AlertState
 import bg.statealerts.model.AlertStatus._
 import bg.statealerts.model.AlertPeriod._
-import scala.collection.JavaConversions
-import org.joda.time.DateTime
 import bg.statealerts.model.AlertPeriod
-import bg.statealerts.model.AlertInfo
+import bg.statealerts.model.AlertTrigger
+import bg.statealerts.model.AlertExecution
+import bg.statealerts.dao.AlertDao
+import bg.statealerts.dao.AlertLogDao
+import bg.statealerts.dao.AlertTriggerDao
 
 @Service
 class AlertService {
@@ -27,18 +27,26 @@ class AlertService {
   @Inject
   var alertLogDao: AlertLogDao = _
 
+  @Inject
+  var alertTriggerDao: AlertTriggerDao = _
+
   @Transactional
   def saveAlert(alert: Alert, user: User) = {
     alert.user = user
-
-    dao.save(alert)
+    val result = dao.save(alert)
+    val alertTrigger = new AlertTrigger
+    alertTrigger.alert = result
+    alertTrigger.nextExecutionTime = AlertTrigger.nextExecutionTime(alert.getPeriodValue)
+    alertTriggerDao.save(alertTrigger)
+    result
   }
 
   @Transactional(readOnly = true)
-  def getAllAlerts(): Seq[AlertInfo] = alertLogDao.getAlerts
+  def forAlertExecution(before: DateTime)(f: (AlertExecution, AlertTrigger) => Unit) =
+    alertTriggerDao.performBatched(before)(f)
 
   @Transactional(readOnly = true)
-  def getAlerts(user: User): List[Alert] = {
+  def getAlerts(user: User): Seq[Alert] = {
     dao.getListByPropertyValue(classOf[Alert], "user", user)
   }
 
@@ -47,32 +55,45 @@ class AlertService {
     dao.delete(classOf[Alert], id)
   }
 
-  @Transactional
-  def prepareAlertLog(alertInfo: AlertInfo, now: DateTime = DateTime.now(), initialStatus: AlertStatus = New): Option[AlertLog] = {
-
-    val from = alertInfo.period match {
-      case Daily   => now.minusDays(1)
-      case Weekly  => now.minusWeeks(1)
-      case Monthly => now.minusMonths(1)
+  protected def getInitialFrom(alertExecution: AlertExecution, maybeTrigger: Option[AlertTrigger], time: DateTime) = {
+    if (maybeTrigger.isDefined && Option(maybeTrigger.get.lastExecutionTime).isDefined) {
+      maybeTrigger.get.lastExecutionTime
+    } else {
+      AlertTrigger.lastExecutionTime(alertExecution.period, time)
     }
-    val interval: Interval = new Interval(from, now)
-
-    val alertLog = new AlertLog()
-    alertLog.name = alertInfo.name
-    alertLog.email = alertInfo.email
-    alertLog.interval = interval
-    alertLog.keywords = alertInfo.keywords
-    alertLog.state = AlertState(now, initialStatus)
-    // TODO retun none if this alert is already pending... or add instead of option introduce new status??? 
-
-    Some(alertLogDao.save(alertLog))
   }
 
   @Transactional
-  def updateAlertLogStatus(alertLog: AlertLog, status: AlertStatus, date: DateTime = DateTime.now) = {
+  def prepareAlertExecution(alertExecution: AlertExecution, maybeTrigger: Option[AlertTrigger], prepareTime: DateTime): AlertLog = {
+
+    val now = DateTime.now
+    val from = getInitialFrom(alertExecution, maybeTrigger, prepareTime)
+
+    val interval: Interval = new Interval(from, prepareTime)
+
+
+    val alertLog = new AlertLog()
+    alertLog.name = alertExecution.name
+    alertLog.email = alertExecution.email
+    alertLog.interval = interval
+    alertLog.keywords = alertExecution.keywords
+    alertLog.state = AlertState(New, "Prepared", now)
+
+    if (maybeTrigger.isDefined)
+    {
+        val trigger = maybeTrigger.get
+        trigger.lastExecutionTime = prepareTime
+        trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(alertExecution.period, prepareTime)
+        alertTriggerDao.save(trigger)
+    }
+    alertLogDao.save(alertLog)
+  }
+
+  @Transactional
+  def updateAlertLogStatus(alertLog: AlertLog, status: AlertStatus, description: String) = {
     val statusNotChanged = alertLog.state.status == status
     val statusCount = if (statusNotChanged) alertLog.state.statusCount + 1 else 1
-    alertLog.state = AlertState(date, status, statusCount)
+    alertLog.state = AlertState(status, description, DateTime.now, statusCount)
     alertLogDao.save(alertLog)
   }
 
