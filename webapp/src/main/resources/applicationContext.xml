@@ -54,7 +54,8 @@
 
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-		id="entityManagerFactory">
+		id="entityManagerFactory"
+        depends-on="ehCacheManager">
 		<property name="persistenceUnitName" value="state-alerts" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaProperties">
