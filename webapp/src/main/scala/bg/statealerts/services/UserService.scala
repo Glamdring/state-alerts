@@ -62,7 +62,7 @@ class UserService {
     }
 
     @Transactional
-    def completeUserRegistration(email: String, username: String, names: String, connection: Connection[_], loginAutomatically: Boolean): User = {
+    def completeUserRegistration(email: String, names: String, connection: Connection[_], loginAutomatically: Boolean): User = {
         var user = new User()
         user.email = email
         user.names = names

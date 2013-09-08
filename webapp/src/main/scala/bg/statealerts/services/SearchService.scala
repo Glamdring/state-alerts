@@ -104,7 +104,7 @@ class SearchService {
     }
   }
   
-  @Scheduled(fixedRate = 60000) // 10 minutes
+  @Scheduled(fixedRate = 600000) // 10 minutes
   def refreshReaderManager(): Unit = {
     readerManager.maybeRefresh()
   }

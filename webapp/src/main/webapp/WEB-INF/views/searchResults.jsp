@@ -7,7 +7,7 @@
 <%@ include file="header.jsp" %>
 
 <div align="center">
-	<form action="${request.getContextPath}/search" method="GET">
+	<form action="${root}/search" method="GET">
 		<input type="text" name="keywords" style="width: 400px; margin-bottom: 0px;" value="${param.keywords}" />&nbsp;&nbsp;<input type="submit" class="btn" value="${msg.search}" />
 	</form>
 	

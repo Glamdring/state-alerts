@@ -95,10 +95,13 @@ class AuthenticationController {
     }
 
     @RequestMapping(Array("/social/completeRegistration"))
-    def completeRegistration(@RequestParam email: String, @RequestParam names: String,
-            @RequestParam username: String, @RequestParam registrationType: String,
+    def completeRegistration(
+            @RequestParam email: String,
+            @RequestParam names: String,
+            @RequestParam registrationType: String,
             @RequestParam(defaultValue = "false", required = false) loginAutomatically: Boolean,
-            request: NativeWebRequest, model: Model): String = {
+            request: NativeWebRequest,
+            model: Model): String = {
 
         if (!emailValidator.isValid(email, null)) {
             return "redirect:/?message=Invalid email. Try again"
@@ -106,10 +109,10 @@ class AuthenticationController {
 
         val attempt = request.getAttribute(classOf[ProviderSignInAttempt].getName(), RequestAttributes.SCOPE_SESSION).asInstanceOf[ProviderSignInAttempt]
         if (attempt != null) {
-            val user = userService.completeUserRegistration(email, username, names, attempt.getConnection(), loginAutomatically)
+            val user = userService.completeUserRegistration(email, names, attempt.getConnection(), loginAutomatically)
             signInAdapter.signIn(user, request.getNativeResponse().asInstanceOf[HttpServletResponse], true)
         } else if ("Persona".equals(registrationType)){
-            val user = userService.completeUserRegistration(email, username, names, null, loginAutomatically)
+            val user = userService.completeUserRegistration(email, names, null, loginAutomatically)
             signInAdapter.signIn(user, request.getNativeResponse().asInstanceOf[HttpServletResponse], true)
         }
         // if the session has expired for a fb/tw registration, do not proceed - otherwise inconsistent data is stored
