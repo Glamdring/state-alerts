@@ -402,6 +402,7 @@
 					<artifactId>tomcat7-maven-plugin</artifactId>
 					<version>2.1</version>
 					<configuration>
+						<uriEncoding>utf-8</uriEncoding>
 						<systemProperties>
 							<statealerts.config.location>${statealerts.config.location}</statealerts.config.location>
 						</systemProperties>

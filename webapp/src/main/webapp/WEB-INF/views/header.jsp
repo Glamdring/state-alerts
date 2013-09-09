@@ -7,9 +7,8 @@
 <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js" rel="stylesheet" type="text/css" media="screen"/>
 <link href="${staticRoot}/styles/main.css" rel="stylesheet" type="text/css" media="screen"/>
 
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://login.persona.org/include.js"></script>
-<script type="text/javascript" src="${staticRoot}/scripts/bootstrap.min.js"></script>
 ${head}
 <meta name="description" content="" />
 <meta name="keywords" content="" />
