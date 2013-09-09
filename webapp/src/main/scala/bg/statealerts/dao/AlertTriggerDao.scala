@@ -13,6 +13,12 @@ class AlertTriggerDao extends BaseDao {
   @Value("${alert.triggers.fetch.size:1000}")
   var fetchSize: Int = _
 
+  def deleteAlertTriggers(alertId: Int) = {
+    val query = entityManager.createQuery("delete from AlertTrigger where alert.id=:alertId")
+    query.setParameter("alertId", alertId)
+    query.executeUpdate()
+  }
+
   def performBatched(before: DateTime)(f: (AlertExecution, AlertTrigger) => Unit) {
     performBatched[Array[Object]](
       query = """

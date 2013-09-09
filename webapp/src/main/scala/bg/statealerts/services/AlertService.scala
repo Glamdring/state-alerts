@@ -52,7 +52,7 @@ class AlertService {
 
   @Transactional
   def delete(id: Int) = {
-    alertTriggerDao.delete(classOf[AlertTrigger], id)
+    alertTriggerDao.deleteAlertTriggers(id)
     dao.delete(classOf[Alert], id)
   }
 
