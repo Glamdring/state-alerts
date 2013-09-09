@@ -19,6 +19,7 @@
 		<spring-security.version>3.2.0.RC1</spring-security.version>
 		<lucene.version>4.3.1</lucene.version>
 		<hibernate.version>4.2.5.Final</hibernate.version>
+		<scalate.version>1.6.1</scalate.version>
 	</properties>
 
 	<dependencyManagement>
@@ -338,7 +339,7 @@
 		<dependency>
 			<groupId>org.fusesource.scalate</groupId>
 			<artifactId>scalate-core_${scala.binaryVersion}</artifactId>
-			<version>1.6.1</version>
+			<version>${scalate.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>scraper</artifactId>
@@ -394,6 +395,18 @@
 					</args>
 				</configuration>
 			</plugin>
+			<plugin>
+	      <groupId>org.fusesource.scalate</groupId>
+	      <artifactId>maven-scalate-plugin_${scala.binaryVersion}</artifactId>
+	      <version>${scalate.version}</version>
+	      <executions>
+	        <execution>
+	          <goals>
+	            <goal>precompile</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	    </plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -416,9 +429,9 @@
 						<stopPort>8090</stopPort>
 						<stopKey>die</stopKey>
 						<jvmArgs>
-                            -Xmx128m
+              -Xmx128m
 							-Dstatealerts.config.location=${statealerts.config.location}
-                        </jvmArgs>
+            </jvmArgs>
 						<systemProperties>
 							<systemProperty>
 								<name>statealerts.config.location</name>
