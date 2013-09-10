@@ -34,7 +34,7 @@ ${head}
                 });
             },
             onlogout : function() {
-                window.locaiton.open("${root}/logout");
+                window.location.replace("${root}/logout");
             }
         });
     });
