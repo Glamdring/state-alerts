@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse
 import org.apache.commons.io.IOUtils
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.ui.Model
+import org.joda.time.Interval
 
 @Controller
 class MainController {
@@ -30,8 +31,13 @@ class MainController {
   }
 
   @RequestMapping(Array("/search"))
-  def search(@RequestParam keywords: String, model: Model): String = {
-    val results = seqAsJavaList(searcher.search(keywords))
+  def search(@RequestParam keywords: String, @RequestParam(required=false) start: Long, model: Model): String = {
+    var results: java.util.List[Document] = null
+    if (start == null) {
+	  results = seqAsJavaList(searcher.search(keywords))
+    } else {
+      results = seqAsJavaList(searcher.search(keywords, new Interval(start, System.currentTimeMillis())))
+    }
     model.addAttribute("results", results)
     "searchResults"
   }
