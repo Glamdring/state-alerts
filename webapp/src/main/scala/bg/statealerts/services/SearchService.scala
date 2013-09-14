@@ -89,15 +89,14 @@ class SearchService {
 	    val sort = new Sort(new SortField("publishTimestamp", SortField.Type.LONG, true))
 	    val result: TopDocs = searcher.search(query, null, limit, sort)
 	
-	    var documents = List[Document]()
 	
 	    val topDocs: Array[ScoreDoc] = result.scoreDocs
-	    
+	    var ids = List[Int]()
 	    for (topDoc <- topDocs) {
 	      val luceneDoc = searcher.doc(topDoc.doc)
-	      val doc = documentDao.get(classOf[Document], luceneDoc.get("id").toInt)
-	      documents ::= doc
+	      ids ::= luceneDoc.get("id").toInt
 	    }
+    	val documents = documentDao.getDocuments(ids) 
 	    documents
     } finally {
       readerManager.release(reader)

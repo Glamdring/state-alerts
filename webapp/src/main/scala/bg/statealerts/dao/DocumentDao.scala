@@ -3,9 +3,9 @@ package bg.statealerts.dao
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
-
 import bg.statealerts.model.Document
 import javax.persistence.TypedQuery
+import scala.collection.JavaConversions
 
 @Repository
 class DocumentDao extends BaseDao {
@@ -27,4 +27,12 @@ class DocumentDao extends BaseDao {
   }
 
   def performBatched(f: Document => Unit): Unit = performBatched(classOf[Document], fetchSize)(f)
+  
+  def getDocuments(ids: List[Int]): List[Document] = {
+    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Documenet doc WHERE id IN(:ids)", classOf[Document])
+    query.setMaxResults(ids.size)
+    query.setParameter("ids", JavaConversions.asJavaList(ids))
+    
+    JavaConversions.asScalaBuffer(query.getResultList()).toList
+  }
 }
