@@ -18,6 +18,12 @@ class ManagementService {
   @Inject
   var alertJob: AlertJob = _
 
+  @Inject
+  var mailServoce: MailService = _
+
+  @Inject
+  var messagePreparators: MessagePreparators = _
+
   @ManagedOperation
   def reindex() = {
     indexer.reindex
@@ -31,6 +37,11 @@ class ManagementService {
   @ManagedOperation
   def resendFailedAlerts() = {
     alertJob.resendFailed
+  }
+
+  @ManagedOperation
+  def sendTestMail(to: String) = {
+    mailServoce.send(messagePreparators.testMail(to))
   }
 
 }

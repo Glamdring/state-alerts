@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.MimeMailMessage
 import org.springframework.stereotype.Component
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.mail.MailException
+import bg.statealerts.services.MessagePreparators
 
 @Component
 @TestProfile.Disabled
@@ -27,15 +29,15 @@ class AlertJob extends Logging {
 
   @Inject
   var mailService: MailService = _
+  
+  @Inject
+  var messagePreparators: MessagePreparators = _
 
   @Inject
   var searchService: SearchService = _
 
   @Value("${alert.job.max_failures:5}")
   var maxFailures: Int = _
-
-  @Value("${mail.address}")
-  var from: String = _
 
   @Scheduled(cron = "${alert.job.send.schedule:0 0 0 * * *}")
   def send() {
@@ -45,8 +47,9 @@ class AlertJob extends Logging {
       (alertExecution: AlertExecution, alertTrigger: AlertTrigger) =>
         val alertLog = alertService.prepareAlertExecution(alertExecution, Some(alertTrigger), prepareTime)
         if (alertLog.state.status == New) {
-            sendAlert(alertLog);
-        } else {
+          sendAlert(alertLog);
+        }
+        else {
           // TODO: better logging 
           log.warn("Not sending alert.")
         }
@@ -73,41 +76,25 @@ class AlertJob extends Logging {
         (Abandoned, "No matching documents.")
       }
       else {
-        val successfullySent = mailService.send(prepareMail(alertLog.email, alertLog.name, alertLog.state, documents))
-        if (successfullySent) {
+        try {
+          mailService.send(messagePreparators.alertMail(alertLog.email, alertLog.name, alertLog.state, documents))
           val count = documents.size
           (Sent, s"Mail with $count documents successfully sent.")
         }
-        else {
-          if (alertLog.state.status == Failed && alertLog.state.statusCount > maxFailures) {
-            (Abandoned, s"Maximum failures ($maxFailures) exceeded.")
-          }
-          else {
-            (Failed, "Mail sending failed.")
+        catch {
+          case e: MailException => {
+            log.warn("Failed sending alert email", e);
+            if (alertLog.state.status == Failed && alertLog.state.statusCount > maxFailures) {
+              (Abandoned, s"Maximum failures ($maxFailures) exceeded.")
+            }
+            else {
+              (Failed, "Mail sending failed.")
+            }
           }
         }
       }
     alertService.updateAlertLogStatus(alertLog, status, description)
   }
 
-  // TODO: use some templating for mails.
-  private def prepareMail(email: String, alertName: String, alertState: AlertState, documents: Seq[Document])(message: MimeMailMessage) {
-      def subject() =
-        {
-          val numberOfDocuments = documents.size
-          s"[state-alerts] $numberOfDocuments documents matched your $alertName alert"
-        }
-      def text() = {
-        documents.map((d: Document) => {
-          val title = d.title
-          val url = d.url
-          s"$title [$url]"
-        }).mkString("\n")
-      }
-    message.setFrom(from);
-    message.setTo(email)
-    message.setSubject(subject())
-    message.setText(text())
-  }
 }
 

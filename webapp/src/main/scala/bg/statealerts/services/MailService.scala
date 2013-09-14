@@ -13,17 +13,9 @@ import org.springframework.mail.MailException
 @Service
 class MailService @Inject() (val mailSender: JavaMailSender) extends Logging {
 
-  def send(preparator: MimeMailMessage => Unit): Boolean =
-    try {
-      mailSender.send(new MimeMessagePreparator() {
-        def prepare(mimeMessage: MimeMessage) = preparator(new MimeMailMessage(mimeMessage))
-      })
-      true
-    }
-    catch {
-      case e: MailException => {
-        log.warn("Failed sending email", e);
-        false
-      }
-    }
+  @throws(classOf[MailException])
+  def send(preparator: MimeMailMessage => Unit) =
+    mailSender.send(new MimeMessagePreparator() {
+      def prepare(mimeMessage: MimeMessage) = preparator(new MimeMailMessage(mimeMessage))
+    })
 }
