@@ -23,9 +23,9 @@ class AlertTriggerDao extends BaseDao {
     performBatched[Array[Object]](
       query = """
                   select
-                    t, a.name, a.email, a.period, string_agg(k.id)
+                    t, a.name, a.email, a.period, a.keywords
                   from
-                    AlertTrigger t join t.alert a join a.keywords k
+                    AlertTrigger t join t.alert a
                   where
                     t.nextExecutionTime <= :before
                   group by

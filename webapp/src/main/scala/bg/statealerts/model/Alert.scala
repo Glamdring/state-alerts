@@ -23,9 +23,8 @@ class Alert {
   @Column
   var name: String = _
 
-  @ElementCollection
-  @LazyCollection(LazyCollectionOption.FALSE)
-  var keywords: java.util.List[String] = new ArrayList();
+  @Column
+  var keywords: String = _
 
   @ElementCollection
   @LazyCollection(LazyCollectionOption.FALSE)

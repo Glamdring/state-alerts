@@ -31,9 +31,9 @@ class MainController {
   }
 
   @RequestMapping(Array("/search"))
-  def search(@RequestParam keywords: String, @RequestParam(required=false) start: Long, model: Model): String = {
+  def search(@RequestParam keywords: String, @RequestParam(required=false, defaultValue="0") start: Long, model: Model): String = {
     var results: java.util.List[Document] = null
-    if (start == null) {
+    if (start == 0) {
 	  results = seqAsJavaList(searcher.search(keywords))
     } else {
       results = seqAsJavaList(searcher.search(keywords, new Interval(start, System.currentTimeMillis())))

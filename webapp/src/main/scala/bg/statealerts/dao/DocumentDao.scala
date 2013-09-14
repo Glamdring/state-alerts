@@ -29,7 +29,10 @@ class DocumentDao extends BaseDao {
   def performBatched(f: Document => Unit): Unit = performBatched(classOf[Document], fetchSize)(f)
   
   def getDocuments(ids: List[Int]): List[Document] = {
-    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Documenet doc WHERE id IN(:ids)", classOf[Document])
+    if (ids.isEmpty) {
+      return List.empty
+    }
+    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Document doc WHERE id IN(:ids)", classOf[Document])
     query.setMaxResults(ids.size)
     query.setParameter("ids", JavaConversions.asJavaList(ids))
     

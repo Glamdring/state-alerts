@@ -39,14 +39,14 @@ class AlertServiceTest {
 
     val alert1 = new Alert()
     alert1.name = "alert 1"
-    alert1.keywords = Seq("word", "test 1")
+    alert1.keywords = "word"
     alert1.period = Daily.toString
     service.saveAlert(alert1, user1)
 
     val alert2 = new Alert()
     alert2.name = "alert 2"
     alert2.period = Daily.toString
-    alert2.keywords = Seq("word", "test 2")
+    alert2.keywords = "word"
     service.saveAlert(alert2, user2)
 
     val all = ListBuffer[(AlertExecution, AlertTrigger)]()
@@ -57,14 +57,10 @@ class AlertServiceTest {
     }
      
     Assert.assertEquals(2, all.size)
-    val executionKeywords1 = all(0)._1.keywords.split(',')
-    val executionKeywords2 = all(1)._1.keywords.split(',')
-    Assert.assertEquals(2, executionKeywords1.size)
+    val executionKeywords1 = all(0)._1.keywords
+    val executionKeywords2 = all(1)._1.keywords
     Assert.assertTrue(executionKeywords1.contains("word"))
-    Assert.assertTrue(executionKeywords1.contains("test 1"))
-    Assert.assertEquals(2, executionKeywords2.size)
     Assert.assertTrue(executionKeywords2.contains("word"))
-    Assert.assertTrue(executionKeywords2.contains("test 2"))
 
   }
 }

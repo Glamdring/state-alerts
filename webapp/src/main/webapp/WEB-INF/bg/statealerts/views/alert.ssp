@@ -10,7 +10,7 @@ val keywords = Option(parameter("keywords")).getOrElse("")
 <table>
 <tr><td>${msg("name")}:</td><td><input type="text" name="name" /></td></tr>
 <tr><td>${msg("email")}:</td><td><input type="text" name="email" value="${userContext.user.email}" /></td></tr>
-<tr><td>${msg("keywords")}:</td><td><input type="text" name="keywords" value="${keywords}" /> (${msg("commaSeparated")})</td></tr>
+<tr><td>${msg("keywords")}:</td><td><input type="text" name="keywords" value="${keywords}" /></td></tr>
 <tr><td>${msg("receiveAlerts")}:</td>
 <td>
 <input type="radio" name="period" value="Daily" id="daily" />&nbsp;<label for="daily" class="radioLabel">${msg("daily")}</label>
