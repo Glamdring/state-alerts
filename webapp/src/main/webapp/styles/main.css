@@ -46,3 +46,9 @@
    vertical-align: middle;
    margin-right: 10px;
 }
+
+.searchResultsTitle {
+    overflow: hidden; 
+    height: auto; 
+    max-height: 80px;
+}

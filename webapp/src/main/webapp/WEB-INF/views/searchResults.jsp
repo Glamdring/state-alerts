@@ -17,8 +17,8 @@
 <table class="table table-bordered table-striped">
 <thead>
 <tr>
-	<td style="width: 40px;" >${msg.documentId}</td>
-	<td>${msg.title}</td>
+	<td style="width: 40px;">${msg.documentId}</td>
+	<td style="width: 120px;>${msg.title}</td>
     <td>${msg.snippet}</td>
     <td>${msg.source}</td>
     <td>${msg.publishDate}</td>
@@ -29,8 +29,8 @@
 <c:forEach items="${results}" var="entry">
 <tr id="row-${entry.id}">
 	<td>${entry.externalId}</td>
-	<td>${entry.title}</td>
-	<td>${entry.content.substring(0, 100)}...</td>
+	<td><div class="searchResultsTitle">${entry.title}</div></td>
+	<td>${entry.content.substring(0, 150)}...</td>
 	<td>${entry.sourceDisplayName}</td>
 	<td><fmt:formatDate value="${entry.publishDate.toDate()}" pattern="dd.MM.yyyy" /></td>
 	<td><a href="${entry.url}">${msg.open}</a></td>
