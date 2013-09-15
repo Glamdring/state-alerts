@@ -76,7 +76,7 @@ class Indexer {
   def getLuceneDocument(document: Document, time: DateTime) = {
 	  val luceneDoc = new LuceneDocument()
 	  luceneDoc.add(new LongField("id", document.id, Store.YES))
-	  luceneDoc.add(new LongField("publisTimestamp", document.publishDate.getMillis(), Store.YES))
+	  luceneDoc.add(new LongField("publishTimestamp", document.publishDate.getMillis(), Store.NO))
 	  luceneDoc.add(new LongField("indexTimestamp", time.getMillis(), Store.YES))
 	  luceneDoc.add(new TextField("text", document.content, Store.YES))
 	  luceneDoc.add(new TextField("externalId", document.externalId, Store.YES))
