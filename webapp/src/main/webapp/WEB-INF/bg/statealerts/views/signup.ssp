@@ -1,0 +1,7 @@
+<% attributes("title") = msg("signup") %>
+<% attributes("currentPage") = "signup" %>
+
+<div class="main">
+   <div class="lead">${msg("signupPageText")}</div>
+   ${include("signin.ssp")}
+</div>

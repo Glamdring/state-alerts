@@ -40,6 +40,7 @@ object AlertTrigger {
     trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(alert.getPeriodValue)
     trigger
   }
+
   def nextExecutionTime(period: AlertPeriod, date: DateTime = DateTime.now) = period match {
     case Daily   => date.plusDays(1)
     case Weekly  => date.plusWeeks(1)
