@@ -34,6 +34,12 @@ class AlertTrigger extends Serializable {
 
 object AlertTrigger {
 
+  def apply(alert: Alert) = {
+    val trigger = new AlertTrigger
+    trigger.alert = alert
+    trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(alert.getPeriodValue)
+    trigger
+  }
   def nextExecutionTime(period: AlertPeriod, date: DateTime = DateTime.now) = period match {
     case Daily   => date.plusDays(1)
     case Weekly  => date.plusWeeks(1)

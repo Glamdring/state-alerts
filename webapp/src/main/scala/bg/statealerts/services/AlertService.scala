@@ -33,12 +33,9 @@ class AlertService {
   @Transactional
   def saveAlert(alert: Alert, user: User) = {
     alert.user = user
-    val result = dao.save(alert)
-    val alertTrigger = new AlertTrigger
-    alertTrigger.alert = result
-    alertTrigger.nextExecutionTime = AlertTrigger.nextExecutionTime(alert.getPeriodValue)
-    alertTriggerDao.save(alertTrigger)
-    result
+    val persisted = dao.save(alert)
+    alertTriggerDao.save(AlertTrigger(persisted))
+    persisted
   }
 
   @Transactional(readOnly = true)
