@@ -59,7 +59,6 @@ ${head}
                 <c:if test="${userLoggedIn}">
                     <li <c:if test="${currentPage == 'myalerts'}">class="active"</c:if>><a href="${root}/alerts/list">${msg.myAlerts}</a></li>
                 </c:if>
-                <li <c:if test="${currentPage == 'topalerts'}">class="active"</c:if>><a href="${root}/toprecent">${msg.topAlerts}</a></li>
                 <c:if test="${!userLoggedIn}">
                     <li <c:if test="${currentPage == 'signup'}">class="active"</c:if>><a href="${root}/signup">${msg.signup}</a></li>
                 </c:if>

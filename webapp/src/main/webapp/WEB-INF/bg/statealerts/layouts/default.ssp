@@ -76,11 +76,6 @@ ${unescape(head)}
             #end
             ><a href="${root}/alerts/list">${msg("myAlerts")}</a></li>
         #end
-        <li 
-        #if (currentPage == "topalerts") 
-            class="active"
-        #end
-        ><a href="${root}/toprecent">${msg("topAlerts")}</a></li>
         #if (!userLoggedIn)
             <li
             #if (currentPage == "signup")
