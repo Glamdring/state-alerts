@@ -71,6 +71,7 @@ class AlertJob extends Logging {
 
   def sendAlert(alertLog: AlertLog) = {
     val documents = searchService.search(alertLog.keywords, alertLog.interval)
+    documents.filter(p => {alertLog.alertTrigger.alert.sources.contains(p.sourceKey)})
     val (status, description) =
       if (documents.isEmpty) {
         (Abandoned, "No matching documents.")

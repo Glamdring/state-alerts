@@ -63,7 +63,7 @@ class SearchService {
   @Transactional(readOnly=true)
   def search(keywords: String): List[Document] = {
     val escapedKeywords = QueryParserUtil.escape(keywords)
-    val q = new TermQuery(new Term("text", escapedKeywords))
+    val q = getTextQuery(escapedKeywords)
     
     getDocuments(q, 50)
   }
@@ -72,7 +72,7 @@ class SearchService {
   def search(keywords: String, interval: Interval): List[Document] = {
 
     val escapedKeywords = QueryParserUtil.escape(keywords)
-    val textQuery = new TermQuery(new Term("text", escapedKeywords))
+    val textQuery = getTextQuery(escapedKeywords)
     val timestampQuery = NumericRangeQuery.newLongRange("indexTimestamp", interval.getStartMillis(), interval.getEndMillis(), true, true)
     val query = new BooleanQuery()
     query.add(textQuery, BooleanClause.Occur.MUST)
@@ -81,6 +81,18 @@ class SearchService {
     getDocuments(query, 50)
   }
 
+  private def getTextQuery(keywords: String): Query = {
+    val keywordsList = keywords.split(" ")
+    if (keywordsList.size == 1) {
+    	return new TermQuery(new Term("text", keywords))
+    } else {
+      val query = new BooleanQuery()
+      keywordsList.foreach(keyword => {
+        query.add(new TermQuery(new Term("text", keyword)), BooleanClause.Occur.MUST)
+      })
+      return query
+    }
+  } 
   private def getDocuments(query: Query, limit: Int): List[Document] = {
     val reader = readerManager.acquire()
     

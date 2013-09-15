@@ -11,6 +11,6 @@
 </div>
 <!-- /container -->
 
-<%--@include file="extras.jsp" --%>
+<%@include file="extras.jsp" %>
 </body>
 </html>
