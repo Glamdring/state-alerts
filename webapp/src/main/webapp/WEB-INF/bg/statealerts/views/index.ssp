@@ -1,3 +1,10 @@
+#set (head)
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("input[name=keywords]").focus();
+  });
+</script>
+#end
 <div style="text-align: center;">
 <h1>Известия за държавни документи</h1>
 <p class="lead">Получете известие за всяко срещане на избрана от вас ключова дума в държавни документи</p>
