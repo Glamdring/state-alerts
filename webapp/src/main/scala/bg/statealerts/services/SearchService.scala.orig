@@ -63,8 +63,13 @@ class SearchService {
   @Transactional(readOnly=true)
   def search(keywords: String): Seq[Document] = {
     val escapedKeywords = QueryParserUtil.escape(keywords)
+<<<<<<< HEAD
     val q = getTextQuery(escapedKeywords)
+    
+=======
+    val q = new TermQuery(new Term("text", escapedKeywords))
 
+>>>>>>> 56e7d0e307c662a12ac026414d0f88d1ac5b896b
     getDocuments(q, 50)
   }
 
@@ -81,6 +86,7 @@ class SearchService {
     getDocuments(query, 50)
   }
 
+<<<<<<< HEAD
   private def getTextQuery(keywords: String): Query = {
     val keywordsList = keywords.split(" ")
     if (keywordsList.size == 1) {
@@ -93,7 +99,10 @@ class SearchService {
       return query
     }
   } 
+  private def getDocuments(query: Query, limit: Int): List[Document] = {
+=======
   private def getDocuments(query: Query, limit: Int): Seq[Document] = {
+>>>>>>> 56e7d0e307c662a12ac026414d0f88d1ac5b896b
     val reader = readerManager.acquire()
 
     try {

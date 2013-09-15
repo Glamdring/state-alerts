@@ -60,7 +60,7 @@ class AuthenticationController {
 	
 	@RequestMapping(value=Array("/signup"), method=Array(RequestMethod.GET))
     def signup(): String = {
-        return "signup";
+        return "layout:signup";
     }
 	
     @RequestMapping(value=Array("/signin/{providerId}"), method=Array(RequestMethod.GET), params=Array("home")) //param to discriminate from the cancellation url (ugly, I know)
@@ -81,17 +81,18 @@ class AuthenticationController {
                 val profile = api.asInstanceOf[Facebook].userOperations().getUserProfile()
                 user.email = profile.getEmail()
                 user.names = profile.getName()
+                model.addAttribute("registrationType", "Facebook")
             } else if (api.isInstanceOf[Twitter]) {
                 val profile = api.asInstanceOf[Twitter].userOperations().getUserProfile()
                 user.names = profile.getName()
+                model.addAttribute("registrationType", "Twitter")
             }
         } else {
             user.email = email
-            model.addAttribute("user", user)
-            model.addAttribute("type", "Persona")
+            model.addAttribute("registrationType", "Persona")
         }
         model.addAttribute("user", user)
-        return "socialSignup"
+        return "layout:register"
     }
 
     @RequestMapping(Array("/social/completeRegistration"))
@@ -111,7 +112,7 @@ class AuthenticationController {
         if (attempt != null) {
             val user = userService.completeUserRegistration(email, names, attempt.getConnection(), loginAutomatically)
             signInAdapter.signIn(user, request.getNativeResponse().asInstanceOf[HttpServletResponse], true)
-        } else if ("Persona".equals(registrationType)){
+        } else if ("Persona" == registrationType){
             val user = userService.completeUserRegistration(email, names, null, loginAutomatically)
             signInAdapter.signIn(user, request.getNativeResponse().asInstanceOf[HttpServletResponse], true)
         }

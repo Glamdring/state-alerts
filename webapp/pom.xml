@@ -20,6 +20,8 @@
 		<lucene.version>4.3.1</lucene.version>
 		<hibernate.version>4.2.5.Final</hibernate.version>
 		<scalate.version>1.6.1</scalate.version>
+
+        <statealerts.config.location>${project.basedir}/config</statealerts.config.location>
 	</properties>
 
 	<dependencyManagement>
@@ -429,9 +431,9 @@
 						<stopPort>8090</stopPort>
 						<stopKey>die</stopKey>
 						<jvmArgs>
-              -Xmx128m
+                            -Xmx128m
 							-Dstatealerts.config.location=${statealerts.config.location}
-            </jvmArgs>
+                        </jvmArgs>
 						<systemProperties>
 							<systemProperty>
 								<name>statealerts.config.location</name>
