@@ -41,14 +41,14 @@ class SearchService {
 
   @Inject
   var documentDao: DocumentDao = _
-  
+
   @Value("${index.path}")
   var indexPath: String = _
   @Value("${lucene.analyzer.class}")
   var analyzerClass: String = _
-  
+
   var readerManager: ReaderManager = _
-  
+
   @PostConstruct
   def init() = {
     readerManager = new ReaderManager(FSDirectory.open(new File(indexPath)))
@@ -59,17 +59,17 @@ class SearchService {
   def destroy() = {
     readerManager.close()
   }
-  
+
   @Transactional(readOnly=true)
-  def search(keywords: String): List[Document] = {
+  def search(keywords: String): Seq[Document] = {
     val escapedKeywords = QueryParserUtil.escape(keywords)
     val q = new TermQuery(new Term("text", escapedKeywords))
-    
+
     getDocuments(q, 50)
   }
 
   @Transactional(readOnly=true)
-  def search(keywords: String, interval: Interval): List[Document] = {
+  def search(keywords: String, interval: Interval): Seq[Document] = {
 
     val escapedKeywords = QueryParserUtil.escape(keywords)
     val textQuery = new TermQuery(new Term("text", escapedKeywords))
@@ -81,28 +81,27 @@ class SearchService {
     getDocuments(query, 50)
   }
 
-  private def getDocuments(query: Query, limit: Int): List[Document] = {
+  private def getDocuments(query: Query, limit: Int): Seq[Document] = {
     val reader = readerManager.acquire()
-    
+
     try {
-    	val searcher = new IndexSearcher(reader)
-	    val sort = new Sort(new SortField("publishTimestamp", SortField.Type.LONG, true))
-	    val result: TopDocs = searcher.search(query, null, limit, sort)
-	
-	
-	    val topDocs: Array[ScoreDoc] = result.scoreDocs
-	    var ids = List[Int]()
-	    for (topDoc <- topDocs) {
-	      val luceneDoc = searcher.doc(topDoc.doc)
-	      ids ::= luceneDoc.get("id").toInt
-	    }
-    	val documents = documentDao.getDocuments(ids) 
-	    documents
+        val searcher = new IndexSearcher(reader)
+        val sort = new Sort(new SortField("publishTimestamp", SortField.Type.LONG, true))
+        val result: TopDocs = searcher.search(query, null, limit, sort)
+
+        val topDocs: Array[ScoreDoc] = result.scoreDocs
+        var ids = List[Int]()
+        for (topDoc <- topDocs) {
+          val luceneDoc = searcher.doc(topDoc.doc)
+          ids ::= luceneDoc.get("id").toInt
+        }
+        val documents = documentDao.getDocuments(ids) 
+        documents
     } finally {
       readerManager.release(reader)
     }
   }
-  
+
   @Scheduled(fixedRate = 600000) // 10 minutes
   def refreshReaderManager(): Unit = {
     readerManager.maybeRefresh()
