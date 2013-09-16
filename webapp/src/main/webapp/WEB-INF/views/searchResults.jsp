@@ -18,7 +18,7 @@
 <thead>
 <tr>
 	<td style="width: 40px;">${msg.documentId}</td>
-	<td style="width: 120px;>${msg.title}</td>
+	<td style="width: 120px;">${msg.title}</td>
     <td>${msg.snippet}</td>
     <td>${msg.source}</td>
     <td>${msg.publishDate}</td>
