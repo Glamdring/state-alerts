@@ -32,7 +32,7 @@ class DocumentDao extends BaseDao {
     if (ids.isEmpty) {
       return List.empty
     }
-    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Document doc WHERE id IN(:ids)", classOf[Document])
+    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Document doc WHERE id IN(:ids) ORDER BY publishDate DESC", classOf[Document])
     query.setMaxResults(ids.size)
     query.setParameter("ids", seqAsJavaList(ids))
 
