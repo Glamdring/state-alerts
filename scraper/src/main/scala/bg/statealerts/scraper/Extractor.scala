@@ -30,6 +30,7 @@ import com.gargoylesoftware.htmlunit.WebWindowListener
 import scala.beans.BeanProperty
 import bg.statealerts.scraper.config.DocumentType
 import bg.statealerts.scraper.config.ContentLocationType
+import scala.collection.JavaConversions
 
 class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 
@@ -65,6 +66,10 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     }
   }
 
+  def extractDocuments(since: ReadableDateTime): java.util.List[Document] = {
+    return JavaConversions.asJavaList(extract(since))
+  }
+  
   def extract(since: ReadableDateTime): List[Document] = {
     if (!descriptor.enabled.getOrElse(true)) {
       return List()
