@@ -1,5 +1,8 @@
 package bg.statealerts.scraper.config
 
+/**
+ * Builder for easier use in Java applications
+ */
 class ExtractorDescriptorBuilder {
   var sourceKey: String = _
   var sourceDisplayName: Option[String] = None
@@ -52,7 +55,7 @@ class ExtractorDescriptorBuilder {
     return this;
   }
 
-  def setDateFormat(dateformat: String): ExtractorDescriptorBuilder = {
+  def setDateFormat(dateFormat: String): ExtractorDescriptorBuilder = {
     this.dateFormat = dateFormat
     return this;
   }
