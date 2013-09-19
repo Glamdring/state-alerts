@@ -49,7 +49,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     if (port == -1) {
       port = 80
     }
-    fullUrl.getProtocol() + "://" + fullUrl.getHost() + ":" + port
+    fullUrl.getProtocol() + "://" + fullUrl.getHost() + ":" + port + "/"
   }
   
   val client = buildHtmlClient()
