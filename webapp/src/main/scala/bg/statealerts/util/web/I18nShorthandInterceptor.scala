@@ -8,6 +8,8 @@ import javax.inject.Inject
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+import bg.statealerts.views._
+
 class I18nShorthandInterceptor extends HandlerInterceptorAdapter {
 
   @Inject

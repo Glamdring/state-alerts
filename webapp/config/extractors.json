@@ -37,7 +37,7 @@
         "paths": {
             "tableRowPath": "//table[@id='resultaTable']/tbody",
             "contentPath": "//div[@id='fullDocument']",
-              "documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
+            "documentLinkPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a",
             "datePath": ".//td/b[starts-with(., 'Получен на:')]/parent::td/following-sibling::td",
             "titlePath": ".//td/b[starts-with(., 'Име:')]/parent::td/following-sibling::td|.//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td",
             "externalIdPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a"
