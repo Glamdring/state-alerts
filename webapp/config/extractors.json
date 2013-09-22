@@ -74,8 +74,8 @@
         "entriesPerRow": "2",
         "paths": {
             "tableRowPath": "//table[@id='list_document']/tbody/tr",
-            "documentPageLinkPath": ".//td/h3/a",
-            "documentLinkPath": "//ul[@id='doc_list']/li[1]",
+            "documentLinkPath": ".//td/h3/a",
+            "documentPageLinkPath": "//ul[@id='doc_list']/li[1]",
             "datePath": ".//td/div[@class='date']",
             "titlePath": ".//td/h3/a"
         },

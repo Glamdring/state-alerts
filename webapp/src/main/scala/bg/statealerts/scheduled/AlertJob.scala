@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.mail.MailException
 import bg.statealerts.services.MessagePreparators
+import scala.collection.JavaConversions
 
 @Component
 @TestProfile.Disabled
@@ -70,8 +71,7 @@ class AlertJob extends Logging {
   }
 
   def sendAlert(alertLog: AlertLog) = {
-    val documents = searchService.search(alertLog.keywords, alertLog.interval)
-    documents.filter(p => {alertLog.alertTrigger.alert.sources.contains(p.sourceKey)})
+    val documents = searchService.search(alertLog.keywords, alertLog.interval, JavaConversions.asScalaBuffer(alertLog.sources).toList)
     val (status, description) =
       if (documents.isEmpty) {
         (Abandoned, "No matching documents.")

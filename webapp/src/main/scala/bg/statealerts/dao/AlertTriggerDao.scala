@@ -23,7 +23,7 @@ class AlertTriggerDao extends BaseDao {
     performBatched[Array[Object]](
       query = """
                   select
-                    t, a.name, a.email, a.period, a.keywords
+                    t, a
                   from
                     AlertTrigger t join t.alert a
                   where
