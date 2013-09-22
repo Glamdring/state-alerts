@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletRequest
 import org.joda.time.DateTimeConstants
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.web.SignInAdapter
 import org.springframework.stereotype.Component
@@ -21,10 +22,12 @@ class SocialSignInAdapter extends SignInAdapter {
     var context: UserContext = _
     @Inject
     var userService: UserService = _
+    @Value("${ui.cookieDomain:}")
+    var cookieDomain: String = _
 
     override def signIn(userId: String, connection: Connection[_], request: NativeWebRequest ): String = {
         val user = userService.getUser(userId.toLong);
-        signIn(user, request.getNativeResponse(classOf[HttpServletRequest]), request.getNativeResponse(classOf[HttpServletResponse]), true);
+        signIn(user, request.getNativeRequest(classOf[HttpServletRequest]), request.getNativeResponse(classOf[HttpServletResponse]), true);
         return "/";
     }
 
@@ -41,35 +44,41 @@ class SocialSignInAdapter extends SignInAdapter {
     }
 
     def addPermanentCookies(user: User, request: HttpServletRequest, response: HttpServletResponse) = {
-        val authTokenCookie = new Cookie(Constants.AuthTokenCookieName, user.loginToken)
-        authTokenCookie.setMaxAge(Constants.CookieAge)
-        authTokenCookie.setPath(cookiePath(request))
-        response.addCookie(authTokenCookie)
-
-        val seriesCookie = new Cookie(Constants.AuthTokenSeriesCookieName, user.loginSeries)
-        seriesCookie.setMaxAge(Constants.CookieAge)
-        seriesCookie.setPath(cookiePath(request))
-        response.addCookie(seriesCookie)
+        addCookie(request, response, Constants.AuthTokenCookieName, user.loginToken)
+        addCookie(request, response, Constants.AuthTokenSeriesCookieName, user.loginSeries)
     }
 
     def removePermanentCookies(request: HttpServletRequest, response: HttpServletResponse)
     {
-        val cookie = WebUtils.getCookie(request, Constants.AuthTokenCookieName)
+        removeCookie(request, response, Constants.AuthTokenCookieName)
+        removeCookie(request, response, Constants.AuthTokenSeriesCookieName)
+    }
+
+    private def addCookie(request: HttpServletRequest, response: HttpServletResponse, name: String, value: String) {
+        val cookie = new Cookie(name, value)
+        cookie.setMaxAge(Constants.CookieAge)
+        if (cookieDomain != null && !cookieDomain.isEmpty())
+        {
+            cookie.setDomain(cookieDomain)
+        }
+        cookie.setPath(cookiePath(request))
+        response.addCookie(cookie)
+    }
+
+    private def removeCookie(request: HttpServletRequest, response: HttpServletResponse, name: String) {
+        val cookie = WebUtils.getCookie(request, name)
         if (cookie != null) {
             cookie.setMaxAge(0)
+            if (cookieDomain != null && !cookieDomain.isEmpty())
+            {
+                cookie.setDomain(cookieDomain)
+            }
             cookie.setPath(cookiePath(request))
             response.addCookie(cookie)
         }
-
-        val seriesCookie = WebUtils.getCookie(request, Constants.AuthTokenSeriesCookieName)
-        if (seriesCookie != null) {
-            seriesCookie.setMaxAge(0)
-            seriesCookie.setPath(cookiePath(request))
-            response.addCookie(seriesCookie)
-        }
     }
 
-    def cookiePath(request: HttpServletRequest) = {
+    private def cookiePath(request: HttpServletRequest) = {
         // we currently need this cookie only for logout
         request.getContextPath + "/logout"
     }

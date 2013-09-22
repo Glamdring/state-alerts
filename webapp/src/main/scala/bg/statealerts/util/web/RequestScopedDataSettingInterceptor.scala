@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource
 import org.springframework.beans.factory.annotation.Value
 import bg.statealerts.controllers.UserContext
 import bg.statealerts.views._
+import bg.statealerts.controllers.GoogleAnalyticsConfig
 
 class RequestScopedDataSettingInterceptor extends HandlerInterceptorAdapter {
 
