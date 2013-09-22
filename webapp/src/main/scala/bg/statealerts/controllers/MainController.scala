@@ -32,17 +32,27 @@ class MainController {
   }
 
   @RequestMapping(Array("/search"))
-  def search(@RequestParam keywords: String, @RequestParam(required=false, defaultValue="0") start: Long, @RequestParam sources: java.util.List[String], model: Model): String = {
-    var results: java.util.List[Document] = null
-    if (start == 0) {
-	  results = seqAsJavaList(searcher.search(keywords))
-    } else {
-      results = seqAsJavaList(searcher.search(keywords, new Interval(start, System.currentTimeMillis()), JavaConversions.asScalaBuffer(sources).toList))
-    }
+  def search(
+      @RequestParam keywords: String,
+      @RequestParam(required=false, defaultValue="0") start: Long,
+      @RequestParam(required=false) sources: java.util.List[String],
+      model: Model): String = {
+    val results: java.util.List[Document] = 
+        if (start == 0) {
+    	  searcher.search(keywords)
+        } else {
+          searcher.search(
+                          keywords,
+                          new Interval(start, System.currentTimeMillis()),
+                          if (sources == null)
+                            List()
+                          else
+                            JavaConversions.asScalaBuffer(sources))
+        }
     model.addAttribute("results", results)
     "searchResults"
   }
-  
+
   @RequestMapping(Array("/about"))
   def about(): String = {
     "layout:about"

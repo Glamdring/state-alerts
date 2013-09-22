@@ -66,15 +66,16 @@ class SearchService {
   }
 
   @Transactional(readOnly=true)
-  def search(keywords: String, interval: Interval, sources: List[String]): Seq[Document] = {
+  def search(keywords: String, interval: Interval, sources: Seq[String]): Seq[Document] = {
 
     val textQuery = getTextQuery(keywords)
     val timestampQuery = NumericRangeQuery.newLongRange("indexTimestamp", interval.getStartMillis(), interval.getEndMillis(), true, true)
     val query = new BooleanQuery()
     query.add(textQuery, BooleanClause.Occur.MUST)
     query.add(timestampQuery, BooleanClause.Occur.MUST)
-    query.add(new TermQuery(new Term("sourceKey", "(" + sources.mkString(" OR ") + ")")), BooleanClause.Occur.MUST)
-    
+    if (!sources.isEmpty)
+        query.add(new TermQuery(new Term("sourceKey", "(" + sources.mkString(" OR ") + ")")), BooleanClause.Occur.MUST)
+
     getDocuments(query, 50)
   }
 
