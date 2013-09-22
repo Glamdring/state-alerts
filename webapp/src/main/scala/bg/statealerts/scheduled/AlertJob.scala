@@ -1,24 +1,32 @@
 package bg.statealerts.scheduled
 
+import scala.collection.JavaConversions
+
+import org.joda.time.DateTime
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.DependsOn
+import org.springframework.mail.MailException
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
+import bg.statealerts.model.Alert
 import bg.statealerts.model.AlertLog
-import bg.statealerts.model.AlertState
-import bg.statealerts.model.AlertStatus._
-import bg.statealerts.model.Document
-import bg.statealerts.model.AlertExecution
+import bg.statealerts.model.AlertStatus.Abandoned
+import bg.statealerts.model.AlertStatus.Failed
+import bg.statealerts.model.AlertStatus.New
+import bg.statealerts.model.AlertStatus.Sent
 import bg.statealerts.model.AlertTrigger
 import bg.statealerts.services.AlertService
 import bg.statealerts.services.MailService
+import bg.statealerts.services.MessagePreparators
 import bg.statealerts.services.SearchService
 import bg.statealerts.util.Logging
 import bg.statealerts.util.TestProfile
 import javax.inject.Inject
-import org.joda.time.DateTime
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.mail.javamail.MimeMailMessage
-import org.springframework.stereotype.Component
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.mail.MailException
-import bg.statealerts.services.MessagePreparators
+import javax.persistence.Embeddable
+import javax.persistence.Entity
 
 @Component
 @TestProfile.Disabled
@@ -43,9 +51,9 @@ class AlertJob extends Logging {
   def send() {
     log.debug("start preparing alerts")
     val prepareTime = DateTime.now
-    alertService.forAlertExecution(prepareTime) {
-      (alertExecution: AlertExecution, alertTrigger: AlertTrigger) =>
-        val alertLog = alertService.prepareAlertExecution(alertExecution, Some(alertTrigger), prepareTime)
+    alertService.performBatched(prepareTime) {
+      (alert: Alert, alertTrigger: AlertTrigger) =>
+        val alertLog = alertService.prepareAlertExecution(alert, Some(alertTrigger), prepareTime)
         if (alertLog.state.status == New) {
           sendAlert(alertLog);
         }
@@ -70,8 +78,7 @@ class AlertJob extends Logging {
   }
 
   def sendAlert(alertLog: AlertLog) = {
-    val documents = searchService.search(alertLog.keywords, alertLog.interval)
-    documents.filter(p => {alertLog.alertTrigger.alert.sources.contains(p.sourceKey)})
+    val documents = searchService.search(alertLog.keywords, alertLog.interval, JavaConversions.asScalaBuffer(alertLog.sources).toList)
     val (status, description) =
       if (documents.isEmpty) {
         (Abandoned, "No matching documents.")

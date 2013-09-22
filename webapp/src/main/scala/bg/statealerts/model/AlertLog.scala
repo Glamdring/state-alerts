@@ -13,6 +13,10 @@ import javax.persistence.ManyToOne
 import javax.persistence.GenerationType
 import javax.persistence.FetchType
 import org.hibernate.annotations.Index
+import javax.persistence.ElementCollection
+import org.hibernate.annotations.LazyCollection
+import java.util.ArrayList
+import org.hibernate.annotations.LazyCollectionOption
 
 @Entity
 case class AlertLog() {
@@ -34,6 +38,11 @@ case class AlertLog() {
 
   @Column
   var keywords: String = _
+  
+  @ElementCollection
+  @LazyCollection(LazyCollectionOption.FALSE)
+  var sources: java.util.List[String] = new ArrayList();
+  
   @Embedded
   var state: AlertState = _
 

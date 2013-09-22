@@ -14,7 +14,10 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
     val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
     var documentUrl: String = element.asInstanceOf[HtmlElement].getAttribute("href");
     if (!documentUrl.startsWith("http")) {
-      documentUrl = ctx.baseUrl + documentUrl
+      if (documentUrl.startsWith("/")) {
+        documentUrl = documentUrl.substring(1)
+      }
+      documentUrl = (ctx.baseUrl + documentUrl)
     }
 
     val contentLocationType = ContentLocationType.withName(ctx.descriptor.contentLocationType)

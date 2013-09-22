@@ -20,7 +20,6 @@ import org.hamcrest.CoreMatchers
 import org.joda.time.DateTime
 import org.apache.commons.lang3.ArrayUtils
 import scala.collection.mutable.ListBuffer
-import bg.statealerts.model.AlertExecution
 import bg.statealerts.model.AlertTrigger
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
@@ -49,9 +48,9 @@ class AlertServiceTest {
     alert2.keywords = "word"
     service.saveAlert(alert2, user2)
 
-    val all = ListBuffer[(AlertExecution, AlertTrigger)]()
-    service.forAlertExecution(DateTime.now.plusDays(1).plusSeconds(10)) {
-      (alert: AlertExecution, trigger: AlertTrigger) =>
+    val all = ListBuffer[(Alert, AlertTrigger)]()
+    service.performBatched(DateTime.now.plusDays(1).plusSeconds(10)) {
+      (alert: Alert, trigger: AlertTrigger) =>
         val e = (alert, trigger)
         all += e
     }

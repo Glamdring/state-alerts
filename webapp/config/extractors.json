@@ -64,6 +64,25 @@
         "dateFormat":"d.M.yyyy",
         "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}",
         "javascriptRequired": "true"
+      },
+      {
+        "sourceKey": "strategybg",
+        "sourceDisplayName": "Портал за обществени консултации",
+        "documentType": "PDF",
+        "contentLocationType": "LinkedDocumentOnLinkedPage",
+        "url": "http://www.strategy.bg/StrategicDocuments/List.aspx?lang=bg-BG&categoryId=1&typeConsultation=1&typeCategory=0&docType=1",
+        "entriesPerRow": "2",
+        "paths": {
+            "tableRowPath": "//table[@id='list_document']/tbody/tr",
+            "documentLinkPath": ".//td/h3/a",
+            "documentPageLinkPath": "//ul[@id='doc_list']/li[1]",
+            "datePath": ".//td/div[@class='date']",
+            "titlePath": ".//td/h3/a"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+        "dateFormat":"d.M.yyyy",
+		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       }
    ]
 }

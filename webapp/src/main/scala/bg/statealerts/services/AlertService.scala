@@ -1,22 +1,24 @@
 package bg.statealerts.services
 
-import javax.inject.Inject
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.stereotype.Service
-import org.joda.time.Interval
 import org.joda.time.DateTime
-import bg.statealerts.model.Alert
-import bg.statealerts.model.User
-import bg.statealerts.model.AlertLog
-import bg.statealerts.model.AlertState
-import bg.statealerts.model.AlertStatus._
-import bg.statealerts.model.AlertPeriod._
-import bg.statealerts.model.AlertPeriod
-import bg.statealerts.model.AlertTrigger
-import bg.statealerts.model.AlertExecution
+import org.joda.time.Interval
+import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
 import bg.statealerts.dao.AlertDao
 import bg.statealerts.dao.AlertLogDao
 import bg.statealerts.dao.AlertTriggerDao
+import bg.statealerts.model.Alert
+import bg.statealerts.model.AlertLog
+import bg.statealerts.model.AlertPeriod
+import bg.statealerts.model.AlertState
+import bg.statealerts.model.AlertStatus.AlertStatus
+import bg.statealerts.model.AlertStatus.New
+import bg.statealerts.model.AlertTrigger
+import bg.statealerts.model.User
+import javax.inject.Inject
+import javax.persistence.Entity
 
 @Service
 class AlertService {
@@ -39,7 +41,7 @@ class AlertService {
   }
 
   @Transactional(readOnly = true)
-  def forAlertExecution(before: DateTime)(f: (AlertExecution, AlertTrigger) => Unit) =
+  def performBatched(before: DateTime)(f: (Alert, AlertTrigger) => Unit) =
     alertTriggerDao.performBatched(before)(f)
 
   @Transactional(readOnly = true)
@@ -53,35 +55,36 @@ class AlertService {
     dao.delete(classOf[Alert], id)
   }
 
-  protected def getInitialFrom(alertExecution: AlertExecution, maybeTrigger: Option[AlertTrigger], time: DateTime) = {
+  protected def getInitialFrom(alert: Alert, maybeTrigger: Option[AlertTrigger], time: DateTime) = {
     if (maybeTrigger.isDefined && Option(maybeTrigger.get.lastExecutionTime).isDefined) {
       maybeTrigger.get.lastExecutionTime
     } else {
-      AlertTrigger.lastExecutionTime(alertExecution.period, time)
+      AlertTrigger.lastExecutionTime(AlertPeriod.withName(alert.period), time)
     }
   }
 
   @Transactional
-  def prepareAlertExecution(alertExecution: AlertExecution, maybeTrigger: Option[AlertTrigger], prepareTime: DateTime): AlertLog = {
+  def prepareAlertExecution(alert: Alert, maybeTrigger: Option[AlertTrigger], prepareTime: DateTime): AlertLog = {
 
     val now = DateTime.now
-    val from = getInitialFrom(alertExecution, maybeTrigger, prepareTime)
+    val from = getInitialFrom(alert, maybeTrigger, prepareTime)
 
     val interval: Interval = new Interval(from, prepareTime)
 
 
     val alertLog = new AlertLog()
-    alertLog.name = alertExecution.name
-    alertLog.email = alertExecution.email
+    alertLog.name = alert.name
+    alertLog.email = alert.email
     alertLog.interval = interval
-    alertLog.keywords = alertExecution.keywords
+    alertLog.keywords = alert.keywords
     alertLog.state = AlertState(New, "Prepared", now)
-
+    alertLog.sources = alert.sources;
+    
     if (maybeTrigger.isDefined)
     {
         val trigger = maybeTrigger.get
         trigger.lastExecutionTime = prepareTime
-        trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(alertExecution.period, prepareTime)
+        trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(AlertPeriod.withName(alert.period), prepareTime)
         alertTriggerDao.save(trigger)
     }
     alertLogDao.save(alertLog)

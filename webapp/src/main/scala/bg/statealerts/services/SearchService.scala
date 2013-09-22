@@ -1,37 +1,35 @@
 package bg.statealerts.services
 
 import java.io.File
+
 import org.apache.lucene.analysis.Analyzer
+import org.apache.lucene.index.ReaderManager
 import org.apache.lucene.index.Term
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil
 import org.apache.lucene.search.BooleanClause
 import org.apache.lucene.search.BooleanQuery
+import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.NumericRangeQuery
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.ScoreDoc
-import org.apache.lucene.search.SearcherFactory
-import org.apache.lucene.search.SearcherManager
 import org.apache.lucene.search.Sort
 import org.apache.lucene.search.SortField
 import org.apache.lucene.search.TermQuery
 import org.apache.lucene.search.TopDocs
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.util.Version
-import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
+import org.joda.time.Interval
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.DependsOn
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.inject.Inject
-import org.apache.lucene.index.ReaderManager
-import org.apache.lucene.search.IndexSearcher
-import org.joda.time.Interval
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
@@ -62,36 +60,32 @@ class SearchService {
 
   @Transactional(readOnly=true)
   def search(keywords: String): Seq[Document] = {
-    val escapedKeywords = QueryParserUtil.escape(keywords)
-    val q = getTextQuery(escapedKeywords)
+    val q = getTextQuery(keywords)
 
     getDocuments(q, 50)
   }
 
   @Transactional(readOnly=true)
-  def search(keywords: String, interval: Interval): Seq[Document] = {
+  def search(keywords: String, interval: Interval, sources: List[String]): Seq[Document] = {
 
-    val escapedKeywords = QueryParserUtil.escape(keywords)
-    val textQuery = getTextQuery(escapedKeywords)
+    val textQuery = getTextQuery(keywords)
     val timestampQuery = NumericRangeQuery.newLongRange("indexTimestamp", interval.getStartMillis(), interval.getEndMillis(), true, true)
     val query = new BooleanQuery()
     query.add(textQuery, BooleanClause.Occur.MUST)
     query.add(timestampQuery, BooleanClause.Occur.MUST)
-
+    query.add(new TermQuery(new Term("sourceKey", "(" + sources.mkString(" OR ") + ")")), BooleanClause.Occur.MUST)
+    
     getDocuments(query, 50)
   }
 
-  private def getTextQuery(keywords: String): Query = {
-    val keywordsList = keywords.split(" ")
-    if (keywordsList.size == 1) {
-    	return new TermQuery(new Term("text", keywords))
-    } else {
-      val query = new BooleanQuery()
-      keywordsList.foreach(keyword => {
-        query.add(new TermQuery(new Term("text", keyword)), BooleanClause.Occur.MUST)
-      })
-      return query
-    }
+  private def getTextQuery(keywords: String): BooleanQuery = {
+    val escapedKeywords = QueryParserUtil.escape(keywords).toLowerCase()
+    val keywordsList = escapedKeywords.split(" ")
+    val query = new BooleanQuery()
+    keywordsList.foreach(keyword => {
+      query.add(new TermQuery(new Term("text", keyword)), BooleanClause.Occur.MUST)
+    })
+    return query
   } 
   private def getDocuments(query: Query, limit: Int): Seq[Document] = {
     val reader = readerManager.acquire()
