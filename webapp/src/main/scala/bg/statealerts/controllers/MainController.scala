@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.ui.Model
 import org.joda.time.Interval
+import scala.collection.JavaConversions
 
 @Controller
 class MainController {
@@ -31,12 +32,12 @@ class MainController {
   }
 
   @RequestMapping(Array("/search"))
-  def search(@RequestParam keywords: String, @RequestParam(required=false, defaultValue="0") start: Long, model: Model): String = {
+  def search(@RequestParam keywords: String, @RequestParam(required=false, defaultValue="0") start: Long, @RequestParam sources: java.util.List[String], model: Model): String = {
     var results: java.util.List[Document] = null
     if (start == 0) {
 	  results = seqAsJavaList(searcher.search(keywords))
     } else {
-      results = seqAsJavaList(searcher.search(keywords, new Interval(start, System.currentTimeMillis())))
+      results = seqAsJavaList(searcher.search(keywords, new Interval(start, System.currentTimeMillis()), JavaConversions.asScalaBuffer(sources).toList))
     }
     model.addAttribute("results", results)
     "searchResults"

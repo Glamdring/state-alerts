@@ -3,10 +3,10 @@ package bg.statealerts.dao
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
-import bg.statealerts.model.AlertExecution
+
+import bg.statealerts.model.Alert
 import bg.statealerts.model.AlertTrigger
-import bg.statealerts.model.AlertPeriod
-import bg.statealerts.model.AlertPeriod._
+import javax.persistence.Entity
 
 @Repository
 class AlertTriggerDao extends BaseDao {
@@ -19,7 +19,7 @@ class AlertTriggerDao extends BaseDao {
     query.executeUpdate()
   }
 
-  def performBatched(before: DateTime)(f: (AlertExecution, AlertTrigger) => Unit) {
+  def performBatched(before: DateTime)(f: (Alert, AlertTrigger) => Unit) {
     performBatched[Array[Object]](
       query = """
                   select
@@ -41,12 +41,8 @@ class AlertTriggerDao extends BaseDao {
       ))
     )( row => {
         val alertTrigger = row(0).asInstanceOf[AlertTrigger]
-        val alertExecution = AlertExecution(
-          name = row(1).asInstanceOf[String],
-          email = row(2).asInstanceOf[String],
-          period = AlertPeriod.withName(row(3).asInstanceOf[String]),
-          keywords = row(4).asInstanceOf[String])
-        f(alertExecution, alertTrigger)
+        val alert = row(1).asInstanceOf[Alert]
+        f(alert, alertTrigger)
       })
   }
 }

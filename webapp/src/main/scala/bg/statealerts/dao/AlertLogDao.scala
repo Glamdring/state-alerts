@@ -8,7 +8,6 @@ import bg.statealerts.model.AlertState
 import org.springframework.beans.factory.annotation.Value
 import bg.statealerts.model.AlertPeriod
 import bg.statealerts.model.AlertStatus._
-import bg.statealerts.model.AlertExecution
 import bg.statealerts.model.AlertTrigger
 
 @Repository
