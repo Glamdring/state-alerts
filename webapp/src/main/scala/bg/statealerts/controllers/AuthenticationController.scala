@@ -24,7 +24,6 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.web.servlet.view.RedirectView
-import org.springframework.web.util.WebUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import bg.statealerts.model.User
 import bg.statealerts.services.UserService
@@ -111,10 +110,10 @@ class AuthenticationController {
         val attempt = request.getAttribute(classOf[ProviderSignInAttempt].getName(), RequestAttributes.SCOPE_SESSION).asInstanceOf[ProviderSignInAttempt]
         if (attempt != null) {
             val user = userService.completeUserRegistration(email, names, attempt.getConnection(), loginAutomatically)
-            signInAdapter.signIn(user, request.getNativeResponse().asInstanceOf[HttpServletResponse], true)
+            signInAdapter.signIn(user, request.getNativeRequest(classOf[HttpServletRequest]), request.getNativeResponse(classOf[HttpServletResponse]), true)
         } else if ("Persona" == registrationType){
             val user = userService.completeUserRegistration(email, names, null, loginAutomatically)
-            signInAdapter.signIn(user, request.getNativeResponse().asInstanceOf[HttpServletResponse], true)
+            signInAdapter.signIn(user, request.getNativeRequest(classOf[HttpServletRequest]), request.getNativeResponse(classOf[HttpServletResponse]), true)
         }
         // if the session has expired for a fb/tw registration, do not proceed - otherwise inconsistent data is stored
         return "redirect:/"
@@ -140,7 +139,7 @@ class AuthenticationController {
                 return "/socialSignUp?email=" + response.get("email").asText()
             } else if (user.nonEmpty){
                 if (userRequestedAuthentication || user.get.loginAutomatically) {
-                    signInAdapter.signIn(user.get, httpResponse, true)
+                    signInAdapter.signIn(user.get, request, httpResponse, true)
                     return "/"
                 } else {
                     return ""
@@ -157,21 +156,7 @@ class AuthenticationController {
     @RequestMapping(Array("/logout"))
     def logout(session: HttpSession, request: HttpServletRequest, response: HttpServletResponse): String = {
         session.invalidate()
-        val cookie = WebUtils.getCookie(request, Constants.AuthTokenCookieName)
-        if (cookie != null) {
-            cookie.setMaxAge(0)
-            cookie.setDomain(".statealerts.com")
-            cookie.setPath("/")
-            response.addCookie(cookie)
-        }
-
-        val seriesCookie = WebUtils.getCookie(request, Constants.AuthTokenSeriesCookieName)
-        if (seriesCookie != null) {
-            seriesCookie.setMaxAge(0)
-            seriesCookie.setDomain(".statealerts.com")
-            seriesCookie.setPath("/")
-            response.addCookie(seriesCookie)
-        }
+        signInAdapter.signOut(request, response)
 
         return "redirect:/"
     }

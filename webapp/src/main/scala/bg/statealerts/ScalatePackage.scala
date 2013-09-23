@@ -9,6 +9,7 @@ class ScalatePackage extends TemplatePackage {
       import bg.statealerts.model._
       import bg.statealerts.views._
       import bg.statealerts.controllers.UserContext
+      import bg.statealerts.controllers.GoogleAnalyticsConfig
 
       val implicits = new Implicits
       import implicits._

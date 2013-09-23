@@ -32,6 +32,15 @@ class MainController {
   }
 
   @RequestMapping(Array("/search"))
+<<<<<<< HEAD
+  def search(@RequestParam keywords: String, @RequestParam(required=false, defaultValue="0") start: Long, @RequestParam(required=false) sources: java.util.List[String], model: Model): String = {
+    var results: java.util.List[Document] = null
+    if (start == 0) {
+	  results = seqAsJavaList(searcher.search(keywords))
+    } else {
+      results = seqAsJavaList(searcher.search(keywords, new Interval(start, System.currentTimeMillis()), JavaConversions.asScalaBuffer(sources).toList))
+    }
+=======
   def search(
       @RequestParam keywords: String,
       @RequestParam(required=false, defaultValue="0") start: Long,
@@ -49,6 +58,7 @@ class MainController {
                           else
                             JavaConversions.asScalaBuffer(sources))
         }
+>>>>>>> 005617b10cacd41eed608072bc36d30f0d56e0ce
     model.addAttribute("results", results)
     "searchResults"
   }
