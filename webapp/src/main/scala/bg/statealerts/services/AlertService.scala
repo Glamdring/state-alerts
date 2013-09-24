@@ -55,36 +55,32 @@ class AlertService {
     dao.delete(classOf[Alert], id)
   }
 
-  protected def getInitialFrom(alert: Alert, maybeTrigger: Option[AlertTrigger], time: DateTime) = {
-    if (maybeTrigger.isDefined && Option(maybeTrigger.get.lastExecutionTime).isDefined) {
-      maybeTrigger.get.lastExecutionTime
-    } else {
-      AlertTrigger.lastExecutionTime(AlertPeriod.withName(alert.period), time)
-    }
+  protected def calculateInterval(alert: Alert, maybeTrigger: Option[AlertTrigger], until: DateTime): Interval = {
+    val after =
+      if (maybeTrigger.isDefined && Option(maybeTrigger.get.lastExecutionTime).isDefined) {
+        maybeTrigger.get.lastExecutionTime
+      } else {
+        AlertTrigger.lastExecutionTime(AlertPeriod.withName(alert.period), until)
+      }
+
+    new Interval(after, until)
   }
 
   @Transactional
-  def prepareAlertExecution(alert: Alert, maybeTrigger: Option[AlertTrigger], prepareTime: DateTime): AlertLog = {
-
-    val now = DateTime.now
-    val from = getInitialFrom(alert, maybeTrigger, prepareTime)
-
-    val interval: Interval = new Interval(from, prepareTime)
-
-
+  def prepareAlertExecution(alert: Alert, maybeTrigger: Option[AlertTrigger], until: DateTime): AlertLog = {
     val alertLog = new AlertLog()
     alertLog.name = alert.name
     alertLog.email = alert.email
-    alertLog.interval = interval
     alertLog.keywords = alert.keywords
-    alertLog.state = AlertState(New, "Prepared", now)
-    alertLog.sources = alert.sources;
+    alertLog.sources = alert.sources
+    alertLog.interval = calculateInterval(alert, maybeTrigger, until)
+    alertLog.state = AlertState(New, "Prepared", DateTime.now)
     
     if (maybeTrigger.isDefined)
     {
         val trigger = maybeTrigger.get
-        trigger.lastExecutionTime = prepareTime
-        trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(AlertPeriod.withName(alert.period), prepareTime)
+        trigger.lastExecutionTime = until
+        trigger.nextExecutionTime = AlertTrigger.nextExecutionTime(AlertPeriod.withName(alert.period), until)
         alertTriggerDao.save(trigger)
     }
     alertLogDao.save(alertLog)

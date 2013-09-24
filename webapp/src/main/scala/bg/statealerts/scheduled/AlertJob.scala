@@ -47,13 +47,16 @@ class AlertJob extends Logging {
   @Value("${alert.job.max_failures:5}")
   var maxFailures: Int = _
 
+  @Value("${index.refreshRate}")
+  var indexRefreshRate: Long = _
+
   @Scheduled(cron = "${alert.job.send.schedule:0 0 0 * * *}")
   def send() {
-    log.debug("start preparing alerts")
-    val prepareTime = DateTime.now
-    alertService.performBatched(prepareTime) {
+    log.debug("start sending alerts")
+    val until = DateTime.now.minus(indexRefreshRate)
+    alertService.performBatched(until) {
       (alert: Alert, alertTrigger: AlertTrigger) =>
-        val alertLog = alertService.prepareAlertExecution(alert, Some(alertTrigger), prepareTime)
+        val alertLog = alertService.prepareAlertExecution(alert, Some(alertTrigger), until)
         if (alertLog.state.status == New) {
           sendAlert(alertLog);
         }

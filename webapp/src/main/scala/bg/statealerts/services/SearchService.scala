@@ -109,7 +109,7 @@ class SearchService {
     }
   }
 
-  @Scheduled(fixedRate = 600000) // 10 minutes
+  @Scheduled(fixedRateString = "${index.refreshRate}")
   def refreshReaderManager(): Unit = {
     readerManager.maybeRefresh()
   }
