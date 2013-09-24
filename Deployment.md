@@ -41,3 +41,5 @@ Commit your changes
 To deploy the application execute
 
     git push
+
+Note: If the disk space on the server is over, you have to clean the git repo. Follow these steps to do so: https://www.openshift.com/forums/openshift/how-to-erase-all-history-from-a-git-repository-on-openshift-and-start-over-with
