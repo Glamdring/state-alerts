@@ -38,16 +38,13 @@ class MainController {
       @RequestParam(required=false) sources: java.util.List[String],
       model: Model): String = {
     val results: java.util.List[Document] = 
-        if (start == 0) {
-    	  searcher.search(keywords)
+        if (start == 0 && sources == null) {
+            searcher.search(keywords)
         } else {
-          searcher.search(
-                          keywords,
-                          new Interval(start, System.currentTimeMillis()),
-                          if (sources == null)
-                            List()
-                          else
-                            JavaConversions.asScalaBuffer(sources))
+            searcher.search(
+                            keywords,
+                            new Interval(start, System.currentTimeMillis()),
+                            if (sources == null || sources.isEmpty()) Nil else sources)
         }
     model.addAttribute("results", results)
     "searchResults"

@@ -73,13 +73,26 @@ class SearchService {
     val query = new BooleanQuery()
     query.add(textQuery, BooleanClause.Occur.MUST)
     query.add(timestampQuery, BooleanClause.Occur.MUST)
-    if (!sources.isEmpty)
-        query.add(new TermQuery(new Term("sourceKey", "(" + sources.mkString(" OR ") + ")")), BooleanClause.Occur.MUST)
+    if (!sources.isEmpty) {
+      
+      query.add(getSourceQuery(sources), BooleanClause.Occur.MUST)
+    }
 
     getDocuments(query, 50)
   }
 
+  private def getSourceQuery(sources: Seq[String]): BooleanQuery = {
+    val sourceQuery = new BooleanQuery
+    for (sourceKey <- sources) {
+      // TODO: lowerCase without locale is not a good thing.
+      val termQuery = new TermQuery(new Term("sourceKey", QueryParserUtil.escape(sourceKey).toLowerCase()))
+      sourceQuery.add(termQuery, BooleanClause.Occur.SHOULD)
+    }
+    sourceQuery
+  }
+
   private def getTextQuery(keywords: String): BooleanQuery = {
+    // TODO: lowerCase without locale is not a good thing.
     val escapedKeywords = QueryParserUtil.escape(keywords).toLowerCase()
     val keywordsList = escapedKeywords.split(" ")
     val query = new BooleanQuery()
@@ -87,7 +100,8 @@ class SearchService {
       query.add(new TermQuery(new Term("text", keyword)), BooleanClause.Occur.MUST)
     })
     return query
-  } 
+  }
+  
   private def getDocuments(query: Query, limit: Int): Seq[Document] = {
     val reader = readerManager.acquire()
 
