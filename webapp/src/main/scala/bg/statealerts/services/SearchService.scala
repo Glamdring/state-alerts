@@ -74,7 +74,6 @@ class SearchService {
     query.add(textQuery, BooleanClause.Occur.MUST)
     query.add(timestampQuery, BooleanClause.Occur.MUST)
     if (!sources.isEmpty) {
-      
       query.add(getSourceQuery(sources), BooleanClause.Occur.MUST)
     }
 

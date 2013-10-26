@@ -17,9 +17,11 @@ import com.gargoylesoftware.htmlunit.WebRequest
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.apache.lucene.index.Term
+import org.joda.time.DateTime
 
 object Foo {
   def main(args: Array[String]) {
+	  println(new DateTime().minusWeeks(1).getMillis());
 	  val indexReader = DirectoryReader.open(FSDirectory.open(new File("c:/config/statealerts/index")));
 	  println(indexReader.maxDoc())
 	  val searcher = new IndexSearcher(indexReader)
