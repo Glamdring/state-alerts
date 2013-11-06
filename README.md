@@ -11,6 +11,8 @@ The project has two subprojects:
 scraper
 =======
 
+This is the module that is reusable. If you need to scrape something, checkout the project, build it and get `scraper.jar`.
+
 The class used to configure individual scraping instances is `ExtractorDescriptor`. There you specify a number of things:
 
 * Target URL, http method, body parameters (in case of POST). You can put a placeholder `{x}` which will be used for paging
@@ -22,6 +24,11 @@ The class used to configure individual scraping instances is `ExtractorDescripto
 
 When you have an `ExtractorDescriptor` instance ready (for java apps you can use the builder to create one), you can create a `new Extractor(descriptor)`, and then (usually with a scheduled job) call `extractor.extractDocuments(since)`
 
-The result is a list of documents
+The result is a list of documents.
 
 More information <a href="http://techblog.bozho.net/?p=1215">in this article</a> 
+
+webapp
+=======
+
+The webapp is ready-to-use i18nizable web-application that can be deployed with just a few steps (by default we deploy it at OpenShift). It stores and indexes the scraped documents and provides a UI for searching and subscribing for email alerts. 
