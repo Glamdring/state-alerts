@@ -31,4 +31,4 @@ More information <a href="http://techblog.bozho.net/?p=1215">in this article</a>
 webapp
 =======
 
-The webapp is ready-to-use i18nizable web-application that can be deployed with just a few steps (by default we deploy it at OpenShift). It stores and indexes the scraped documents and provides a UI for searching and subscribing for email alerts. 
+The webapp is a ready-to-use i18nizable web-application that can be deployed with just a few steps (by default we deploy it at OpenShift). It stores and indexes the scraped documents and provides a UI for searching and subscribing for email alerts. 
