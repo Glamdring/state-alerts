@@ -23,8 +23,8 @@ class MessagePreparators {
         documents.map((d: Document) => {
           val title = d.title
           val url = d.url
-          s"$title [$url]"
-        }).mkString("\n")
+          s"$title [ $url ]"
+        }).mkString("\n\n\n")
       }
     message.setFrom(from);
     message.setTo(email)
