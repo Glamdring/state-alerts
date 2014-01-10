@@ -82,7 +82,7 @@
         "pagingMultiplier": "0",
         "failOnError": "false",
         "dateFormat":"d.M.yyyy",
-		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
+        "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
       {
         "sourceKey": "dker-decisions",
@@ -99,7 +99,7 @@
         "pagingMultiplier": "0",
         "failOnError": "false",
         "dateFormat": "dd.MM.yyyy",
-		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
+        "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
       {
         "sourceKey": "dker-news",
@@ -117,7 +117,7 @@
         "pagingMultiplier": "0",
         "failOnError": "false",
         "dateFormat": "dd.MM.yyyy",
-		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
+        "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
       {
         "sourceKey": "kzp-news",
@@ -126,7 +126,7 @@
         "contentLocationType": "LinkedDocumentInTable",
         "url": "http://kzp.bg/index.php?mode=viewc&group_id=1&month=lastthree",
         "paths": {
-            "tableRowPath": "//td[@rowspan='2']/table/tbody",
+            "tableRowPath": "/html/body/table/tbody/tr/td/table/tbody/tr[4]/td/table/tbody/",
             "documentLinkPath": ".//tr[3]/td/div/div/a",
             "datePath": ".//tr[1]/td/div",
             "titlePath": ".//tr[2]/td/div/b",
@@ -134,7 +134,8 @@
         },
         "pagingMultiplier": "0",
         "failOnError": "false",
-		"dateFormat": "dd.MM.yyyy"
+        "dateFormat": "dd.MM.yyyy",
+        "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
       {
         "sourceKey": "cem-news",
@@ -151,8 +152,9 @@
         },
         "pagingMultiplier": "0",
         "failOnError": "false",
-		"dateFormat": "dd MMMM yyyy",
-		"dateLocale": "bg"
+        "dateFormat": "dd MMMM yyyy",
+        "dateRegex": "\\d{1,2} [\\P{M}\\p{M}]+ \\d{4}",
+        "dateLocale": "bg"
       },
       {
         "sourceKey": "crc-news",
@@ -169,7 +171,8 @@
         },
         "pagingMultiplier": "0",
         "failOnError": "false",
-		"dateFormat": "dd MMMM yyyy (HH:mm)"
+        "dateFormat": "dd MMMM yyyy (HH:mm)",
+        "dateLocale": "bg"
       },
       {
         "sourceKey": "crc-decisions",
@@ -189,9 +192,9 @@
         },
         "pagingMultiplier": "0",
         "failOnError": "false",
-		"dateFormat": "dd MMMM yyyy (HH:mm)",
-		"dateRegex": "\\d{1,2} \\p{IsAlphabetic}{,8} \\d{4}",
-		"dateLocale": "bg"
+        "dateFormat": "dd MMMM yyyy (HH:mm)",
+        "dateRegex": "\\d{1,2} [\\P{M}\\p{M}]+ \\d{4}",
+        "dateLocale": "bg"
       }
    ]
 }

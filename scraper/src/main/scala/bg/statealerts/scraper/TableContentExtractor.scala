@@ -18,16 +18,16 @@ class TableContentExtractor extends DocumentDetailsExtractor {
         throw new IllegalStateException("Cannot find date element for xpath " + p)
       }
       val element = if (elements.size() > 1 && ctx.descriptor.entriesPerRow.nonEmpty) elements.get(rowIdx) else elements.get(0)
-      var text = element.asInstanceOf[DomNode].getTextContent().trim()
+      var dateText = element.asInstanceOf[DomNode].getTextContent().trim()
       ctx.descriptor.dateRegex.foreach(regex => {  
         val pattern = Pattern.compile(regex)
-        val matcher = pattern.matcher(text)
+        val matcher = pattern.matcher(dateText)
         if (matcher.find()) {
-          text = matcher.group().trim()
+          dateText = matcher.group().trim()
         }
       })
-      if (StringUtils.isNotBlank(text)) { 
-    	  doc.publishDate = ctx.dateFormatter.parseDateTime(text).withTimeAtStartOfDay() 
+      if (StringUtils.isNotBlank(dateText)) { 
+    	  doc.publishDate = ctx.dateFormatter.parseDateTime(dateText).withTimeAtStartOfDay() 
       }
     })
 
