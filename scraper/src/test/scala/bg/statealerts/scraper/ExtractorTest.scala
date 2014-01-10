@@ -47,6 +47,7 @@ class ExtractorTest {
         ),
         pagingMultiplier = 0,
         dateFormat = "dd/MM/yyyy",
+        dateLocale = None,
         entriesPerRow = None,
         heuristics = None,
         dateRegex = None,

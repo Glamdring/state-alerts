@@ -31,6 +31,8 @@ import scala.beans.BeanProperty
 import bg.statealerts.scraper.config.DocumentType
 import bg.statealerts.scraper.config.ContentLocationType
 import scala.collection.JavaConversions
+import java.util.Locale
+import org.w3c.dom.Attr
 
 class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 
@@ -39,8 +41,9 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   val tableContentExtractor = new TableContentExtractor()
   val documentPageExtractor = new DocumentPageExtractor()
 
-  val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
-
+  var dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
+  descriptor.dateLocale.foreach(l => dateTimeFormatter = dateTimeFormatter.withLocale(new Locale(l)))
+  
   val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.map(_.bodyParams.get), descriptor.pagingMultiplier)
   
   var baseUrl: String = {
@@ -197,20 +200,23 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
           documentPage.getEnclosingWindow().getHistory().back()
         }
       })
-    } else if (descriptor.paths.documentLinkPath.get.endsWith("href")) {
-      doc.url = row.getFirstByXPath(descriptor.paths.documentLinkPath.get).asInstanceOf[HtmlElement].getTextContent()
-    } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
-      val link = row.getFirstByXPath[HtmlElement](descriptor.paths.documentLinkPath.get)
-      if (link != null) {
-	      val commandString = link.getOnClickAttribute().replaceAll("return ", "")
-	      val executeJavaScript = htmlPage.executeJavaScript(commandString)
-	      val documentPage = executeJavaScript.getNewPage()
-	      populateDocumentWithDownloadedContent(doc, documentPage, ctx)
-	      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
-      }
-    }
+    } else {
+      val element:HtmlElement = row.getFirstByXPath(descriptor.paths.documentLinkPath.get).asInstanceOf[HtmlElement];
+        if (element.hasAttribute("href") && !element.getAttribute("href").equals("#") && !element.getAttribute("href").contains("javascript")) {
+    		doc.url = Utilities.getFullUrl(ctx, element);
+	    } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
+	      val link = row.getFirstByXPath[HtmlElement](descriptor.paths.documentLinkPath.get)
+		  if (link != null) {
+		    val commandString = link.getOnClickAttribute().replaceAll("return ", "")
+		    val executeJavaScript = htmlPage.executeJavaScript(commandString)
+	        val documentPage = executeJavaScript.getNewPage()
+	        populateDocumentWithDownloadedContent(doc, documentPage, ctx)
+		    htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+		  }
+       }
+	}
   }
-
+  
   private def populateDocumentWithDownloadedContent(doc: Document, documentPage: Page, ctx: ExtractionContext) = {
     try {
       val bytes = IOUtils.toByteArray(documentPage.getWebResponse().getContentAsStream())

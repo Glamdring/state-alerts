@@ -12,13 +12,7 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
 
     val elements = row.getByXPath(ctx.descriptor.paths.documentLinkPath.get)
     val element = if (elements.size() > 1) elements.get(rowIdx) else elements.get(0)
-    var documentUrl: String = element.asInstanceOf[HtmlElement].getAttribute("href");
-    if (!documentUrl.startsWith("http")) {
-      if (documentUrl.startsWith("/")) {
-        documentUrl = documentUrl.substring(1)
-      }
-      documentUrl = (ctx.baseUrl + documentUrl)
-    }
+    var documentUrl = Utilities.getFullUrl(ctx, element.asInstanceOf[HtmlElement])
 
     val contentLocationType = ContentLocationType.withName(ctx.descriptor.contentLocationType)
     // if the link is not available in the table, but on a separate page, go to that page first
@@ -43,10 +37,7 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
       if (ctx.descriptor.paths.documentPageLinkPath.nonEmpty) {
         val link: HtmlElement = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageLinkPath.get);
         if (link != null) {
-          documentUrl = link.getAttribute("href")
-          if (!documentUrl.startsWith("http")) {
-            documentUrl = ctx.baseUrl + documentUrl
-          }
+          documentUrl = Utilities.getFullUrl(ctx, link)
         } else {
           documentUrl = null
         }

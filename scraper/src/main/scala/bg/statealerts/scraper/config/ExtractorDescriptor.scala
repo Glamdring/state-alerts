@@ -10,6 +10,7 @@ case class ExtractorDescriptor(
   entriesPerRow: Option[Int], // in case there is no way to identify rows by XPath, or in case there is more than one entry per row, use a counter
   paths: ElementPaths,
   dateFormat: String,
+  dateLocale: Option[String],
   dateRegex: Option[String], // in case the date is not in a separate field, use regex to locate it
   url: String,
   httpRequest: Option[HttpRequest],

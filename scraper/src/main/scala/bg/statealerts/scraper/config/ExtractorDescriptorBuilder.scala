@@ -11,6 +11,7 @@ class ExtractorDescriptorBuilder {
   var entriesPerRow: Option[Int] = None
   var paths: ElementPaths = _
   var dateFormat: String = _
+  var dateLocale: Option[String] = None
   var dateRegex: Option[String] = None // in case the date is not in a separate field, use regex to locate it
   var url: String = _
   var httpRequest: Option[HttpRequest] = None
@@ -21,7 +22,7 @@ class ExtractorDescriptorBuilder {
   var failOnError: Option[Boolean] = None
 
   def build(): ExtractorDescriptor = {
-    return new ExtractorDescriptor(sourceKey, sourceDisplayName, enabled, documentType, entriesPerRow, paths, dateFormat, dateRegex,
+    return new ExtractorDescriptor(sourceKey, sourceDisplayName, enabled, documentType, entriesPerRow, paths, dateFormat, dateLocale, dateRegex,
       url, httpRequest, heuristics, contentLocationType, pagingMultiplier, javascriptRequired, failOnError)
   }
   

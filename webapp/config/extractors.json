@@ -83,6 +83,115 @@
         "failOnError": "false",
         "dateFormat":"d.M.yyyy",
 		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
+      },
+      {
+        "sourceKey": "dker-decisions",
+        "sourceDisplayName": "ДКЕВР - решения",
+        "documentType": "PDF",
+        "contentLocationType": "LinkedDocumentInTable",
+        "url": "http://dker.bg/docsbg.php?d=3&subD=105",
+        "paths": {
+            "tableRowPath": "//div[@class='txtinfo']/table/tbody/tr",
+            "documentLinkPath": ".//td[2]/a",
+            "datePath": ".//td[2]/a",
+            "titlePath": ".//td[2]/a"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+        "dateFormat": "dd.MM.yyyy",
+		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
+      },
+      {
+        "sourceKey": "dker-news",
+        "sourceDisplayName": "ДКЕВР - новини",
+        "documentType": "HTML",
+        "contentLocationType": "LinkedDocumentInTable",
+        "url": "http://dker.bg/novinibg.php?P=389",
+        "paths": {
+            "tableRowPath": "//div[@id='news3']/div[@class='contnews']",
+            "documentLinkPath": ".//a[2]",
+            "datePath": ".//h2",
+            "titlePath": ".//a[2]",
+            "contentPath": "//div[@class='txtinfo']"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+        "dateFormat": "dd.MM.yyyy",
+		"dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
+      },
+      {
+        "sourceKey": "kzp-news",
+        "sourceDisplayName": "КЗП - новини",
+        "documentType": "HTML",
+        "contentLocationType": "LinkedDocumentInTable",
+        "url": "http://kzp.bg/index.php?mode=viewc&group_id=1&month=lastthree",
+        "paths": {
+            "tableRowPath": "//td[@rowspan='2']/table/tbody",
+            "documentLinkPath": ".//tr[3]/td/div/div/a",
+            "datePath": ".//tr[1]/td/div",
+            "titlePath": ".//tr[2]/td/div/b",
+            "contentPath": "//td[@rowspan='2']/table/tbody/tr/td/p[3]"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+		"dateFormat": "dd.MM.yyyy"
+      },
+      {
+        "sourceKey": "cem-news",
+        "sourceDisplayName": "СЕМ - новини",
+        "documentType": "HTML",
+        "contentLocationType": "LinkedDocumentInTable",
+        "url": "http://www.cem.bg/cat.php?id=113",
+        "paths": {
+            "tableRowPath": "//div[@class='files_cats_results']/div[@class='res_row']",
+            "documentLinkPath": ".//a",
+            "datePath": ".//span[@class='date']",
+            "titlePath": ".//div[@class='info']/text()[1]",
+            "contentPath": "//div[@id='shorttext']/p[1]"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+		"dateFormat": "dd MMMM yyyy",
+		"dateLocale": "bg"
+      },
+      {
+        "sourceKey": "crc-news",
+        "sourceDisplayName": "КРС - новини",
+        "documentType": "HTML",
+        "contentLocationType": "LinkedDocumentInTable",
+        "url": "http://crc.bg/news.php?lang=bg",
+        "paths": {
+            "tableRowPath": "//div[@id='inner-right-main-text']/div[@class='news-links']",
+            "documentLinkPath": ".//p/a",
+            "datePath": ".//p/span[@class='news-date']",
+            "titlePath": ".//p/a",
+            "contentPath": "//div[@id='text_container']"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+		"dateFormat": "dd MMMM yyyy (HH:mm)"
+      },
+      {
+        "sourceKey": "crc-decisions",
+        "sourceDisplayName": "КРС - решения",
+        "documentType": "HTML",
+        "contentLocationType": "Table",
+        "url": "http://crc.bg/decisions.php?id=1016&lang=bg",
+        "httpRequest": {
+            "method": "POST",
+            "bodyParams": "decision_number=&decision_date=&date_start=01-01-2014&date_end=&public_text="        
+        },
+        "paths": {
+            "tableRowPath": "//div[@class='search-results']",
+            "datePath": ".//p/strong",
+            "titlePath": ".//p/strong",
+            "contentPath": ".//div[@id='text_container']"
+        },
+        "pagingMultiplier": "0",
+        "failOnError": "false",
+		"dateFormat": "dd MMMM yyyy (HH:mm)",
+		"dateRegex": "\\d{1,2} \\p{IsAlphabetic}{,8} \\d{4}",
+		"dateLocale": "bg"
       }
    ]
 }
