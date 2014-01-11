@@ -80,7 +80,9 @@ class Indexer {
 	  luceneDoc.add(new LongField("indexTimestamp", time.getMillis(), Store.YES))
 	  luceneDoc.add(new TextField("sourceKey", document.getSourceKey, Store.YES))
 	  luceneDoc.add(new TextField("text", document.content, Store.YES))
-	  luceneDoc.add(new TextField("externalId", document.externalId, Store.YES))
+	  if (document.externalId != null) {
+	  	luceneDoc.add(new TextField("externalId", document.externalId, Store.YES))
+	  }
 	  luceneDoc.add(new TextField("title", document.title, Store.YES))
 	  luceneDoc
   }

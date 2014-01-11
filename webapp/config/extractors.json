@@ -126,7 +126,7 @@
         "contentLocationType": "LinkedDocumentInTable",
         "url": "http://kzp.bg/index.php?mode=viewc&group_id=1&month=lastthree",
         "paths": {
-            "tableRowPath": "/html/body/table/tbody/tr/td/table/tbody/tr[4]/td/table/tbody/",
+            "tableRowPath": "/html/body/table/tbody/tr/td/table/tbody/tr[4]/td/table/tbody/tr/td[3]",
             "documentLinkPath": ".//tr[3]/td/div/div/a",
             "datePath": ".//tr[1]/td/div",
             "titlePath": ".//tr[2]/td/div/b",
@@ -153,7 +153,7 @@
         "pagingMultiplier": "0",
         "failOnError": "false",
         "dateFormat": "dd MMMM yyyy",
-        "dateRegex": "\\d{1,2} [\\P{M}\\p{M}]+ \\d{4}",
+        "dateRegex": "\\d{1,2} [\\P{M}\\p{M}&&[^\\s]]+ \\d{4}",
         "dateLocale": "bg"
       },
       {
@@ -192,8 +192,8 @@
         },
         "pagingMultiplier": "0",
         "failOnError": "false",
-        "dateFormat": "dd MMMM yyyy (HH:mm)",
-        "dateRegex": "\\d{1,2} [\\P{M}\\p{M}]+ \\d{4}",
+        "dateFormat": "dd MMMM yyyy",
+        "dateRegex": "\\d{1,2} [\\P{M}\\p{M}&&[^\\s]]+ \\d{4}",
         "dateLocale": "bg"
       }
    ]

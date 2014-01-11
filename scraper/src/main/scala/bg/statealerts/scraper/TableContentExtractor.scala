@@ -49,7 +49,7 @@ class TableContentExtractor extends DocumentDetailsExtractor {
       doc.externalId = element.asInstanceOf[DomNode].getTextContent().trim()
     })
     //TODO use rowIdx
-    if (ctx.descriptor.contentLocationType == ContentLocationType.Table && ctx.descriptor.paths.contentPath.nonEmpty) {
+    if (ContentLocationType.withName(ctx.descriptor.contentLocationType) == ContentLocationType.Table && ctx.descriptor.paths.contentPath.nonEmpty) {
     	doc.content = row.getFirstByXPath(ctx.descriptor.paths.contentPath.get).asInstanceOf[DomNode].getTextContent().trim()
     }
   }
