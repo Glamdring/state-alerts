@@ -35,6 +35,13 @@ case class User extends Serializable {
 
     @Column(nullable=false)
     @BeanProperty
+    var corporate: Boolean = _
+    
+    @BeanProperty
+    var apiAccessToken: String = _
+    
+    @Column(nullable=false)
+    @BeanProperty
     var receiveEmails: Boolean = _
     
     @Type(`type` = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")

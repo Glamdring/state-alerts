@@ -1,7 +1,6 @@
 package bg.statealerts.services
 
 import java.io.File
-
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.index.ReaderManager
 import org.apache.lucene.index.Term
@@ -24,12 +23,15 @@ import org.springframework.context.annotation.DependsOn
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
 import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.inject.Inject
+import org.springframework.cache.annotation.Cacheable
+import bg.statealerts.model.User
+import bg.statealerts.model.SearchLog
+import org.joda.time.DateTime
 
 @Service
 @DependsOn(Array("indexer")) // indexer initializes index
@@ -66,6 +68,7 @@ class SearchService {
   }
 
   @Transactional(readOnly=true)
+  @Cacheable(value=Array("methodCache"), key="#keywords")
   def search(keywords: String, interval: Interval, sources: Seq[String]): Seq[Document] = {
 
     val textQuery = getTextQuery(keywords)
@@ -80,6 +83,23 @@ class SearchService {
     getDocuments(query, 50)
   }
 
+  @Transactional(readOnly=true)
+  @Cacheable(Array("methodCache"))
+  def getSources(): Seq[String] = {
+    documentDao.getSources()
+  }
+  
+  @Transactional
+  def logApiSearch(token: String, keywords: String, sources: List[String]) = {
+    val user = documentDao.getByPropertyValue(classOf[User], "token", token)
+    val entry = new SearchLog()
+    entry.searchTime = new DateTime()
+    entry.keywords = keywords;
+    entry.sources = sources.toString;
+    entry.user = user.getOrElse(null)
+    documentDao.save(entry)
+  }
+   
   private def getSourceQuery(sources: Seq[String]): BooleanQuery = {
     val sourceQuery = new BooleanQuery
     for (sourceKey <- sources) {

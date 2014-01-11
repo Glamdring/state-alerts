@@ -52,7 +52,8 @@
 	<mvc:view-controller path="/exceptions/uncaughtException" />
 	<mvc:view-controller path="/exceptions/resourceNotFound" />
 	<mvc:view-controller path="/exceptions/dataAccessFailure" />
-
+    <mvc:resources location="/restful-docs" mapping="/restful-docs/**"/>
+    
  	<bean class="org.springframework.social.connect.web.ProviderSignInController">
         <property name="signUpUrl" value="/socialSignUp"/>
     </bean>
@@ -91,4 +92,7 @@
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="1" />
 	</bean>
+	
+    <!-- Restful API Docs -->
+    <bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig"/>
 </beans>

@@ -26,6 +26,11 @@ class DocumentDao extends BaseDao {
     }
   }
 
+  def getSources(): Seq[String] = {
+    val query: TypedQuery[String] = entityManager.createQuery("SELECT im.sourceKey FROM Import im GROUP BY sourceKey", classOf[String])
+    query.getResultList()
+  }
+  
   def performBatched(f: Document => Unit): Unit = performBatched(classOf[Document], fetchSize)(f)
   
   def getDocuments(ids: List[Int]): Seq[Document] = {

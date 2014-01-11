@@ -130,4 +130,10 @@ class UserService {
 
         userDao.save(user)
     }
+    
+    @Transactional(readOnly=true)
+    def canPerformApiSearch(token: String): Boolean = {
+    val user = userDao.getByPropertyValue(classOf[User], "token", token);
+    return user.nonEmpty && user.get.corporate == true;
+  }
 }

@@ -21,7 +21,7 @@
 		<hibernate.version>4.2.5.Final</hibernate.version>
 		<scalate.version>1.6.1</scalate.version>
 
-        <statealerts.config.location>${project.basedir}/config</statealerts.config.location>
+		<statealerts.config.location>${project.basedir}/config</statealerts.config.location>
 	</properties>
 
 	<dependencyManagement>
@@ -39,7 +39,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
-  				<artifactId>spring-security-crypto</artifactId>
+				<artifactId>spring-security-crypto</artifactId>
 				<version>${spring-security.version}</version>
 			</dependency>
 		</dependencies>
@@ -206,11 +206,11 @@
 			<artifactId>rome</artifactId>
 			<version>1.0</version>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -348,6 +348,11 @@
 			<groupId>bg.statealerts</groupId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.mangofactory</groupId>
+			<artifactId>swagger-springmvc</artifactId>
+			<version>0.6.5</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -383,7 +388,7 @@
 				<executions>
 					<execution>
 						<goals>
-                            <goal>add-source</goal>
+							<goal>add-source</goal>
 							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>
@@ -398,17 +403,17 @@
 				</configuration>
 			</plugin>
 			<plugin>
-	      <groupId>org.fusesource.scalate</groupId>
-	      <artifactId>maven-scalate-plugin_${scala.binaryVersion}</artifactId>
-	      <version>${scalate.version}</version>
-	      <executions>
-	        <execution>
-	          <goals>
-	            <goal>precompile</goal>
-	          </goals>
-	        </execution>
-	      </executions>
-	    </plugin>
+				<groupId>org.fusesource.scalate</groupId>
+				<artifactId>maven-scalate-plugin_${scala.binaryVersion}</artifactId>
+				<version>${scalate.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>precompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -431,9 +436,9 @@
 						<stopPort>8090</stopPort>
 						<stopKey>die</stopKey>
 						<jvmArgs>
-                            -Xmx128m
+							-Xmx128m
 							-Dstatealerts.config.location=${statealerts.config.location}
-                        </jvmArgs>
+						</jvmArgs>
 						<systemProperties>
 							<systemProperty>
 								<name>statealerts.config.location</name>
