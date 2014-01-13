@@ -95,7 +95,7 @@ class SearchService {
     val entry = new SearchLog()
     entry.searchTime = new DateTime()
     entry.keywords = keywords;
-    entry.sources = sources.toString;
+    entry.sources = sources.mkString(",");
     entry.user = user.getOrElse(null)
     documentDao.save(entry)
   }

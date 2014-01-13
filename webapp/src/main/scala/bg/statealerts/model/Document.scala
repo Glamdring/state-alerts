@@ -27,7 +27,6 @@ case class Document {
   
   @Type(`type` = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   @BeanProperty
-  //@JsonSerialize(using=classOf[JodaSerializers])
   var publishDate: DateTime = _
   
   @BeanProperty

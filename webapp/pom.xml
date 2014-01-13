@@ -51,6 +51,27 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.mangofactory</groupId>
+			<artifactId>swagger-springmvc</artifactId>
+			<version>0.6.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-module-scala</artifactId>
+					<groupId>com.fasterxml.jackson.module</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-scala_2.10</artifactId>
+			<version>2.2.1</version>
+		</dependency>
 		<!-- Spring dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -303,11 +324,6 @@
 			<version>1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>0.5.5</version>
@@ -321,11 +337,6 @@
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
 			<version>${scala.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.yuvimasory</groupId>
-			<artifactId>jerkson_${scala.binaryVersion}</artifactId>
-			<version>0.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -347,11 +358,6 @@
 			<artifactId>scraper</artifactId>
 			<groupId>bg.statealerts</groupId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mangofactory</groupId>
-			<artifactId>swagger-springmvc</artifactId>
-			<version>0.6.5</version>
 		</dependency>
 	</dependencies>
 

@@ -70,7 +70,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   }
 
   def extractDocuments(since: ReadableDateTime): java.util.List[Document] = {
-    return JavaConversions.asJavaList(extract(since))
+    return JavaConversions.seqAsJavaList(extract(since))
   }
   
   def extract(since: ReadableDateTime): List[Document] = {

@@ -3,7 +3,7 @@
       {
         "sourceKey": "ParliamentLawProjects",
         "sourceDisplayName": "Законопроекти",
-        "enabled": "true",
+        "enabled": true,
         "documentType": "PDF",
         "contentLocationType": "LinkedDocumentOnLinkedPage",
         "url": "http://www.parliament.bg/bg/bills",
@@ -19,16 +19,16 @@
             "titlePath": ".//td[2]/a",
             "externalIdPath": ".//td[3]"
         },
-        "pagingMultiplier": "0",
+        "pagingMultiplier": 0,
         "dateFormat": "dd/MM/yyyy"
       },
       {
         "sourceKey": "AOP",
         "sourceDisplayName": "Агенция за обществени поръчки",
-        "enabled": "true",
+        "enabled": true,
         "documentType": "HTML",
         "contentLocationType": "LinkedPage",
-        "entriesPerRow": "14",
+        "entriesPerRow": 14,
         "url": "http://rop3-app1.aop.bg:7778/portal/page?_pageid=93,662251&_dad=portal&_schema=PORTAL",
         "httpRequest": {
             "method": "POST",
@@ -42,8 +42,8 @@
             "titlePath": ".//td/b[starts-with(., 'Име:')]/parent::td/following-sibling::td|.//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td",
             "externalIdPath": ".//td/b[starts-with(., 'Документ:')]/parent::td/following-sibling::td/a"
         },
-        "pagingMultiplier": "1",
-        "failOnError": "false",
+        "pagingMultiplier": 1,
+        "failOnError": false,
         "dateFormat":"dd-MM-yyyy"
       },
       {
@@ -59,11 +59,11 @@
             "titlePath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]",
             "externalIdPath": ".//td/table/tbody/tr/td[1]/img/following-sibling::text()[1]"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat":"d.M.yyyy",
         "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}",
-        "javascriptRequired": "true"
+        "javascriptRequired": true
       },
       {
         "sourceKey": "strategybg",
@@ -71,7 +71,7 @@
         "documentType": "PDF",
         "contentLocationType": "LinkedDocumentOnLinkedPage",
         "url": "http://www.strategy.bg/StrategicDocuments/List.aspx?lang=bg-BG&categoryId=1&typeConsultation=1&typeCategory=0&docType=1",
-        "entriesPerRow": "2",
+        "entriesPerRow": 2,
         "paths": {
             "tableRowPath": "//table[@id='list_document']/tbody/tr",
             "documentLinkPath": ".//td/h3/a",
@@ -79,8 +79,8 @@
             "datePath": ".//td/div[@class='date']",
             "titlePath": ".//td/h3/a"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat":"d.M.yyyy",
         "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
@@ -96,8 +96,8 @@
             "datePath": ".//td[2]/a",
             "titlePath": ".//td[2]/a"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat": "dd.MM.yyyy",
         "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
@@ -114,8 +114,8 @@
             "titlePath": ".//a[2]",
             "contentPath": "//div[@class='txtinfo']"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat": "dd.MM.yyyy",
         "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
@@ -132,8 +132,8 @@
             "titlePath": ".//tr[2]/td/div/b",
             "contentPath": "//td[@rowspan='2']/table/tbody/tr/td/p[3]"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat": "dd.MM.yyyy",
         "dateRegex": "\\d{1,2}\\.\\d{1,2}\\.\\d{4}"
       },
@@ -150,8 +150,8 @@
             "titlePath": ".//div[@class='info']/text()[1]",
             "contentPath": "//div[@id='shorttext']/p[1]"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat": "dd MMMM yyyy",
         "dateRegex": "\\d{1,2} [\\P{M}\\p{M}&&[^\\s]]+ \\d{4}",
         "dateLocale": "bg"
@@ -169,8 +169,8 @@
             "titlePath": ".//p/a",
             "contentPath": "//div[@id='text_container']"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat": "dd MMMM yyyy (HH:mm)",
         "dateLocale": "bg"
       },
@@ -190,8 +190,8 @@
             "titlePath": ".//p/strong",
             "contentPath": ".//div[@id='text_container']"
         },
-        "pagingMultiplier": "0",
-        "failOnError": "false",
+        "pagingMultiplier": 0,
+        "failOnError": false,
         "dateFormat": "dd MMMM yyyy",
         "dateRegex": "\\d{1,2} [\\P{M}\\p{M}&&[^\\s]]+ \\d{4}",
         "dateLocale": "bg"

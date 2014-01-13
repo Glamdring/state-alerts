@@ -4,13 +4,14 @@ import org.springframework.beans.factory.FactoryBean
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 import org.joda.time.DateTimeZone
-import com.codahale.jerkson.Json
 import java.io.File
 import org.springframework.beans.factory.annotation.Value
 import bg.statealerts.scraper.Extractor
 import bg.statealerts.scraper.config.ExtractorDescriptor
 import bg.statealerts.scraper.config.ExtractorConfiguration
 import bg.statealerts.scraper.config.ContentLocationType
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 @Component("extractors")
 class ExtractorConfigurationFactoryBean extends FactoryBean[List[Extractor]]{
@@ -20,11 +21,15 @@ class ExtractorConfigurationFactoryBean extends FactoryBean[List[Extractor]]{
   @Value("${statealerts.config.location}")
   var configLocation: String = _
   
+  val mapper: ObjectMapper = new ObjectMapper()
+  
   @PostConstruct
   def init() {
+    mapper.registerModule(DefaultScalaModule)
     DateTimeZone.setDefault(DateTimeZone.UTC)
     val file = new File(configLocation + "/extractors.json")
-    val config = Json.parse[ExtractorConfiguration](file)
+    //val config = Json.parse[ExtractorConfiguration](file)
+    val config = mapper.readValue(file, classOf[ExtractorConfiguration])
     for (descriptor <- config.extractors) {
       validateDescriptor(descriptor) // the application fails on startup if a configuration is invalid
       var extractor = new Extractor(descriptor)

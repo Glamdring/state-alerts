@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
-import com.codahale.jerkson.Json
 import bg.statealerts.dao.DocumentDao
 import bg.statealerts.model.Document
 import bg.statealerts.model.Import
@@ -69,7 +68,7 @@ class InformationExtractorJob {
         	  val document = new Document()
 	          document.title = StringUtils.left(doc.title, 2000);
 	          document.url = StringUtils.left(doc.url, 2000);
-	          //remove unneeded whitespaces new lines
+	          //remove unneeded whitespaces and new lines
 	          document.content = doc.content.replaceAll("^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
 	          document.importTime = now
 	          //TODO automatic copying
