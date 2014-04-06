@@ -84,11 +84,11 @@ class SearchService {
   }
 
   @Transactional(readOnly=true)
-  def list(since: DateTime): Seq[Document] = {
+  def list(sources: Seq[String], since: DateTime): Seq[Document] = {
     if (since.isBefore(new DateTime().minusMonths(2))) {
       throw new IllegalArgumentException("Cannot query database for documents older than 2 months");
     }
-    documentDao.getDocumentsAfter(since);
+    documentDao.getDocumentsAfter(sources, since);
   }
   
   @Transactional(readOnly=true)
@@ -99,7 +99,7 @@ class SearchService {
   
   @Transactional
   def logApiUsage(token: String, keywords: String, sources: List[String], operation: String) = {
-    val user = documentDao.getByPropertyValue(classOf[User], "token", token)
+    val user = documentDao.getByPropertyValue(classOf[User], "api_access_token", token)
     val entry = new ApiLog()
     entry.searchTime = new DateTime()
     entry.keywords = keywords;

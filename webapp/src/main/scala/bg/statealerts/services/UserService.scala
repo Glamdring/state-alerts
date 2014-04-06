@@ -133,7 +133,7 @@ class UserService {
     
     @Transactional(readOnly=true)
     def canUseApi(token: String): Boolean = {
-    val user = userDao.getByPropertyValue(classOf[User], "token", token);
-    return user.nonEmpty && user.get.corporate == true;
-  }
+	    val user = userDao.getByPropertyValue(classOf[User], "apiAccessToken", token);
+	    return user.nonEmpty && user.get.corporate == true;
+    }
 }

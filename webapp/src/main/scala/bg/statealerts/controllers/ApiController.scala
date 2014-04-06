@@ -69,7 +69,7 @@ class ApiController {
 
     if (userService.canUseApi(token)) {
 		searcher.logApiUsage(token, null, asScalaBuffer(sources).toList, "list");
-	    val results: java.util.List[Document] = searcher.list(new DateTime(since));
+	    val results: java.util.List[Document] = searcher.list(sources, new DateTime(since));
 	    results;
     } else {
     	throw new IllegalStateException("Not allowed to use API");

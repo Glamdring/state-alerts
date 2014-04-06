@@ -109,6 +109,6 @@
 
     <!-- Restful API Docs -->
     <bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig"/>
-    <bean id="exclusionModule" class="bg.statealerts.util.RestfulDocumentationExtensibilityModule"/>
+    <bean id="extensibilityModule" class="bg.statealerts.util.RestfulDocumentationExtensibilityModule"/>
     <mvc:view-controller path="/restful-docs" view-name="restful"/>
 </beans>

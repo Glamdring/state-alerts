@@ -10,6 +10,9 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.Lob
 import javax.persistence.GenerationType
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import bg.statealerts.util.LongDateTimeSerializer
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 @Entity
 case class Document {
@@ -26,6 +29,7 @@ case class Document {
   var content: String = _
   
   @Type(`type` = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+  @JsonSerialize(using = classOf[LongDateTimeSerializer])
   @BeanProperty
   var publishDate: DateTime = _
   

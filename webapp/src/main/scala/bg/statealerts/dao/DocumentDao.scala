@@ -44,10 +44,19 @@ class DocumentDao extends BaseDao {
     query.getResultList()
   }
   
-  def getDocumentsAfter(since: DateTime): Seq[Document] = {
-    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Document doc WHERE publishDate > :since ORDER BY publishDate DESC", classOf[Document])
+  def getDocumentsAfter(sources: Seq[String], since: DateTime): Seq[Document] = {
+    var sourcesClause = ""
+    if (!sources.isEmpty) {
+      sourcesClause = "AND source_key IN(:sources) "
+    } 
+    
+    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Document doc WHERE publishDate > :since " 
+        + sourcesClause + "ORDER BY publishDate DESC", classOf[Document])
     query.setParameter("since", since)
-
+    if (!sources.isEmpty) {
+      query.setParameter("sources", seqAsJavaList(sources));
+    }
+    
     query.getResultList()
   }
 }
