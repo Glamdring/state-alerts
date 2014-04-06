@@ -51,6 +51,9 @@ case class Document {
   @BeanProperty
   var additionalMetaData: String = _
   
+  @BeanProperty
+  var metaDataUrl: String = _
+  
   @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   var importTime:DateTime = _
 }

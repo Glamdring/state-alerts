@@ -82,6 +82,7 @@ class InformationExtractorJob {
 	          if (doc.additionalMetaData.nonEmpty) {
 	          	document.additionalMetaData = mapper.writeValueAsString(doc.additionalMetaData)
       		  }
+	          document.metaDataUrl = doc.metaDataUrl
 	          persistedDocuments ::= service.save(document)
           } catch {
             case ex: Exception => {

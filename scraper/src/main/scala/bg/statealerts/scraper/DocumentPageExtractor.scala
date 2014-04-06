@@ -43,6 +43,13 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
         }
       }
       doc.url = documentUrl
+ 
+      if (ctx.descriptor.paths.metaDataUrlPath.nonEmpty) {
+        val link: HtmlElement = docPage.getFirstByXPath(ctx.descriptor.paths.metaDataUrlPath.get);
+        if (link != null) {
+          doc.metaDataUrl = Utilities.getFullUrl(ctx, link)
+        }
+      }
       
       if (ctx.descriptor.paths.additionalMetaDataPaths.nonEmpty) {
         val metaData = scala.collection.mutable.Map[String, String]()

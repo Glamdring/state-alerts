@@ -17,7 +17,8 @@
             "documentPageLinkPath": "//table[@class='bills']/tbody/tr[5]/td[2]/a",
             "datePath": ".//td[4]",
             "titlePath": ".//td[2]/a",
-            "externalIdPath": ".//td[3]"
+            "externalIdPath": ".//td[3]",
+            "metaDataUrlPath": "//div[@class='markframe']/div[1]/a"
         },
         "pagingMultiplier": 0,
         "dateFormat": "dd/MM/yyyy"

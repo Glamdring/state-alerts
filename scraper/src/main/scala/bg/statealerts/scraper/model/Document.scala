@@ -14,4 +14,5 @@ case class Document() {
   var externalId: String = _
   var importTime: DateTime = _
   var additionalMetaData: Map[String, String] = Map()
+  var metaDataUrl: String = _
 }
