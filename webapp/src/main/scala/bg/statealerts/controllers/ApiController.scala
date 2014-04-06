@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.joda.time.Interval
 import com.mangofactory.swagger.annotations.ApiInclude
 import com.wordnik.swagger.annotations.Api
+import org.joda.time.DateTime
 
 @Controller
 @RequestMapping(Array("/api"))
@@ -41,20 +42,37 @@ class ApiController {
   @ApiInclude
   def apiSearch(
       @RequestParam keywords: String,
-      @RequestParam start: Long,
+      @RequestParam since: Long,
       @RequestParam token: String,
-      @RequestParam(required=false) sources: java.util.List[String],
-      model: Model): java.util.List[Document] = {
-    if (userService.canPerformApiSearch(token)) {
-    	searcher.logApiSearch(token, keywords, asScalaBuffer(sources).toList);
+      @RequestParam(required=false) sources: java.util.List[String]): java.util.List[Document] = {
+    
+    if (userService.canUseApi(token)) {
+    	searcher.logApiUsage(token, keywords, asScalaBuffer(sources).toList, "search");
 	    val results: java.util.List[Document] = 
 	            searcher.search(
 	                            keywords,
-	                            new Interval(start, System.currentTimeMillis()),
+	                            new Interval(since, System.currentTimeMillis()),
 	                            if (sources == null || sources.isEmpty()) Nil else asScalaBuffer(sources))
 	    results;
     } else {
-      throw new IllegalStateException("Not allowed to perform searched");
+    	throw new IllegalStateException("Not allowed to perform search");
+    }
+  }
+  
+  @RequestMapping(value=Array("/list"), method=Array(RequestMethod.GET))
+  @ResponseBody
+  @ApiInclude
+  def list(
+      @RequestParam since: Long,
+      @RequestParam token: String,
+      @RequestParam(required=false) sources: java.util.List[String]): java.util.List[Document] = {
+
+    if (userService.canUseApi(token)) {
+		searcher.logApiUsage(token, null, asScalaBuffer(sources).toList, "list");
+	    val results: java.util.List[Document] = searcher.list(new DateTime(since));
+	    results;
+    } else {
+    	throw new IllegalStateException("Not allowed to use API");
     }
   }
 }

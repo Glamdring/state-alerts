@@ -30,7 +30,7 @@ import javax.annotation.PreDestroy
 import javax.inject.Inject
 import org.springframework.cache.annotation.Cacheable
 import bg.statealerts.model.User
-import bg.statealerts.model.SearchLog
+import bg.statealerts.model.ApiLog
 import org.joda.time.DateTime
 
 @Service
@@ -84,19 +84,28 @@ class SearchService {
   }
 
   @Transactional(readOnly=true)
+  def list(since: DateTime): Seq[Document] = {
+    if (since.isBefore(new DateTime().minusMonths(2))) {
+      throw new IllegalArgumentException("Cannot query database for documents older than 2 months");
+    }
+    documentDao.getDocumentsAfter(since);
+  }
+  
+  @Transactional(readOnly=true)
   @Cacheable(Array("methodCache"))
   def getSources(): Seq[String] = {
     documentDao.getSources()
   }
   
   @Transactional
-  def logApiSearch(token: String, keywords: String, sources: List[String]) = {
+  def logApiUsage(token: String, keywords: String, sources: List[String], operation: String) = {
     val user = documentDao.getByPropertyValue(classOf[User], "token", token)
-    val entry = new SearchLog()
+    val entry = new ApiLog()
     entry.searchTime = new DateTime()
     entry.keywords = keywords;
     entry.sources = sources.mkString(",");
     entry.user = user.getOrElse(null)
+    entry.operationType = operation 
     documentDao.save(entry)
   }
    

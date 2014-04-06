@@ -43,4 +43,11 @@ class DocumentDao extends BaseDao {
 
     query.getResultList()
   }
+  
+  def getDocumentsAfter(since: DateTime): Seq[Document] = {
+    val query: TypedQuery[Document] = entityManager.createQuery("SELECT doc FROM Document doc WHERE publishDate > :since ORDER BY publishDate DESC", classOf[Document])
+    query.setParameter("since", since)
+
+    query.getResultList()
+  }
 }

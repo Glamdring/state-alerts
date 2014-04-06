@@ -10,7 +10,7 @@ import javax.persistence.Column
 import javax.persistence.ManyToOne
 
 @Entity
-case class SearchLog() {
+case class ApiLog() {
   @Id @GeneratedValue(strategy = GenerationType.AUTO)
   var id: Long = _
   
@@ -19,6 +19,9 @@ case class SearchLog() {
   
   @Column
   var keywords: String = _
+  
+  @Column
+  var operationType: String = _
   
   @Column
   var sources: String = _
