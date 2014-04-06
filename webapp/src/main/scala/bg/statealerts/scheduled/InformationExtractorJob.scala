@@ -23,6 +23,7 @@ import org.joda.time.DateTimeConstants
 import javax.annotation.Resource
 import bg.statealerts.util.TestProfile
 import bg.statealerts.scraper.Extractor
+import com.fasterxml.jackson.databind.ObjectMapper
 
 @Component
 @TestProfile.Disabled
@@ -49,7 +50,9 @@ class InformationExtractorJob {
   var indexer: Indexer = _
 
   val random = new Random()
-
+  
+  val mapper = new ObjectMapper()
+  
   @Scheduled(fixedRate = DateTimeConstants.MILLIS_PER_HOUR)
   def run() {
     if (randomSleepMaxMinutes > 0) {
@@ -76,6 +79,9 @@ class InformationExtractorJob {
 	          document.sourceDisplayName = doc.sourceDisplayName
 	          document.sourceKey = doc.sourceKey
 	          document.publishDate = doc.publishDate
+	          if (doc.additionalMetaData.nonEmpty) {
+	          	document.additionalMetaData = mapper.writeValueAsString(doc.additionalMetaData)
+      		  }
 	          persistedDocuments ::= service.save(document)
           } catch {
             case ex: Exception => {

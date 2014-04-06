@@ -10,13 +10,14 @@ class ElementPathsBuilder {
   var contentPath: Option[String] = None
   var externalIdPath: Option[String] = None
   var datePath: Option[String] = None
+  var additionalMetaDataPaths: Option[Map[String, String]] = None
   var documentPageDatePath: Option[String] = None
   var documentLinkPath: Option[String] = None
   var documentPageLinkPath: Option[String] = None
 
   def build(): ElementPaths = {
     return new ElementPaths(tableRowPath, titlePath, documentPageTitlePath, contentPath, externalIdPath, 
-        datePath, documentPageDatePath, documentLinkPath, documentPageLinkPath)
+        datePath, additionalMetaDataPaths, documentPageDatePath, documentLinkPath, documentPageLinkPath)
   }
   
   def setTableRowPath(tableRowPath: String): ElementPathsBuilder = {

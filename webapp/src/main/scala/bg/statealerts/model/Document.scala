@@ -47,6 +47,10 @@ case class Document {
   @BeanProperty
   var externalId: String = _
   
+  @Column(length=3000)
+  @BeanProperty
+  var additionalMetaData: String = _
+  
   @Type(`type`="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   var importTime:DateTime = _
 }
