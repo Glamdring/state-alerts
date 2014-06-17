@@ -24,7 +24,7 @@ import bg.statealerts.model.AlertTrigger
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(Array("classpath*:/applicationContext.xml"))
-@ActiveProfiles(Array(TestProfile.PROFILE_NAME))
+@ActiveProfiles(Array("test-profile"))
 //TODO: use scalatest
 class AlertServiceTest {
 

@@ -10,8 +10,9 @@ class HTMLDocumentExtractor extends DocumentFileExtractor {
     val element = docPage.getFirstByXPath(ctx.descriptor.paths.contentPath.get).asInstanceOf[HtmlElement]
     if (element == null) {
     	""
+    } else {
+    	element.getTextContent()
     }
-    element.getTextContent()
   }
   
   def extractContent(bytes: Array[Byte], ctx: ExtractionContext): String = {
