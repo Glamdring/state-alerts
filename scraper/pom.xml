@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
-			<version>2.13-SNAPSHOT</version>
+			<version>2.15</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
