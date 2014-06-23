@@ -1,45 +1,34 @@
-Deploying on Openshift
+Deploying
 ======================
 
-Register for openshift account and create a tomcat 7 app with mysql support. Execute the following command in a newly-created directory (e.g. statealerts-deployment)
+Make sure you have installed MySQL and Tomcat (at least 7). Nginx / apache with forwarding to Tomcat is also desirable.
 
-    rhc app create -a statealerts jbossews-2.0 mysql-5.1
+Copy the war file from _webapp/target_ into the _webapps_ server folder as _ROOT.war_
 
-Clone the openshift git repo:
+In _$TOMCAT/conf/server.xml_ find the _Connector_ element and add _URIEncoding="utf-8"_ attribbute so it looks like
 
-    git clone <your repo>
-    
-Delete the _src_ folder and _pom.xml_ file from the template
-
-    cd statealerts
-    git rm -r src/ pom.xml
-
-Copy the prebuid war into _webapps_ folder as _ROOT.war_
-
-    cp <path-to-source>/webapp/target/statealerts-0.0.1-SNAPSHOT.war webapps/ROOT.war
-
-In _.openshift/config/server.xml_ find _Connector_ element and add _URIEncoding="utf-8"_ attribbute so it looks like
-
-    <Connector address="${OPENSHIFT_JBOSSEWS_IP}"
-               port="${OPENSHIFT_JBOSSEWS_HTTP_PORT}"
+    <Connector port="..."
                protocol="HTTP/1.1"
                connectionTimeout="20000"
-               URIEncoding="utf-8"
+               URIEncoding="UTF-8"
                redirectPort="8443"/>
 
-In _.openshift/action_hooks_ folder create a file called _pre_start_jbossews_ with following contents
+And also add the following at the bottom of the _Engine_ element:
 
-    export CATALINA_OPTS="-Dstatealerts.config.location=${OPENSHIFT_REPO_DIR}/config -Duser.timezone=UTC"
+    <Host name="yourdomain.com" appBase="webapps" unpackWARs="true" autoDeploy="true">
+        <Alias>www.yourdomain.com</Alias>
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs/access"  prefix="welshare_access_" suffix=".log" pattern="%h %l %u %t &quot;%r&quot; %s %b, t=%D" resolveHosts="false"/>
+        <Valve className="org.apache.catalina.valves.StuckThreadDetectionValve" threshold="60" />
+    </Host>
+
+Also change the defaultHost of your Engine:
+
+    <Engine name="Catalina" defaultHost="yourdomain.com">
     
-In repository root folder create folder called _config_ and copy there all files from _project-root/config_ (at least the following configuration files _statealert.properties_, _extractors.json_, _ehcache.xml_)
 
-Commit your changes
+Create a config folder (e.g. /var/config) and copy there all files from _project-root/config_ (at least the following configuration files _statealert.properties_, _extractors.json_, _ehcache.xml_)
 
-    git add webapps config .openshift
-    git commit  -m "Inital commit for state alerts app."
+Add the following in catalina.sh
 
-To deploy the application execute
-
-    git push
-
-Note: If the disk space on the server is over, you have to clean the git repo. Follow these steps to do so: https://www.openshift.com/forums/openshift/how-to-erase-all-history-from-a-git-repository-on-openshift-and-start-over-with
+    export CATALINA_OPTS="-Dstatealerts.config.location=/var/config -Duser.timezone=UTC"
+  

@@ -9,7 +9,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="bg.statealerts" level="all" />
+	<logger name="bg.statealerts" level="warn" />
 	<logger name="org.hibernate" level="warn" />
 	<root level="info">
 		<appender-ref ref="console" />
