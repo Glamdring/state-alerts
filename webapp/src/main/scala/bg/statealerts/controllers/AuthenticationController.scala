@@ -38,6 +38,9 @@ import org.springframework.web.bind.annotation.RequestMethod
 class AuthenticationController {
     val logger: Logger = LoggerFactory.getLogger(classOf[AuthenticationController])
 
+    @Value("${base.url}")
+    var baseUrl: String = _
+    
     @Inject
     var signInController: ProviderSignInController = _
     @Inject
@@ -46,7 +49,7 @@ class AuthenticationController {
     var userService: UserService = _
     @Inject
     var context: UserContext = _
-
+    
     val mapper = new ObjectMapper()
     
     val restTemplate = {
@@ -55,6 +58,7 @@ class AuthenticationController {
         template.getMessageConverters().add(new StringHttpMessageConverter())
         template
     }
+    
 	val emailValidator = new EmailValidator()
 	
 	@RequestMapping(value=Array("/signup"), method=Array(RequestMethod.GET))
@@ -130,7 +134,7 @@ class AuthenticationController {
         }
         val params = new LinkedMultiValueMap[String, String]()
         params.add("assertion", assertion)
-        params.add("audience", request.getScheme() + "://" + request.getServerName() + ":" + (if (request.getServerPort() == 80) "" else request.getServerPort()))
+        params.add("audience", request.getScheme() + "://" + baseUrl)
         val entity = restTemplate.postForEntity("https://verifier.login.persona.org/verify", params, classOf[String])
         val response = mapper.readTree(entity.getBody())
         if (response.get("status").asText().equals("okay")) {
