@@ -15,7 +15,7 @@ import bg.statealerts.util.LongDateTimeSerializer
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 @Entity
-case class Document {
+case class Document() {
   @Id @GeneratedValue(strategy = GenerationType.AUTO)
   @BeanProperty
   var id: Int = _

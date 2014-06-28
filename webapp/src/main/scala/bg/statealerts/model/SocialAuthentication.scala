@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-case class SocialAuthentication {
+case class SocialAuthentication() {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

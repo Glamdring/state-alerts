@@ -9,7 +9,7 @@ import org.hibernate.annotations.Type
 import annotation.target.field
 
 @Embeddable
-case class AlertState {
+case class AlertState() {
   @Index(name="alertStateDateIndex")
   @Type(`type` = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   var date: DateTime =_

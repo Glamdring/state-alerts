@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 import scala.beans.BeanProperty
 
 @Entity
-case class User extends Serializable {
+case class User() extends Serializable {
     val serialVersionUID: Long = -3364753990290712657L;
 
     @Id

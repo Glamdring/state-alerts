@@ -231,10 +231,10 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   private def buildHtmlClient(): WebClient = {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
     bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING
-    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_17.getApplicationName(),
-      BrowserVersion.FIREFOX_17.getApplicationVersion(),
-      BrowserVersion.FIREFOX_17.getUserAgent(),
-      BrowserVersion.FIREFOX_17.getBrowserVersionNumeric(),
+    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_24.getApplicationName(),
+      BrowserVersion.FIREFOX_24.getApplicationVersion(),
+      BrowserVersion.FIREFOX_24.getUserAgent(),
+      BrowserVersion.FIREFOX_24.getBrowserVersionNumeric(),
       bvf)
     val client: WebClient = new WebClient(bv)
     client.getOptions().setJavaScriptEnabled(descriptor.javascriptRequired.getOrElse(false))

@@ -32,9 +32,9 @@ object Foo {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
     bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING
     val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_17.getApplicationName(),
-      BrowserVersion.FIREFOX_17.getApplicationVersion(),
-      BrowserVersion.FIREFOX_17.getUserAgent(),
-      BrowserVersion.FIREFOX_17.getBrowserVersionNumeric(),
+      BrowserVersion.FIREFOX_24.getApplicationVersion(),
+      BrowserVersion.FIREFOX_24.getUserAgent(),
+      BrowserVersion.FIREFOX_24.getBrowserVersionNumeric(),
       bvf);
     val client: WebClient = new WebClient(bv)
 
