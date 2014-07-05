@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.beans.factory.annotation.Value
+import javax.annotation.PostConstruct
 
 @Controller
 class AuthenticationController {
@@ -61,6 +62,11 @@ class AuthenticationController {
     }
     
 	val emailValidator = new EmailValidator()
+
+	@PostConstruct
+	def init() = {
+    	signInController.setApplicationUrl(baseUrl)
+	}
 	
 	@RequestMapping(value=Array("/signup"), method=Array(RequestMethod.GET))
     def signup(): String = {
