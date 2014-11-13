@@ -155,7 +155,8 @@
         "failOnError": false,
         "dateFormat": "dd MMMM yyyy",
         "dateRegex": "\\d{1,2} [\\P{M}\\p{M}&&[^\\s]]+ \\d{4}",
-        "dateLocale": "bg"
+        "dateLocale": "bg",
+        "enabled": false
       },
       {
         "sourceKey": "crc-news",

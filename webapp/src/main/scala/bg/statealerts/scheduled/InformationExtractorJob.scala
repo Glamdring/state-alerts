@@ -63,9 +63,11 @@ class InformationExtractorJob {
       try {
         var lastImportTime = dao.getLastImportDate(extractor.descriptor.sourceKey).getOrElse(new DateTime().minusDays(14).withTimeAtStartOfDay()).withZoneRetainFields(DateTimeZone.UTC)
         val now = DateTime.now()
+        logger.info(s"Starting import for key ${extractor.descriptor.sourceKey}")
         var documents = extractor.extract(lastImportTime)
         var persistedDocuments = List[Document]()
         var documentCount = documents.size
+        logger.info(s"Found $documentCount documents");
         for (doc <- documents) {
           try {
         	  val document = new Document()
