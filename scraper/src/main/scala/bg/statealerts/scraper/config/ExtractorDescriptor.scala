@@ -17,6 +17,7 @@ case class ExtractorDescriptor(
   heuristics: Option[Heuristics],
   contentLocationType: String,
   pagingMultiplier: Int,
+  firstPage: Int,
   javascriptRequired: Option[Boolean],
   failOnError: Option[Boolean]) //whether an error in parsing one document should result in failing the whole batch
 {

@@ -4,5 +4,6 @@ case class HttpRequest(
   method: Option[String],
   bodyParams: Option[String],
   headers: Option[Map[String, String]],
-  warmUpRequest: Option[Boolean]) {
+  warmUpRequest: Option[Boolean],
+  warmUpRequestUrl: Option[String]) {
 }

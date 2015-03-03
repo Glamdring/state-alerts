@@ -44,7 +44,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   var dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
   descriptor.dateLocale.foreach(l => dateTimeFormatter = dateTimeFormatter.withLocale(new Locale(l)))
   
-  val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.map(_.bodyParams.get), descriptor.pagingMultiplier)
+  val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.flatMap(_.bodyParams), descriptor.pagingMultiplier, descriptor.firstPage)
   
   var baseUrl: String = {
     val fullUrl = new URL(descriptor.url)
@@ -82,14 +82,15 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     var result = List[Document]()
     val loop = new Breaks()
     val httpMethod = HttpMethod.valueOf(descriptor.httpRequest.map(_.method.getOrElse("GET")).getOrElse("GET"))
-
     descriptor.httpRequest.foreach(_.headers.foreach(map => {
       map.foreach(e => client.addRequestHeader(e._1, e._2))
     }))
     val ctx = new ExtractionContext(descriptor, baseUrl, dateTimeFormatter, client)
 
     // warm-up request: in case some cookies/session need to be populated first
-    descriptor.httpRequest.foreach(_.warmUpRequest.foreach(if (_) client.getPage(baseUrl)))
+    descriptor.httpRequest.foreach { req => 
+		req.warmUpRequest.foreach(if (_) client.getPage(req.warmUpRequestUrl.getOrElse(baseUrl)))
+	}
 
     // The general flow is as follows:
     // - loop all rows in the table. Continue to the next page (if any). 

@@ -18,12 +18,13 @@ class ExtractorDescriptorBuilder {
   var heuristics: Option[Heuristics] = None
   var contentLocationType: String = _
   var pagingMultiplier: Int = _
+  var firstPage: Int = 1
   var javascriptRequired: Option[Boolean] = None
   var failOnError: Option[Boolean] = None
 
   def build(): ExtractorDescriptor = {
     return new ExtractorDescriptor(sourceKey, sourceDisplayName, enabled, documentType, entriesPerRow, paths, dateFormat, dateLocale, dateRegex,
-      url, httpRequest, heuristics, contentLocationType, pagingMultiplier, javascriptRequired, failOnError)
+      url, httpRequest, heuristics, contentLocationType, pagingMultiplier, firstPage, javascriptRequired, failOnError)
   }
   
   def setSourceKey(sourceKey: String): ExtractorDescriptorBuilder = {
@@ -51,7 +52,7 @@ class ExtractorDescriptorBuilder {
     return this;
   }
 
-  def setSourceKey(paths: ElementPaths): ExtractorDescriptorBuilder = {
+  def setPaths(paths: ElementPaths): ExtractorDescriptorBuilder = {
     this.paths = paths
     return this;
   }
@@ -99,5 +100,10 @@ class ExtractorDescriptorBuilder {
   def setFailOnError(failOnError: Boolean): ExtractorDescriptorBuilder = {
     this.failOnError = Some(failOnError)
     return this;
+  }
+  
+  def setDateLocale(locale: String): ExtractorDescriptorBuilder = {
+	this.dateLocale = Some(locale)
+	return this;
   }
 }

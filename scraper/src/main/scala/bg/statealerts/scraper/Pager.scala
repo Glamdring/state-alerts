@@ -1,8 +1,9 @@
 package bg.statealerts.scraper
 
-class Pager(url: String, bodyParams: Option[String], multiplier: Int = 1){
+class Pager(url: String, bodyParams: Option[String], multiplier: Int = 1, firstPage: Int = 1){
 	
-  var currentPage: Int = 0
+  var currentPage: Int = firstPage
+  
   def getPageUrl(): String = {
     url.replace("{x}", String.valueOf(currentPage * multiplier))
   }

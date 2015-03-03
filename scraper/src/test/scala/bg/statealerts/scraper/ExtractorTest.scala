@@ -34,7 +34,7 @@ class ExtractorTest {
         httpRequest = Some(new HttpRequest(
             method = Some("POST"),
             bodyParams = Some("from=&to=&L_ActL_title=&L_Ses_id=&L_Act_sign=&L_Act_im_id=&A_ns_C_id=&submit=%D0%A2%D1%8A%D1%80%D1%81%D0%B8"),
-            headers = None, warmUpRequest = None
+            headers = None, warmUpRequest = None, warmUpRequestUrl = None
         )),
         paths = new ElementPaths(
             tableRowPath = "//table[@class='billsresult']/tbody/tr[position()>1]",
@@ -47,6 +47,7 @@ class ExtractorTest {
 			documentPageTitlePath = None, contentPath = None, documentPageDatePath = None
         ),
         pagingMultiplier = 0,
+		firstPage = 1,
         dateFormat = "dd/MM/yyyy",
         dateLocale = None,
         entriesPerRow = None,
