@@ -148,6 +148,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                     loop.break
                   }
                   if (StringUtils.isNotBlank(doc.url)) {
+					logger.debug("Extracting document content for url: " + doc.url)
                     doc.content = documentExtractor.extractContent(doc.url, ctx)
                   }
                 }
