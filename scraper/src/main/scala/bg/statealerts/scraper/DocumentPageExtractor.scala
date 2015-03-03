@@ -5,8 +5,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import bg.statealerts.scraper.model.Document
 import bg.statealerts.scraper.config.ContentLocationType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class DocumentPageExtractor extends DocumentDetailsExtractor {
+
+  val logger: Logger = LoggerFactory.getLogger(classOf[DocumentPageExtractor])
 
   def populateDocument(doc: Document, row: HtmlElement, rowIdx: Int, ctx: ExtractionContext) = {
 
@@ -17,7 +21,9 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
     val contentLocationType = ContentLocationType.withName(ctx.descriptor.contentLocationType)
     // if the link is not available in the table, but on a separate page, go to that page first
     if (contentLocationType == ContentLocationType.LinkedDocumentOnLinkedPage || contentLocationType == ContentLocationType.LinkedPage) {
+	  logger.debug("Requesting document page: " + documentUrl)
       val docPage: HtmlPage = ctx.client.getPage(documentUrl)
+	  
       if (ctx.descriptor.paths.documentPageTitlePath.nonEmpty) {
         doc.title = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
       }

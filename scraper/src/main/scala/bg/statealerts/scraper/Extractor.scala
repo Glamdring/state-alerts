@@ -110,8 +110,14 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
           }
 
           htmlPage = client.getPage(request)
+		  if (logger.isDebugEnabled()) {
+			logger.debug("Page body: " + htmlPage.asXml());
+		  }
+		  
           val list = asScalaBuffer(htmlPage.getByXPath(descriptor.paths.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
 
+		  logger.info("Found rows: " + list.size)
+		  
           if (list.isEmpty) {
             loop.break
           }
