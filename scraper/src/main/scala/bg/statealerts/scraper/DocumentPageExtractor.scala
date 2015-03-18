@@ -60,7 +60,10 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
       if (ctx.descriptor.paths.additionalMetaDataPaths.nonEmpty) {
         val metaData = scala.collection.mutable.Map[String, String]()
         for (path <- ctx.descriptor.paths.additionalMetaDataPaths.get) {
-          metaData.put(path._1, docPage.getFirstByXPath(path._2))
+          val value = docPage.getFirstByXPath(path._2)
+          if (value != null) {
+          	metaData.put(path._1, value)
+          }
         }
         doc.additionalMetaData = metaData.toMap;
       }

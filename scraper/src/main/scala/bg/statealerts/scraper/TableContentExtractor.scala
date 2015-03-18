@@ -48,6 +48,17 @@ class TableContentExtractor extends DocumentDetailsExtractor {
       val element = if (elements.size() > 1 && ctx.descriptor.entriesPerRow.nonEmpty) elements.get(rowIdx) else elements.get(0)
       doc.externalId = element.asInstanceOf[DomNode].getTextContent().trim()
     })
+    
+    if (ctx.descriptor.paths.additionalMetaDataPaths.nonEmpty) {
+        val metaData = scala.collection.mutable.Map[String, String]()
+        for (path <- ctx.descriptor.paths.additionalMetaDataPaths.get) {
+          val value = row.getFirstByXPath(path._2);
+          if (value != null) {
+          	metaData.put(path._1, value)
+          }
+        }
+        doc.additionalMetaData = metaData.toMap;
+    }
     //TODO use rowIdx
     if (ContentLocationType.withName(ctx.descriptor.contentLocationType) == ContentLocationType.Table && ctx.descriptor.paths.contentPath.nonEmpty) {
     	doc.content = row.getFirstByXPath(ctx.descriptor.paths.contentPath.get).asInstanceOf[DomNode].getTextContent().trim()
