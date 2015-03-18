@@ -65,4 +65,13 @@ class ElementPathsBuilder {
     this.documentPageLinkPath = Some(documentPageLinkPath)
     return this;
   }
+  
+  /**
+   * Sets paths to additional metadata. Key=property name, value=XPath
+   */
+  def setAdditionalMetaDataPath(paths: java.util.Map[String, String]): ElementPathsBuilder = {
+    import scala.collection.JavaConverters._
+    this.additionalMetaDataPaths = Some(paths.asScala.toMap[String, String])
+    return this;
+  }
 }
