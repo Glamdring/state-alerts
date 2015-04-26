@@ -65,6 +65,10 @@ class InformationExtractorJob {
         val now = DateTime.now()
         logger.info(s"Starting import for key ${extractor.descriptor.sourceKey}")
         var documents = extractor.extract(lastImportTime)
+        val today = new DateTime().withTimeAtStartOfDay()
+        // do not import documents from the current day, as new ones may appear later, and normally we don't get the hour of upload, only the date
+        documents = documents.filter(doc => doc.publishDate != null && doc.publishDate.isBefore(today))
+        
         var persistedDocuments = List[Document]()
         var documentCount = documents.size
         logger.info(s"Found $documentCount documents");

@@ -42,7 +42,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   val documentPageExtractor = new DocumentPageExtractor()
 
   var dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern(descriptor.dateFormat)
-  descriptor.dateLocale.foreach(l => dateTimeFormatter = dateTimeFormatter.withLocale(new Locale(l)))
+  	.withLocale(descriptor.dateLocale.map(new Locale(_)).getOrElse(Locale.ENGLISH))
   
   val pager: Pager = new Pager(descriptor.url, descriptor.httpRequest.flatMap(_.bodyParams), descriptor.pagingMultiplier, descriptor.firstPage)
   
@@ -77,7 +77,12 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     if (!descriptor.enabled.getOrElse(true)) {
       return List()
     }
-    val today = new DateTime().withTimeAtStartOfDay()
+    
+    if (since == null) {
+      logger.warn("You are runing with a null reference date. This is rarely a good idea, " +
+    		  	  "because it will fetch results till the beginning, unless you have specified " + 
+    		  	  "scraping just a single page, without paging increment")
+    }
     
     var result = List[Document]()
     val loop = new Breaks()
@@ -131,7 +136,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                 doc.sourceDisplayName = descriptor.sourceDisplayName.getOrElse(descriptor.sourceKey)
 
                 tableContentExtractor.populateDocument(doc, row, entryIdx, ctx)
-                if (doc.publishDate != null && !doc.publishDate.isAfter(since)) {
+                if (since != null && doc.publishDate != null && !doc.publishDate.isAfter(since)) {
                   loop.break
                 }
 
@@ -144,7 +149,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                     getLinkedDocument(doc, row, ctx, request)
                   }
 
-                  if (doc.publishDate != null && !doc.publishDate.isAfter(since)) {
+                  if (since != null && doc.publishDate != null && !doc.publishDate.isAfter(since)) {
                     loop.break
                   }
                   if (StringUtils.isNotBlank(doc.url)) {
@@ -153,8 +158,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                   }
                 }
                 // don't add empty documents (the content of which was not obtained, for some reason)
-                // also, do not import documents from the current day, as new ones may appear later, and normally we don't get the hour of upload, only the date
-                if (StringUtils.isNotBlank(doc.content) && doc.publishDate != null && doc.publishDate.isBefore(today)) {
+                if (StringUtils.isNotBlank(doc.content)) {
                   result ::= doc
                 }
               } catch {
@@ -209,9 +213,12 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
         }
       })
     } else {
-      val element:HtmlElement = row.getFirstByXPath(descriptor.paths.documentLinkPath.get).asInstanceOf[HtmlElement];
-        if (element.hasAttribute("href") && !element.getAttribute("href").equals("#") && !element.getAttribute("href").contains("javascript")) {
-    		doc.url = Utilities.getFullUrl(ctx, element);
+    	val element:HtmlElement = row.getFirstByXPath(descriptor.paths.documentLinkPath.get).asInstanceOf[HtmlElement];
+    	if (element == null) {
+    	  throw new IllegalStateException("No link found in row for xpath: " + descriptor.paths .documentLinkPath);
+    	}
+	    if (element.hasAttribute("href") && !element.getAttribute("href").equals("#") && !element.getAttribute("href").contains("javascript")) {
+			doc.url = Utilities.getFullUrl(ctx, element);
 	    } else { // in case the document is not linked, but a click on a button is required for downloading, get the bytes of the response
 	      val link = row.getFirstByXPath[HtmlElement](descriptor.paths.documentLinkPath.get)
 		  if (link != null) {

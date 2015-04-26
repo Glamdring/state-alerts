@@ -28,15 +28,18 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
         doc.title = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
       }
       if (ctx.descriptor.paths.documentPageDatePath.nonEmpty) {
-        var text = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageDatePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
-        if (ctx.descriptor.dateRegex.nonEmpty) {
-          val pattern = Pattern.compile(ctx.descriptor.dateRegex.get)
-          val matcher = pattern.matcher(text)
-          if (matcher.find()) {
-            text = matcher.group()
-          }
+        val element = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageDatePath.get).asInstanceOf[HtmlElement]
+        if (element != null) {
+	        var text = element.getTextContent().trim()
+	        if (ctx.descriptor.dateRegex.nonEmpty) {
+	          val pattern = Pattern.compile(ctx.descriptor.dateRegex.get)
+	          val matcher = pattern.matcher(text)
+	          if (matcher.find()) {
+	            text = matcher.group()
+	          }
+	        }
+	        doc.publishDate = ctx.dateFormatter.parseDateTime(text).withTimeAtStartOfDay()
         }
-        doc.publishDate = ctx.dateFormatter.parseDateTime(text).withTimeAtStartOfDay()
       }
 
       // if the document is downloadable file, get the link to it. Otherwise set the documentUrl to be the document details page

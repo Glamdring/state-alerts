@@ -29,81 +29,86 @@ class ExtractorDescriptorBuilder {
   
   def setSourceKey(sourceKey: String): ExtractorDescriptorBuilder = {
     this.sourceKey = sourceKey
-    return this;
+    return this
   }
 
   def setSourceDisplayName(sourceDisplayName: String): ExtractorDescriptorBuilder = {
     this.sourceDisplayName = Some(sourceDisplayName)
-    return this;
+    return this
   }
 
   def setEnabled(enabled: Boolean): ExtractorDescriptorBuilder = {
     this.enabled = Some(enabled)
-    return this;
+    return this
   }
 
   def setDocumentType(documentType: String): ExtractorDescriptorBuilder = {
     this.documentType = documentType
-    return this;
+    return this
   }
 
   def setEntriesPerRow(entriesPerRow: Int): ExtractorDescriptorBuilder = {
     this.entriesPerRow = Some(entriesPerRow)
-    return this;
+    return this
   }
 
   def setPaths(paths: ElementPaths): ExtractorDescriptorBuilder = {
     this.paths = paths
-    return this;
+    return this
   }
 
   def setDateFormat(dateFormat: String): ExtractorDescriptorBuilder = {
     this.dateFormat = dateFormat
-    return this;
+    return this
   }
 
   def setDateRegex(dateRegex: String): ExtractorDescriptorBuilder = {
     this.dateRegex = Some(dateRegex)
-    return this;
+    return this
   }
 
   def setUrl(url: String): ExtractorDescriptorBuilder = {
     this.url = url
-    return this;
+    return this
   }
 
   def setHttpRequest(httpRequest: HttpRequest): ExtractorDescriptorBuilder = {
     this.httpRequest = Some(httpRequest)
-    return this;
+    return this
   }
 
   def setHeuristics(heuristics: Heuristics): ExtractorDescriptorBuilder = {
     this.heuristics = Some(heuristics)
-    return this;
+    return this
   }
 
   def setContentLocationType(contentLocationType: String): ExtractorDescriptorBuilder = {
     this.contentLocationType = contentLocationType
-    return this;
+    return this
   }
 
   def setPagingMultiplier(pagingMultiplier: Int): ExtractorDescriptorBuilder = {
     this.pagingMultiplier = pagingMultiplier
-    return this;
+    return this
   }
 
   def setJavascriptRequired(javascriptRequired: Boolean): ExtractorDescriptorBuilder = {
     this.javascriptRequired = Some(javascriptRequired)
-    return this;
+    return this
   }
 
   def setFailOnError(failOnError: Boolean): ExtractorDescriptorBuilder = {
     this.failOnError = Some(failOnError)
-    return this;
+    return this
   }
   
   def setDateLocale(locale: String): ExtractorDescriptorBuilder = {
 	this.dateLocale = Some(locale)
-	return this;
+	return this
+  }
+  
+  def setFirstPage(firstPage: Int): ExtractorDescriptorBuilder = {
+    this.firstPage = firstPage
+    return this
   }
 }
