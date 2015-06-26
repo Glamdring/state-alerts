@@ -23,47 +23,47 @@ class ElementPathsBuilder {
   
   def setTableRowPath(tableRowPath: String): ElementPathsBuilder = {
     this.tableRowPath = tableRowPath
-    return this;
+    return this
   }
 
   def setTitlePath(titlePath: String): ElementPathsBuilder = {
     this.titlePath = Some(titlePath)
-    return this;
+    return this
   }
 
   def setDocumentPageTitlePath(documentPageTitlePath: String): ElementPathsBuilder = {
     this.documentPageTitlePath = Some(documentPageTitlePath)
-    return this;
+    return this
   }
 
   def setContentPath(contentPath: String): ElementPathsBuilder = {
     this.contentPath = Some(contentPath)
-    return this;
+    return this
   }
 
   def setDatePath(datePath: String): ElementPathsBuilder = {
     this.datePath = Some(datePath)
-    return this;
+    return this
   }
 
   def setExternalIdPath(externalIdPath: String): ElementPathsBuilder = {
     this.externalIdPath = Some(externalIdPath)
-    return this;
+    return this
   }
 
   def setDocumentPageDatePath(documentPageDatePath: String): ElementPathsBuilder = {
     this.documentPageDatePath = Some(documentPageDatePath)
-    return this;
+    return this
   }
 
   def setDocumentLinkPath(documentLinkPath: String): ElementPathsBuilder = {
     this.documentLinkPath = Some(documentLinkPath)
-    return this;
+    return this
   }
 
   def setDocumentPageLinkPath(documentPageLinkPath: String): ElementPathsBuilder = {
     this.documentPageLinkPath = Some(documentPageLinkPath)
-    return this;
+    return this
   }
   
   /**
@@ -72,6 +72,6 @@ class ElementPathsBuilder {
   def setAdditionalMetaDataPath(paths: java.util.Map[String, String]): ElementPathsBuilder = {
     import scala.collection.JavaConverters._
     this.additionalMetaDataPaths = Some(paths.asScala.toMap[String, String])
-    return this;
+    return this
   }
 }
