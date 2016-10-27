@@ -253,8 +253,9 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
       bvf)
     val client: WebClient = new WebClient(bv)
     client.getOptions().setJavaScriptEnabled(descriptor.javascriptRequired.getOrElse(false))
-    client.getOptions.setTimeout(120 * 1000)
+    client.getOptions().setTimeout(descriptor.timeout)
     client.getOptions().setPrintContentOnFailingStatusCode(false)
+    client.setWebConnection(new RetryableWebConnection(client))
     client
   }
 }
