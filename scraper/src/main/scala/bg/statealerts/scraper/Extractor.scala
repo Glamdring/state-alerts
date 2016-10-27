@@ -69,11 +69,11 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     }
   }
 
-  def extractDocuments(since: ReadableDateTime): java.util.List[Document] = {
-    return JavaConversions.seqAsJavaList(extract(since))
+  def extractDocuments(since: ReadableDateTime, extractHtml: Boolean): java.util.List[Document] = {
+    return JavaConversions.seqAsJavaList(extract(since, extractHtml))
   }
   
-  def extract(since: ReadableDateTime): List[Document] = {
+  def extract(since: ReadableDateTime, extractHtml: Boolean = false): List[Document] = {
     if (!descriptor.enabled.getOrElse(true)) {
       return List()
     }
@@ -90,7 +90,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     descriptor.httpRequest.foreach(_.headers.foreach(map => {
       map.foreach(e => client.addRequestHeader(e._1, e._2))
     }))
-    val ctx = new ExtractionContext(descriptor, baseUrl, dateTimeFormatter, client)
+    val ctx = new ExtractionContext(descriptor, baseUrl, extractHtml, dateTimeFormatter, client)
 
     // warm-up request: in case some cookies/session need to be populated first
     descriptor.httpRequest.foreach { req => 
@@ -163,7 +163,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                 }
               } catch {
                 case e: Exception => {
-                  logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "] row " + entryIdx, e)
+                  logger.error("Problem parsing page " + pageUrl + "[" + pageBodyParams + "] row " + row, e)
                   if (descriptor.failOnError.getOrElse(false)) {
                     result = List() //failing - no documents are to be stored
                     loop.break

@@ -6,7 +6,8 @@ import com.gargoylesoftware.htmlunit.WebClient
 
 class ExtractionContext(
     val descriptor: ExtractorDescriptor, 
-    val baseUrl: String, 
+    val baseUrl: String,
+    val extractHtml: Boolean,
     val dateFormatter: DateTimeFormatter,
     val client: WebClient) {
 }

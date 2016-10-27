@@ -7,6 +7,7 @@ import bg.statealerts.scraper.model.Document
 import bg.statealerts.scraper.config.ContentLocationType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.apache.commons.lang3.StringUtils
 
 class DocumentPageExtractor extends DocumentDetailsExtractor {
 
@@ -25,7 +26,12 @@ class DocumentPageExtractor extends DocumentDetailsExtractor {
       val docPage: HtmlPage = ctx.client.getPage(documentUrl)
 	  
       if (ctx.descriptor.paths.documentPageTitlePath.nonEmpty) {
-        doc.title = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageTitlePath.get).asInstanceOf[HtmlElement].getTextContent().trim()
+        val titleElement = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageTitlePath.get).asInstanceOf[HtmlElement]
+        if (titleElement != null) {
+        	doc.title = StringUtils.trim(titleElement.getTextContent());
+        } else {
+          logger.warn("No title found for documentUrl="  + documentUrl)
+        }
       }
       if (ctx.descriptor.paths.documentPageDatePath.nonEmpty) {
         val element = docPage.getFirstByXPath(ctx.descriptor.paths.documentPageDatePath.get).asInstanceOf[HtmlElement]

@@ -65,7 +65,7 @@ class AuthenticationController {
 
 	@PostConstruct
 	def init() = {
-    	signInController.setApplicationUrl(baseUrl)
+    	signInController.setApplicationUrl("http://" + baseUrl)
 	}
 	
 	@RequestMapping(value=Array("/signup"), method=Array(RequestMethod.GET))
