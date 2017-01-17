@@ -33,6 +33,7 @@ import bg.statealerts.scraper.config.ContentLocationType
 import scala.collection.JavaConversions
 import java.util.Locale
 import org.w3c.dom.Attr
+import com.gargoylesoftware.htmlunit.util.Cookie
 
 class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 
@@ -88,7 +89,15 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     val loop = new Breaks()
     val httpMethod = HttpMethod.valueOf(descriptor.httpRequest.map(_.method.getOrElse("GET")).getOrElse("GET"))
     descriptor.httpRequest.foreach(_.headers.foreach(map => {
-      map.foreach(e => client.addRequestHeader(e._1, e._2))
+      map.foreach(e => {
+        if (e._1.equalsIgnoreCase("cookie")) {
+        	val parts = e._2.split("=")
+        	client.getCookieManager().addCookie(new Cookie(new URL(descriptor.url).getHost(), parts(0), parts(1)))
+        } else {
+        	client.addRequestHeader(e._1, e._2)
+        }
+      }
+        )
     }))
     val ctx = new ExtractionContext(descriptor, baseUrl, extractHtml, dateTimeFormatter, client)
 

@@ -52,9 +52,9 @@ class TableContentExtractor extends DocumentDetailsExtractor {
     if (ctx.descriptor.paths.additionalMetaDataPaths.nonEmpty) {
         val metaData = scala.collection.mutable.Map[String, String]()
         for (path <- ctx.descriptor.paths.additionalMetaDataPaths.get) {
-          val value = row.getFirstByXPath(path._2);
+          val value = row.getFirstByXPath(path._2).asInstanceOf[HtmlElement];
           if (value != null) {
-          	metaData.put(path._1, value)
+          	metaData.put(path._1, value.getTextContent())
           }
         }
         doc.additionalMetaData = metaData.toMap;
