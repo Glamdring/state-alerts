@@ -13,3 +13,4 @@ tmp
 .project
 .settings
 *.orig
+/bin/
