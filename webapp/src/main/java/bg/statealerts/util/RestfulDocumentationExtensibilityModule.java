@@ -30,33 +30,33 @@ public class RestfulDocumentationExtensibilityModule extends ExtensibilityModule
 		documentationFilters.add(new Filter<Documentation>() {
 			@Override
 			public void apply(FilterContext<Documentation> context) {
-				Documentation replacement = new FilteringDocumentation(null, config.getApiVersion(), config.getBasePath(), null, apiPathPrefix);
-				Field fld = ReflectionUtils.findField(FilterContext.class, "subject");
-				ReflectionUtils.makeAccessible(fld);
-				ReflectionUtils.setField(fld, context, replacement);
+//				Documentation replacement = new FilteringDocumentation(null, config.getApiVersion(), config.getBasePath(), null, apiPathPrefix);
+//				Field fld = ReflectionUtils.findField(FilterContext.class, "subject");
+//				ReflectionUtils.makeAccessible(fld);
+//				ReflectionUtils.setField(fld, context, replacement);
 			}
 		});
 	}
 	
-	public static class FilteringDocumentation extends Documentation  {
-		
-		private String apiPathPrefix;
-		
-		public FilteringDocumentation(String apiVersion, String swaggerVersion,
-				String basePath, String resourcePath, String apiPathPrefix) {
-			super(apiVersion, swaggerVersion, basePath, resourcePath);
-			this.apiPathPrefix = apiPathPrefix;
-		}
-		
-		public FilteringDocumentation() {
-		}
-		
-		@Override
-		public Object addApi(DocumentationEndPoint ep) {
-			if (ep.getPath().startsWith("/" + DocumentationController.CONTROLLER_ENDPOINT + apiPathPrefix)) {
-				return super.addApi(ep);
-			}
-			return ep;
-		}
-	}
+//	public static class FilteringDocumentation extends Documentation  {
+//		
+//		private String apiPathPrefix;
+//		
+//		public FilteringDocumentation(String apiVersion, String swaggerVersion,
+//				String basePath, String resourcePath, String apiPathPrefix) {
+//			super(apiVersion, swaggerVersion, basePath, resourcePath);
+//			this.apiPathPrefix = apiPathPrefix;
+//		}
+//		
+//		public FilteringDocumentation() {
+//		}
+//		
+//		@Override
+//		public Object addApi(DocumentationEndPoint ep) {
+//			if (ep.getPath().startsWith("/" + DocumentationController.CONTROLLER_ENDPOINT + apiPathPrefix)) {
+//				return super.addApi(ep);
+//			}
+//			return ep;
+//		}
+//	}
 }

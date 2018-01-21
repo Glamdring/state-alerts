@@ -6,8 +6,6 @@ import javax.persistence.Embeddable
 import org.hibernate.annotations.Index
 import org.hibernate.annotations.Type
 
-import annotation.target.field
-
 @Embeddable
 case class AlertState() {
   @Index(name="alertStateDateIndex")
