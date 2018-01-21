@@ -122,20 +122,28 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
         
         try {
           logger.debug("Requesting page: " + pageUrl + "[" + pageBodyParams + "]")
-          val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
-          // POST parameters are set in the request body
-          if (httpMethod == HttpMethod.POST) {
-            request.setRequestBody(pageBodyParams)
-          }
 
+          var request: WebRequest = null
           if (descriptor.paths.pageChangeLinkPath.nonEmpty && htmlPage != null) {
             val link = htmlPage.getFirstByXPath[HtmlElement](descriptor.paths.pageChangeLinkPath.get)
             if (link != null) {
                 val commandString = link.getOnClickAttribute().replaceAll("return ", "")
                 val executeJavaScript = htmlPage.executeJavaScript(commandString)
-                htmlPage = executeJavaScript.getNewPage().asInstanceOf[HtmlPage]
+                val page = executeJavaScript.getNewPage()
+                if (page.isInstanceOf[HtmlPage]) {
+                    htmlPage = page.asInstanceOf[HtmlPage]
+                } else {
+                    logger.warn("Unexpected page: " + page.getWebResponse().getContentAsString());
+                }
+            } else {
+                logger.warn("No link found");
             }
           } else {
+            request = new WebRequest(new URL(pageUrl), httpMethod)
+            // POST parameters are set in the request body
+            if (httpMethod == HttpMethod.POST) {
+              request.setRequestBody(pageBodyParams)
+            }
             htmlPage = client.getPage(request)
     		if (logger.isTraceEnabled()) {
     		  logger.trace("Page body: " + htmlPage.asXml());
@@ -253,7 +261,9 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 		    val executeJavaScript = htmlPage.executeJavaScript(commandString)
 	        val documentPage = executeJavaScript.getNewPage()
 	        populateDocumentWithDownloadedContent(doc, documentPage, ctx)
-		    htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+	        if (request != null) {
+		      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
+		    }
 		  }
        }
 	}
@@ -273,10 +283,10 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   private def buildHtmlClient(): WebClient = {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
     bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING
-    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_24.getApplicationName(),
-      BrowserVersion.FIREFOX_24.getApplicationVersion(),
-      BrowserVersion.FIREFOX_24.getUserAgent(),
-      BrowserVersion.FIREFOX_24.getBrowserVersionNumeric(),
+    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_38.getApplicationName(),
+      BrowserVersion.FIREFOX_38.getApplicationVersion(),
+      BrowserVersion.FIREFOX_38.getUserAgent(),
+      BrowserVersion.FIREFOX_38.getBrowserVersionNumeric(),
       bvf)
     val client: WebClient = new WebClient(bv)
     client.getOptions().setJavaScriptEnabled(descriptor.javascriptRequired.getOrElse(false))

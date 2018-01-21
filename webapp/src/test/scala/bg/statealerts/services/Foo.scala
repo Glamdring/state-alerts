@@ -31,10 +31,10 @@ object Foo {
   def maina(args: Array[String]) {
     val bvf: Array[BrowserVersionFeatures] = new Array[BrowserVersionFeatures](1)
     bvf(0) = BrowserVersionFeatures.HTMLIFRAME_IGNORE_SELFCLOSING
-    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_17.getApplicationName(),
-      BrowserVersion.FIREFOX_24.getApplicationVersion(),
-      BrowserVersion.FIREFOX_24.getUserAgent(),
-      BrowserVersion.FIREFOX_24.getBrowserVersionNumeric(),
+    val bv: BrowserVersion = new BrowserVersion(BrowserVersion.FIREFOX_38.getApplicationName(),
+      BrowserVersion.FIREFOX_38.getApplicationVersion(),
+      BrowserVersion.FIREFOX_38.getUserAgent(),
+      BrowserVersion.FIREFOX_38.getBrowserVersionNumeric(),
       bvf);
     val client: WebClient = new WebClient(bv)
 
