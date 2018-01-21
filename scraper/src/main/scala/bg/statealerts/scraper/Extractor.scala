@@ -59,6 +59,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
   val client = buildHtmlClient()
   
   var htmlPage: HtmlPage = _
+  var searchResultsPage: HtmlPage = _
   
   //TODO get from enum field, rather than instantiating for each extraction
   val documentExtractor: DocumentFileExtractor = {
@@ -121,34 +122,33 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
         val pageBodyParams = pager.getBodyParams()
         
         try {
-          logger.debug("Requesting page: " + pageUrl + "[" + pageBodyParams + "]")
-
-          var request: WebRequest = null
+          var request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
+          // POST parameters are set in the request body
+          if (httpMethod == HttpMethod.POST) {
+            request.setRequestBody(pageBodyParams)
+          }
           if (descriptor.paths.pageChangeLinkPath.nonEmpty && htmlPage != null) {
             val link = htmlPage.getFirstByXPath[HtmlElement](descriptor.paths.pageChangeLinkPath.get)
             if (link != null) {
-                val commandString = link.getOnClickAttribute().replaceAll("return ", "")
-                val executeJavaScript = htmlPage.executeJavaScript(commandString)
-                val page = executeJavaScript.getNewPage()
+                logger.debug("Clicking 'next page' button: " + pageUrl)
+                val page: Page = link.click();
+                logger.debug("Opened page: " + page.getUrl())
                 if (page.isInstanceOf[HtmlPage]) {
-                    htmlPage = page.asInstanceOf[HtmlPage]
-                } else {
+                    searchResultsPage = page.asInstanceOf[HtmlPage]
+                } else if (page != null) {
                     logger.warn("Unexpected page: " + page.getWebResponse().getContentAsString());
                 }
             } else {
                 logger.warn("No link found");
             }
           } else {
-            request = new WebRequest(new URL(pageUrl), httpMethod)
-            // POST parameters are set in the request body
-            if (httpMethod == HttpMethod.POST) {
-              request.setRequestBody(pageBodyParams)
-            }
-            htmlPage = client.getPage(request)
+            logger.debug("Requesting page: " + pageUrl + "[" + pageBodyParams + "]")
+            searchResultsPage = client.getPage(request)
     		if (logger.isTraceEnabled()) {
-    		  logger.trace("Page body: " + htmlPage.asXml());
+    		  logger.trace("Page body: " + searchResultsPage.asXml());
     		}
 		  }
+		  htmlPage = searchResultsPage;
 		  
           val list = asScalaBuffer(htmlPage.getByXPath(descriptor.paths.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
 
@@ -261,9 +261,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
 		    val executeJavaScript = htmlPage.executeJavaScript(commandString)
 	        val documentPage = executeJavaScript.getNewPage()
 	        populateDocumentWithDownloadedContent(doc, documentPage, ctx)
-	        if (request != null) {
-		      htmlPage = client.getPage(request) // needed, due to a possible bug in htmlunit.
-		    }
+	        htmlPage = client.getPage(request); // needed, due to a possible bug in htmlunit.
 		  }
        }
 	}
