@@ -12,13 +12,14 @@ class ElementPathsBuilder {
   var datePath: Option[String] = None
   var additionalMetaDataPaths: Option[Map[String, String]] = None
   var metaDataUrlPath: Option[String] = None
+  var pageChangeLinkPath: Option[String] = None
   var documentPageDatePath: Option[String] = None
   var documentLinkPath: Option[String] = None
   var documentPageLinkPath: Option[String] = None
 
   def build(): ElementPaths = {
     return new ElementPaths(tableRowPath, titlePath, documentPageTitlePath, contentPath, externalIdPath, 
-        datePath, additionalMetaDataPaths, metaDataUrlPath, documentPageDatePath, documentLinkPath, documentPageLinkPath)
+        datePath, additionalMetaDataPaths, metaDataUrlPath, pageChangeLinkPath, documentPageDatePath, documentLinkPath, documentPageLinkPath)
   }
   
   def setTableRowPath(tableRowPath: String): ElementPathsBuilder = {
@@ -73,5 +74,10 @@ class ElementPathsBuilder {
     import scala.collection.JavaConverters._
     this.additionalMetaDataPaths = Some(paths.asScala.toMap[String, String])
     return this
+  }
+  
+  def setPageChangeLinkPath(pageChangeLinkPath: String): ElementPathsBuilder = {
+    this.pageChangeLinkPath = Some(pageChangeLinkPath);
+    return this;
   }
 }

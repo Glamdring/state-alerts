@@ -70,11 +70,15 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
     }
   }
 
-  def extractDocuments(since: ReadableDateTime, extractHtml: Boolean): java.util.List[Document] = {
-    return JavaConversions.seqAsJavaList(extract(since, extractHtml))
+  def extractDocuments(since: ReadableDateTime, extractHtml: Boolean, consumer: java.util.function.Consumer[Document] = null): java.util.List[Document] = {
+    var function: Document => Unit = null;
+    if (consumer != null) {
+        function = d => consumer.accept(d);
+    }
+    return JavaConversions.seqAsJavaList(extract(since, extractHtml, d => consumer.accept(d)))
   }
   
-  def extract(since: ReadableDateTime, extractHtml: Boolean = false): List[Document] = {
+  def extract(since: ReadableDateTime, extractHtml: Boolean = false, docConsumer: Document => Unit = null): List[Document] = {
     if (!descriptor.enabled.getOrElse(true)) {
       return List()
     }
@@ -115,6 +119,7 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
       while (true) {
         val pageUrl = pager.getPageUrl()
         val pageBodyParams = pager.getBodyParams()
+        
         try {
           logger.debug("Requesting page: " + pageUrl + "[" + pageBodyParams + "]")
           val request: WebRequest = new WebRequest(new URL(pageUrl), httpMethod)
@@ -123,9 +128,18 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
             request.setRequestBody(pageBodyParams)
           }
 
-          htmlPage = client.getPage(request)
-		  if (logger.isDebugEnabled()) {
-			logger.debug("Page body: " + htmlPage.asXml());
+          if (descriptor.paths.pageChangeLinkPath.nonEmpty && htmlPage != null) {
+            val link = htmlPage.getFirstByXPath[HtmlElement](descriptor.paths.pageChangeLinkPath.get)
+            if (link != null) {
+                val commandString = link.getOnClickAttribute().replaceAll("return ", "")
+                val executeJavaScript = htmlPage.executeJavaScript(commandString)
+                htmlPage = executeJavaScript.getNewPage().asInstanceOf[HtmlPage]
+            }
+          } else {
+            htmlPage = client.getPage(request)
+    		if (logger.isTraceEnabled()) {
+    		  logger.trace("Page body: " + htmlPage.asXml());
+    		}
 		  }
 		  
           val list = asScalaBuffer(htmlPage.getByXPath(descriptor.paths.tableRowPath).asInstanceOf[ArrayList[HtmlElement]])
@@ -168,7 +182,11 @@ class Extractor(@BeanProperty val descriptor: ExtractorDescriptor) {
                 }
                 // don't add empty documents (the content of which was not obtained, for some reason)
                 if (StringUtils.isNotBlank(doc.content)) {
-                  result ::= doc
+                  if (docConsumer != null) {
+                    docConsumer(doc);
+                  } else {
+                    result ::= doc
+                  }
                 }
               } catch {
                 case e: Exception => {

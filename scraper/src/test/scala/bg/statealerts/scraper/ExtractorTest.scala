@@ -43,7 +43,7 @@ class ExtractorTest {
 			datePath = Some(".//td[4]"),
 			titlePath = Some(".//td[2]/a"),
 			externalIdPath = Some(".//td[3]"),
-			additionalMetaDataPaths = None, metaDataUrlPath = None,
+			additionalMetaDataPaths = None, metaDataUrlPath = None, pageChangeLinkPath = None,
 			documentPageTitlePath = None, contentPath = None, documentPageDatePath = None
         ),
         pagingMultiplier = 0,

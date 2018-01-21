@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="10 seconds">
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{32} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="bg.statealerts" level="debug" />
+	<root level="info">
+		<appender-ref ref="console" />
+	</root>
+	
+	<logger name="org.apache.pdfbox" level="warn" />
+	<logger name="org.apache.http" level="warn" />
+
+</configuration>
